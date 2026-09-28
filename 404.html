@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Gift Not Found | Never The Wrong Gift</title>
+  <meta name="description" content="The page you're looking for seems to have gone missing or been wrapped up somewhere else. Return to Never The Wrong Gift.">
+  <meta name="robots" content="noindex, follow">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .error-page-wrapper {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+      text-align: center;
+      background: radial-gradient(circle at center, #FFFFFF 0%, #F7F2EA 100%);
+    }
+    .error-card {
+      max-width: 640px;
+      background: #FFFFFF;
+      border: 1px solid #E8E2D8;
+      border-radius: 16px;
+      padding: 50px 36px;
+      box-shadow: 0 12px 36px rgba(36, 40, 33, 0.08);
+    }
+    .error-icon-box {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 24px;
+      background-color: #F7F2EA;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #A72D32;
+    }
+    .error-code {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      letter-spacing: 3px;
+      color: #B79A62;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .error-title {
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      color: #1F2C1A;
+      line-height: 1.25;
+      margin-bottom: 16px;
+    }
+    .error-desc {
+      color: #686860;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+    .error-cta-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 36px;
+    }
+    .error-search-box {
+      border-top: 1px solid #E8E2D8;
+      padding-top: 28px;
+      margin-top: 10px;
+    }
+    .error-search-title {
+      font-size: 0.9rem;
+      color: #242821;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .error-search-form {
+      display: flex;
+      max-width: 420px;
+      margin: 0 auto;
+      gap: 8px;
+    }
+    .error-search-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #E8E2D8;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .error-popular-links {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .tag-link {
+      font-size: 0.8rem;
+      color: #26351F;
+      background: #F7F2EA;
+      padding: 5px 12px;
+      border-radius: 20px;
+      transition: all 0.2s ease;
+    }
+    .tag-link:hover {
+      background: #A72D32;
+      color: #FFFFFF;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="error-page-wrapper">
+    <div class="error-card">
+      <div class="error-icon-box">
+        <svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="6" y="16" width="36" height="26" rx="3" stroke="#A72D32"/>
+          <path d="M6 24h36" stroke="#B79A62"/>
+          <path d="M24 16v26" stroke="#B79A62"/>
+          <path d="M24 16C24 16 16 6 11 9C7 11.5 10 16 24 16Z" stroke="#A72D32" fill="#F7F2EA"/>
+          <path d="M24 16C24 16 32 6 37 9C41 11.5 38 16 24 16Z" stroke="#A72D32" fill="#F7F2EA"/>
+          <circle cx="24" cy="24" r="2" fill="#A72D32"/>
+        </svg>
+      </div>
+
+      <span class="error-code">404 ERROR</span>
+      <h1 class="error-title">Oops! This Gift Seems to Have Gone Missing.</h1>
+      <p class="error-desc">
+        The page you're looking for may have moved, changed or been wrapped up somewhere else.
+      </p>
+
+      <div class="error-cta-group">
+        <a href="/" class="btn btn-primary">Back to Home</a>
+        <a href="/#collections" class="btn btn-light" style="border: 1px solid #E8E2D8;">Shop Christmas Gifts</a>
+        <a href="/#gift-guide" class="btn btn-light" style="border: 1px solid #E8E2D8;">Explore Gift Collections</a>
+      </div>
+
+      <div class="error-search-box">
+        <p class="error-search-title">Or search our holiday collection:</p>
+        <form class="error-search-form" action="/" method="GET" onsubmit="window.location.href='/?q=' + encodeURIComponent(this.querySelector('input').value); return false;">
+          <input type="text" class="error-search-input" placeholder="Search personalized gifts, mugs, hampers..." required>
+          <button type="submit" class="btn btn-primary" style="padding: 10px 18px;">Search</button>
+        </form>
+
+        <div class="error-popular-links">
+          <span style="font-size: 0.8rem; color: #686860; line-height: 28px;">Popular:</span>
+          <a href="/#personalized" class="tag-link">Personalized Gifts</a>
+          <a href="/#bestsellers" class="tag-link">Bestselling Gifts</a>
+          <a href="/#occasions" class="tag-link">Shop By Occasion</a>
+          <a href="/#budget" class="tag-link">Under $25</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+# Robots.txt for Never The Wrong Gift
+User-agent: *
+Allow: /
+Disallow: /cart
+Disallow: /checkout
+Disallow: /account
+
+# XML Sitemap
+Sitemap: http://localhost:5173/sitemap.xml
