@@ -9,4 +9,13 @@ export default defineConfig({
       '@': path.resolve(__dirname, './'),
     },
   },
+  build: {
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+        product: path.resolve(__dirname, 'product.html'),
+        notFound: path.resolve(__dirname, '404.html'),
+      },
+    },
+  },
 });

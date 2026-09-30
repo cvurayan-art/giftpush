@@ -6,47 +6,47 @@ import { WorksWheel, type WorksWheelItem } from "@/components/ui/works-wheel";
 const WORKS: WorksWheelItem[] = [
   {
     title: "Handcrafted Keepsakes",
-    image: "images/personalized_showcase.jpg",
+    image: "/images/personalized_showcase.jpg",
     href: "#personalized",
   },
   {
     title: "Festive Traditions",
-    image: "images/tree_ornament.jpg",
+    image: "/images/tree_ornament.jpg",
     href: "#collections",
   },
   {
     title: "Winter Aromatherapy",
-    image: "images/cinnamon_candle.jpg",
+    image: "/images/cinnamon_candle.jpg",
     href: "#bestsellers",
   },
   {
     title: "Cozy Holiday Ceramics",
-    image: "images/cozy_mug.jpg",
+    image: "/images/cozy_mug.jpg",
     href: "#bestsellers",
   },
   {
     title: "Artisan Gourmet Hampers",
-    image: "images/gift_hamper.jpg",
+    image: "/images/gift_hamper.jpg",
     href: "#collections",
   },
   {
     title: "Golden Keepsake Boxes",
-    image: "images/personalized_box.jpg",
+    image: "/images/personalized_box.jpg",
     href: "product.html",
   },
   {
     title: "Heirloom Knit Stockings",
-    image: "images/knit_stocking.jpg",
+    image: "/images/knit_stocking.jpg",
     href: "#budget",
   },
   {
     title: "Holiday Lights & Magic",
-    image: "images/occasion_christmas.jpg",
+    image: "/images/occasion_christmas.jpg",
     href: "#occasions",
   },
   {
     title: "Thoughtful Gift Packages",
-    image: "images/hero_gift.jpg",
+    image: "/images/hero_gift.jpg",
     href: "#gift-guide",
   },
 ];

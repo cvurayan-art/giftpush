@@ -138,7 +138,11 @@ export function WorksWheel({
   React.useEffect(() => {
     const el = stageRef.current;
     if (!el) return;
-    const read = () => setStage({ w: el.clientWidth, h: el.clientHeight });
+    const read = () => {
+      const w = el.clientWidth || (typeof window !== "undefined" ? window.innerWidth : 1100);
+      const h = el.clientHeight || 580;
+      setStage({ w, h });
+    };
     read();
     const ro = new ResizeObserver(read);
     ro.observe(el);
@@ -146,7 +150,8 @@ export function WorksWheel({
   }, []);
 
   const metrics = React.useMemo(() => {
-    const { w, h } = stage;
+    const w = stage.w || 1100;
+    const h = stage.h || 580;
     const cardW = Math.min(h * CARD_H * CARD_RATIO, w * CARD_MAX_W);
     const cardH = cardW / CARD_RATIO;
     const drumR = cardH * DRUM;
