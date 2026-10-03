@@ -133,27 +133,27 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
-  // 5. ACCOUNT MODAL
-  const accountTrigger = document.getElementById('btn-account-trigger');
-  const accountOverlay = document.getElementById('account-modal-overlay');
-  const closeAccountBtn = document.getElementById('btn-close-account');
+  // 5. GUEST REVIEW MODAL
+  const openReviewBtn = document.getElementById('btn-open-review-modal');
+  const reviewOverlay = document.getElementById('review-modal-overlay');
+  const closeReviewBtn = document.getElementById('btn-close-review');
 
-  if (accountTrigger && accountOverlay) {
-    accountTrigger.addEventListener('click', () => {
-      accountOverlay.classList.add('active');
+  if (openReviewBtn && reviewOverlay) {
+    openReviewBtn.addEventListener('click', () => {
+      reviewOverlay.classList.add('active');
     });
   }
 
-  if (closeAccountBtn && accountOverlay) {
-    closeAccountBtn.addEventListener('click', () => {
-      accountOverlay.classList.remove('active');
+  if (closeReviewBtn && reviewOverlay) {
+    closeReviewBtn.addEventListener('click', () => {
+      reviewOverlay.classList.remove('active');
     });
   }
 
-  if (accountOverlay) {
-    accountOverlay.addEventListener('click', (e) => {
-      if (e.target === accountOverlay) {
-        accountOverlay.classList.remove('active');
+  if (reviewOverlay) {
+    reviewOverlay.addEventListener('click', (e) => {
+      if (e.target === reviewOverlay) {
+        reviewOverlay.classList.remove('active');
       }
     });
   }

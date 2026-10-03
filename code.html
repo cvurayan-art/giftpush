@@ -1,0 +1,924 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Dyson eCommerce Store - Official Layout</title>
+<!-- Tailwind CSS CDN with forms & container queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- Custom Configuration for Tailwind -->
+<script data-purpose="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              pink: '#ff4d61',
+              pinkHover: '#e63946',
+              lightPink: '#fde8eb',
+              lightGreen: '#ebf9f3',
+              lightPurple: '#f2eefa',
+              lightBlue: '#ebf4fc',
+              lightPeach: '#fdf2eb',
+              heroPeach: '#fceee8',
+              bannerGreen: '#ddf3ec',
+              bannerBlue: '#ddf0fc',
+              bannerPink: '#fce8ec',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<!-- Custom Styles for Typography and Fine-tuning -->
+<style data-purpose="typography">
+    body {
+      font-family: 'Inter', sans-serif;
+      color: #1a1a1a;
+      -webkit-font-smoothing: antialiased;
+    }
+  </style>
+<style data-purpose="layout">
+    /* Hide scrollbars for slick horizontal scrolling */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-800 antialiased selection:bg-rose-100 selection:text-rose-600">
+<!-- BEGIN: TopAnnouncementBar -->
+<!-- Top Utility Announcement & Quick Links Strip -->
+<div class="bg-neutral-900 text-neutral-300 text-xs py-2 px-4 md:px-8 border-b border-neutral-800" data-purpose="announcement-bar">
+<div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+<!-- Announcement message -->
+<div class="flex items-center gap-2">
+<span class="bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">Free Gift Wrap</span>
+<span>Free Express Shipping on orders over $50</span>
+</div>
+<!-- Right Utility Links -->
+<div class="flex items-center space-x-6 text-xs text-neutral-400">
+<a class="hover:text-white transition-colors" href="#track">Track Order</a>
+<a class="hover:text-white transition-colors" href="#help">Help &amp; FAQs</a>
+<div class="flex items-center gap-1 cursor-pointer hover:text-white transition-colors">
+<span>USD ($)</span>
+<i class="w-3 h-3" data-lucide="chevron-down"></i>
+</div>
+</div>
+</div>
+</div>
+<!-- END: TopAnnouncementBar -->
+<!-- BEGIN: MainHeader -->
+<!-- Primary Brand Logo, Main Navigation & Action Cart Badges -->
+<header class="bg-white border-b border-gray-100 sticky top-0 z-40" data-purpose="main-header">
+<div class="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
+<!-- Brand Logo -->
+<div class="flex items-center gap-12">
+<a class="text-3xl font-black tracking-tight text-neutral-950 lowercase flex items-center" href="#">
+          dyson
+        </a>
+<!-- Main Navigation Links -->
+<nav class="hidden lg:flex items-center space-x-7 text-sm font-semibold text-neutral-700">
+<a class="text-rose-500 font-bold hover:text-rose-600 relative py-2" href="#">
+            Home
+            <span class="absolute bottom-0 left-0 w-full h-[2px] bg-rose-500 rounded-full"></span>
+</a>
+<div class="relative group cursor-pointer flex items-center gap-1 hover:text-rose-500 transition-colors py-2">
+<span>Shop</span>
+<i class="w-3.5 h-3.5 transition-transform group-hover:rotate-180" data-lucide="chevron-down"></i>
+</div>
+<a class="hover:text-rose-500 transition-colors py-2" href="#track">Track Order</a>
+<a class="hover:text-rose-500 transition-colors py-2" href="#compare">Compare</a>
+<a class="hover:text-rose-500 transition-colors py-2" href="#wishlist">My Wishlist</a>
+<a class="hover:text-rose-500 transition-colors py-2" href="#about">About Us</a>
+<a class="hover:text-rose-500 transition-colors py-2" href="#contact">Contact Us</a>
+</nav>
+</div>
+<!-- Right Action Icons: Search, User, Wishlist, Cart -->
+<div class="flex items-center space-x-5 text-neutral-700">
+<!-- Search Button -->
+<button aria-label="Search" class="p-2 hover:text-rose-500 hover:bg-neutral-50 rounded-full transition">
+<i class="w-5 h-5 stroke-[2.2]" data-lucide="search"></i>
+</button>
+<!-- User Profile Avatar/Icon -->
+<button aria-label="User Account" class="p-2 hover:text-rose-500 hover:bg-neutral-50 rounded-full transition">
+<i class="w-5 h-5 stroke-[2.2]" data-lucide="user"></i>
+</button>
+<!-- Wishlist Icon with count badge -->
+<button aria-label="Wishlist" class="relative p-2 hover:text-rose-500 hover:bg-neutral-50 rounded-full transition">
+<i class="w-5 h-5 stroke-[2.2]" data-lucide="heart"></i>
+<span class="absolute top-1 right-1 bg-neutral-900 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">2</span>
+</button>
+<!-- Cart Bag with vibrant pink badge count -->
+<button aria-label="Shopping Cart" class="relative p-2 hover:text-rose-500 hover:bg-neutral-50 rounded-full transition">
+<i class="w-5 h-5 stroke-[2.2]" data-lucide="shopping-bag"></i>
+<span class="absolute top-0 right-0 bg-[#ff4d61] text-white text-[11px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">3</span>
+</button>
+</div>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: StoryCategoryBar -->
+<!-- Circular Category Carousel Row with 10 Categories -->
+<section class="py-8 bg-white border-b border-gray-100" data-purpose="category-stories">
+<div class="max-w-7xl mx-auto px-4 md:px-8">
+<div class="flex items-center justify-between gap-4 overflow-x-auto no-scrollbar py-2 text-center">
+<!-- 1. Bags -->
+<a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
+<div class="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105">
+<img alt="Bags" class="w-full h-full object-cover pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjucY1tliPsWhu7mbzkOZVf91StIi4vODr2GpHZnlNvBBzoAItGUuv_erwxFKe8aAZPLCdRAmKw1EktoBD3zVKbE0rO_PEMliyIuO8eZE4vSo733zCs9GTFj7OIquscuFIosEM4P78zUhY08oQMqHUwd8E1679KDCrwgTtK8RQEcHoCgAHCcr6J2qiWmTOM09JcXgygFKZRPw7qpj1H9Eip6J6bhZdnrg5Tl1zmZFVz5zMf7R5WE2K">
+</div>
+<span class="mt-2 text-xs font-semibold text-neutral-800 group-hover:text-rose-500 transition">Bags</span>
+</a>
+<!-- 2. Beauty -->
+<a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
+<div class="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105">
+<img alt="Beauty" class="w-full h-full object-cover pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDr3D-d8rtTPrMiHHnGC61-ZJ9eWYFgtIp1uVY9D9CPjFaSNLsf6OmHJwpbdETb6thD7ocNe_eqSvuAYCnddhSpbAnuBYK0VsvWk7iDLaE3FTOm6tczQdDF4cNyv1YF1xaACx5h_HGxPyjIkthwjDlFJbMZNuZPf1n9LdqwPIimI5x635PxeOsYVIc8SnlI7Y4csaOOR67N-c-BVSHAaWDozJbS8P5gS2J1UkxjxfE7ScYd-qb9glua">
+</div>
+<span class="mt-2 text-xs font-semibold text-neutral-800 group-hover:text-rose-500 transition">Beauty</span>
+</a>
+<!-- 3. Electronics (Green Circle Badge) -->
+<a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
+<div class="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-[#b8f72c] transition-transform duration-200 group-hover:scale-105">
+<div class="flex flex-col items-center justify-center text-neutral-900 leading-tight">
+<span class="text-xs font-bold">25%</span>
+<span class="text-[9px] font-black uppercase tracking-tight">OFF</span>
+</div>
+</div>
+<span class="mt-2 text-xs font-semibold text-neutral-800 group-hover:text-rose-500 transition">Electroni...</span>
+</a>
+<!-- 4. Fashion -->
+<a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
+<div class="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105">
+<img alt="Fashion" class="w-full h-full object-cover pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaaBFMyO9AXbj1jCGkokb6kVIMzCHuc0h-3VDrB1uJE22rDUHlN3BW1qOeXVwu3wvRJ_PofvBjOM-jfMP1K-TjrPmTG4KxQjvjkX2oSk2GQT6Bc5TxsO-AtNQGdkYlEcwZ2fqMTEwUPwgPsQVuNw3qkzkFwcdEf-ZRk0xUP1W8-nxVmY34d2lch5Dkii03UYuA5wAdGC86eIB-x7Hzz9jFu5iqpmkDNdVqccJKO15g_q1CKS3sZ8Sk">
+</div>
+<span class="mt-2 text-xs font-semibold text-neutral-800 group-hover:text-rose-500 transition">Fashion</span>
+</a>
+<!-- 5. Headphone -->
+<a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
+<div class="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105">
+<img alt="Headphone" class="w-full h-full object-cover pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXYFDT80YIsxFIttXNcH8X_MIaB63xGveFdT18qVUu4rNeDb5fkG_mJmlTszPblMb6lOH3JdFvcCSRJz8z0IZlWIfk90gxDJzxAREuQk7X-fzuUu0t4BuSIdmuGR3AeEq7uaZRPRz9leHJx2HGv7OPI6Rs4I466s-nfH45owy40Op7s9WoPuaZID8srIXN-2DYjR_GXr4vp7Q9K9ORadLwZRMm3U8Zjen3kUKBxL5UrlA7aN_BRPgN">
+</div>
+<span class="mt-2 text-xs font-semibold text-neutral-800 group-hover:text-rose-500 transition">Headphone...</span>
+</a>
+<!-- 6. Laptops -->
+<a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
+<div class="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-[#fadb14] text-neutral-900 transition-transform duration-200 group-hover:scale-105">
+<i class="w-8 h-8 stroke-[2]" data-lucide="laptop"></i>
+</div>
+<span class="mt-2 text-xs font-semibold text-neutral-800 group-hover:text-rose-500 transition">Laptops</span>
+</a>
+<!-- 7. Mobile Phones -->
+<a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
+<div class="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-[#ffc5cc] transition-transform duration-200 group-hover:scale-105">
+<i class="w-7 h-7 text-rose-700 stroke-[2]" data-lucide="smartphone"></i>
+</div>
+<span class="mt-2 text-xs font-semibold text-neutral-800 group-hover:text-rose-500 transition">Mobile Ph...</span>
+</a>
+<!-- 8. Daily Deals -->
+<a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
+<div class="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-[#ff3b4e] text-white transition-transform duration-200 group-hover:scale-105">
+<div class="text-center font-black leading-none uppercase text-[10px] tracking-tight">
+              DAILY<br>DEALS
+            </div>
+</div>
+<span class="mt-2 text-xs font-semibold text-neutral-800 group-hover:text-rose-500 transition">Stationer...</span>
+</a>
+<!-- 9. Toys & Games -->
+<a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
+<div class="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105">
+<img alt="Toys" class="w-full h-full object-cover pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_efgaPRlM74lmQ2HMQ2VF5ypnG2jFdJ_4pS4Wm2gTd5cVJ4rHXcn0A7gUc6scNbOj6NtfDur9_oHzppZuaak_WzKtA1dicxPTqxDCv6_S32RxAku1mnJCLWnx6jtuLhhxC33zKFGk6uPiSilnYfvjekduTxrG0SNVBfyZVR6XlzEuJohmJ74BFLgLu0LihhXePWcS5RlFoShfYqic43aEEFvrkmXGerP9Bmc1IbKVs_wZFj9-IG75">
+</div>
+<span class="mt-2 text-xs font-semibold text-neutral-800 group-hover:text-rose-500 transition">Toys &amp;...</span>
+</a>
+<!-- 10. Wearables -->
+<a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
+<div class="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-[#2f54eb] text-white transition-transform duration-200 group-hover:scale-105">
+<i class="w-7 h-7 stroke-[2]" data-lucide="glasses"></i>
+</div>
+<span class="mt-2 text-xs font-semibold text-neutral-800 group-hover:text-rose-500 transition">Wearables</span>
+</a>
+</div>
+</div>
+</section>
+<!-- END: StoryCategoryBar -->
+<!-- BEGIN: HeroAndBentoPromoGrid -->
+<!-- Main Hero Promotion Banner paired with 2x2 Bento Product Deals -->
+<section class="py-8 bg-white" data-purpose="hero-bento-grid">
+<div class="max-w-7xl mx-auto px-4 md:px-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Left Large Hero Banner -->
+<div class="lg:col-span-7 bg-[#fceee8] rounded-2xl overflow-hidden relative p-8 md:p-12 flex flex-col md:flex-row items-center justify-between min-h-[460px] shadow-sm">
+<!-- Text Content -->
+<div class="w-full md:w-1/2 z-10 space-y-4">
+<h1 class="text-4xl sm:text-5xl font-extrabold text-neutral-900 leading-[1.1] tracking-tight">
+              Style<br>and<br>Speed
+            </h1>
+<p class="text-neutral-600 text-sm md:text-base font-normal pt-1 pb-3">
+              Do it all with style, performance, and speed
+            </p>
+<a class="inline-block bg-neutral-900 text-white font-semibold text-xs uppercase tracking-wider px-8 py-3.5 rounded-full hover:bg-neutral-800 transition duration-200" href="#shop">
+              Shop Now
+            </a>
+<!-- Nvidia Sponsor Logo Tag -->
+<div class="pt-6 flex items-center gap-2">
+<span class="text-xs font-bold tracking-widest text-neutral-800 flex items-center gap-1">
+<i class="w-4 h-4 text-green-600 fill-current" data-lucide="sparkle"></i>
+                NVIDIA.
+              </span>
+</div>
+</div>
+<!-- Hero Image -->
+<div class="w-full md:w-1/2 h-full flex items-end justify-center md:justify-end mt-6 md:mt-0">
+<img alt="Two young stylish models laughing" class="max-h-[380px] object-cover rounded-xl shadow-sm filter contrast-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSSYX0CliS6Ucr0wtGfXIEhOrS02ZxYTwCWb1rVHirx1lA1R65k_kp84Hm8-0ycPvPqxcPoquC2c0o8tE9_VCVnVveUQgB-DrfZJGtu0dgcQC2uXOkO8zNwSW_0FBRKTHy0xgHUrMwtczteddzvn4abUCQ7z7b80DXoGvYs-jMRmg284gBOq1udghRbPFM6TjOyG-a5vlYxJbpBW5MziyAFWPQ0c9zzg7tXj3mV2u4AyociVMTLvUU">
+</div>
+</div>
+<!-- Right 2x2 Bento Grid -->
+<div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- 1. Top-Left: High Classic Watch -->
+<div class="bg-[#ebf9f3] rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition">
+<div>
+<span class="inline-block bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Hot</span>
+<h3 class="text-base font-bold text-neutral-900 mt-2 leading-tight">High Classic<br>Watch!</h3>
+<p class="text-xs text-neutral-500 mt-1">Weekly Offers</p>
+<p class="text-lg font-extrabold text-neutral-900 mt-1">$59</p>
+</div>
+<div class="mt-4 flex justify-end">
+<img alt="Watch" class="w-24 h-24 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnpL9X2PdsU17yVff1Vwdiv3MVz4ClBXzs8n0X0vyAC5pvWtbY9cqQF0jUq5aEJp7Srq6AN5rUQ9xCLx7ZqyQU5ri-7VbiriD3Mlnxo60KCWTsuQcjTEQra1IXzAeNW5r2jwduxDJdIoJqXcZrO1KXFiyNybd8CNL0qQeItveHvE1DNifceswRv7LFpFz_PPpIDNvRAUVbiBzJ9pzQpWqBLP58tnqMYaML0PsphowFIMzDThVMyoQf">
+</div>
+</div>
+<!-- 2. Top-Right: Sunglasses -->
+<div class="bg-[#f2eefa] rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition">
+<div>
+<div class="flex items-center gap-1">
+<span class="inline-block bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">New</span>
+<span class="text-xs font-semibold text-neutral-600">25% OFF</span>
+</div>
+<h3 class="text-base font-bold text-neutral-900 mt-2 leading-tight">Sunglasses</h3>
+<p class="text-xs text-neutral-500 mt-1">Special Offers</p>
+<p class="text-lg font-extrabold text-neutral-900 mt-1">$19</p>
+</div>
+<div class="mt-4 flex justify-end">
+<img alt="Sunglasses" class="w-24 h-24 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxhMQRHqtrn3JAS3BFmfkyfu-t1BzwY9RiEorwzhMGiJ1TVFwswxCNzTsLe-tn-OHNtvHS2f7o9lhOdnRLhmHmV83qgi7N2x3gRIbpawTStTgGkWgyU3cWSFbrC7xQZ-Jc6RQ4KFLDvw3KXaU45uV42fTMr3FPU3aj-uo9cA_JOnUJEcNS5MvfMs-HGK8tFFUP7wx8HdNv5qP2nTDcjL4IEtmnrdKs-fLxTlHOA55hPYFrBbEguFdr">
+</div>
+</div>
+<!-- 3. Bottom-Left: Video Games -->
+<div class="bg-[#ebf4fc] rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition">
+<div>
+<span class="inline-block bg-sky-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Top Deal</span>
+<h3 class="text-base font-bold text-neutral-900 mt-2 leading-tight">Video Games<br>Offers!</h3>
+<p class="text-xs text-neutral-500 mt-1">Top Deals</p>
+<p class="text-lg font-extrabold text-neutral-900 mt-1">$89</p>
+</div>
+<div class="mt-4 flex justify-end">
+<img alt="Game Controller" class="w-24 h-24 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAA9mq5Zi3MaqYOz8YT-JEsdZGCiMdN5-jan7sTEZEP531-Cf-COIcNw_Qufnkzh4IsC_HJiT1v8k7dNcMniQ_H5nuT3hXzwlcbv5oc06Q-BpZ5EbF6-aOk1JbA7h_FPoIWxiBAtqEhoJcxLn5FwVky_lGOnWOrnPqphY9ZBJxR9kAJWZwk2hTVDBHqVqqfnRvgkXCY01TD1ZL_bYNdHDt4k45GRTn703DmvpWirD6dJN-kKn4V4FpR">
+</div>
+</div>
+<!-- 4. Bottom-Right: Top Brands Shoes -->
+<div class="bg-[#fdf2eb] rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition">
+<div>
+<span class="inline-block bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Best Seller</span>
+<h3 class="text-base font-bold text-neutral-900 mt-2 leading-tight">Top Brands<br>Shoes</h3>
+<p class="text-xs text-neutral-500 mt-1">Weekly Offers</p>
+<p class="text-lg font-extrabold text-neutral-900 mt-1">$129</p>
+</div>
+<div class="mt-4 flex justify-end">
+<img alt="Sneakers" class="w-24 h-24 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHV4-RM3vwWL16QXa83HDLqh8Arh5kn8rL6tIbeZR4jChdQaZgy0BHK8anl1SEzFcRSXpGqhaYEoRD-wB3R16Bf52kzrXyhyjWHjCQYu-mHviUSXe5df9Ksoalg2Y1j9O71osy0DIMJqDLzO59VYn44-sy76ZL2ao8F833_YiGV9EMXRLDn-X7MrcHGoLTncBWHzw6WRrO6zu8ushYLqHWfy3ddWV8LtSJ0rmtBGc3S97EH7kho6ga">
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: HeroAndBentoPromoGrid -->
+<!-- BEGIN: FlashDealsSection -->
+<!-- Carousel Product Showcase with Countdown Timer and Carousel Controls -->
+<section class="py-12 bg-white" data-purpose="flash-deals">
+<div class="max-w-7xl mx-auto px-4 md:px-8">
+<!-- Section Header with Real-style Countdown Badges -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 gap-4">
+<div class="flex items-center gap-4 flex-wrap">
+<h2 class="text-2xl md:text-3xl font-bold text-neutral-950 tracking-tight">Flash Deals</h2>
+<!-- Countdown Badges -->
+<div class="flex items-center gap-1.5 font-bold text-neutral-900">
+<span class="w-9 h-9 rounded-full bg-neutral-900 text-white text-xs flex flex-col items-center justify-center leading-none">
+<span>09</span>
+<span class="text-[7px] text-neutral-400 font-normal">Hours</span>
+</span>
+<span class="font-bold">:</span>
+<span class="w-9 h-9 rounded-full bg-neutral-900 text-white text-xs flex flex-col items-center justify-center leading-none">
+<span>36</span>
+<span class="text-[7px] text-neutral-400 font-normal">Minutes</span>
+</span>
+<span class="font-bold">:</span>
+<span class="w-9 h-9 rounded-full bg-neutral-900 text-white text-xs flex flex-col items-center justify-center leading-none">
+<span>44</span>
+<span class="text-[7px] text-neutral-400 font-normal">Seconds</span>
+</span>
+</div>
+</div>
+<a class="text-xs font-bold text-neutral-900 hover:text-rose-500 underline underline-offset-4 uppercase tracking-wider" href="#all">
+          See All Products
+        </a>
+</div>
+<!-- Carousel Cards Container with Relative Arrow Nav Buttons -->
+<div class="relative">
+<!-- Left Nav Arrow -->
+<button aria-label="Previous Deal" class="absolute -left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-[#ff4d61] text-white flex items-center justify-center shadow-md hover:bg-rose-600 transition">
+<i class="w-5 h-5" data-lucide="chevron-left"></i>
+</button>
+<!-- Right Nav Arrow -->
+<button aria-label="Next Deal" class="absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-[#ff4d61] text-white flex items-center justify-center shadow-md hover:bg-rose-600 transition">
+<i class="w-5 h-5" data-lucide="chevron-right"></i>
+</button>
+<!-- Cards Row -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+<!-- Product 1: Baby Shark Cube -->
+<div class="border border-gray-100 rounded-xl p-4 bg-white flex flex-col justify-between group hover:shadow-lg transition">
+<div class="relative bg-gray-50 rounded-lg p-4 flex items-center justify-center h-48">
+<img alt="Baby Shark Cube" class="h-32 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAbpL3DDBevdG7mICAKmSPCEMvSxy1REopIlTY-lDRKUU6SCucxpdwA4dukABgDgYKb6_BQviOaWJlspcSEWn5cEY7PM6d4GRFLQtMzsZLGZECskQF0ZhYejULGLBJxBVoaAFV_TFs63AxQvQSPAe_u27W5DSqemKH4JQizwZdWxaSvukw19YAUP9AmpbUFm2yuGSQKLF_mJlQPhy0zHh3BrvvACmOGAlFPJx7c10LAwKwp4DLwE-w">
+</div>
+<div class="mt-4 flex-1 flex flex-col justify-between">
+<div>
+<h4 class="text-xs font-semibold text-neutral-800 line-clamp-2 leading-snug">Pinkfong Baby Shark Official Song Cube</h4>
+<div class="mt-2 text-sm font-bold text-[#ff4d61]">$15.00</div>
+</div>
+<div class="mt-4 flex items-center gap-2">
+<button class="flex-1 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold py-2.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition">
+<i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
+<span>Add To Cart</span>
+</button>
+<button aria-label="Favorite" class="w-9 h-9 border border-neutral-900 bg-neutral-900 text-white rounded-lg flex items-center justify-center hover:bg-neutral-800 transition">
+<i class="w-4 h-4" data-lucide="heart"></i>
+</button>
+</div>
+</div>
+</div>
+<!-- Product 2: Smart Keyboard Folio -->
+<div class="border border-gray-100 rounded-xl p-4 bg-white flex flex-col justify-between group hover:shadow-lg transition">
+<div class="relative bg-gray-50 rounded-lg p-4 flex items-center justify-center h-48">
+<span class="absolute top-2 left-2 bg-neutral-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">-15%</span>
+<img alt="Smart Keyboard" class="h-32 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApDPK8TWzUOizUU3LAPphRFXsUMewmF5Kacm5vCHqKZRSXz4QojncX5nOWXwOXX85aDy7K_qGT_9uOUR9EMhljJHdFH7ON1SNvYSuJSBATh6e4rvdYKJGTc6F_hXfg0VEGzMUGnKAd1ZX5Lc9qt3uADP90lhIihyp3eYX07bVSOLf7JG_AM0rYZzIpehvcxNAlUA0gy6Gm11i9eaPZDhCm_etpv-UDzn2mVsKy5DE-1ba9tnQifJdN">
+</div>
+<div class="mt-4 flex-1 flex flex-col justify-between">
+<div>
+<h4 class="text-xs font-semibold text-neutral-800 line-clamp-2 leading-snug">Smart Keyboard Folio for 12.9 (English)</h4>
+<div class="mt-2 flex items-center gap-2">
+<span class="text-xs text-neutral-400 line-through">$1,299.00</span>
+<span class="text-sm font-bold text-[#ff4d61]">$1,099.00</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-2">
+<button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition">
+<i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
+<span>Add To Cart</span>
+</button>
+<button aria-label="Favorite" class="w-9 h-9 border border-neutral-900 bg-neutral-900 text-white rounded-lg flex items-center justify-center hover:bg-neutral-800 transition">
+<i class="w-4 h-4" data-lucide="heart"></i>
+</button>
+</div>
+</div>
+</div>
+<!-- Product 3: Retro Coffee Maker -->
+<div class="border border-gray-100 rounded-xl p-4 bg-white flex flex-col justify-between group hover:shadow-lg transition">
+<div class="relative bg-gray-50 rounded-lg p-4 flex items-center justify-center h-48">
+<img alt="Coffee Maker" class="h-32 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCC2ZQ_M4SyGUXrLeJVZWFta13x96nqu8p5_ZBwZehIpgg0fgU78DEv4Kd88z3Qh728mPgQ7pqiE52PkZ5IdztMW_v6oFkW3XMkjYZZvncCcLL4MEO9rzwpfJ1Qiql2iOeo1EDzKVUmZ_D71BEhbNP37Dn9EGcnOX7i93hgrSq1jiZ390uvDPXoZ9AiuiOWBJqYhThtEBQrTGmcp72ld63M7rn0zXXGFd3LedMJxwTUsNncpAITJsd">
+</div>
+<div class="mt-4 flex-1 flex flex-col justify-between">
+<div>
+<h4 class="text-xs font-semibold text-neutral-800 line-clamp-2 leading-snug">Retro Style Coffee Maker Machine</h4>
+<div class="mt-2 text-sm font-bold text-[#ff4d61]">$229.00</div>
+</div>
+<div class="mt-4 flex items-center gap-2">
+<button class="flex-1 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold py-2.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition">
+<i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
+<span>Add To Cart</span>
+</button>
+<button aria-label="Favorite" class="w-9 h-9 border border-neutral-900 bg-neutral-900 text-white rounded-lg flex items-center justify-center hover:bg-neutral-800 transition">
+<i class="w-4 h-4" data-lucide="heart"></i>
+</button>
+</div>
+</div>
+</div>
+<!-- Product 4: Apple Watch Series 5 -->
+<div class="border border-gray-100 rounded-xl p-4 bg-white flex flex-col justify-between group hover:shadow-lg transition">
+<div class="relative bg-gray-50 rounded-lg p-4 flex items-center justify-center h-48">
+<span class="absolute top-2 left-2 bg-neutral-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">-4%</span>
+<img alt="Apple Watch" class="h-32 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtuE99cs-6_cyaPwZrlesKmbzDsv9lrhPkO52LxdTdS9BjY4W_KrVhyeuhAAXRZk4u8mNiUOXNjsmppsRQq_x704W3L8zIf55ZjIGpBCINbQs2_Zi-SE6OFF_CYrFp80-srKY5Jtv6_EESLn6hS6EZJfGbZ9S10h-qMiUtq-oLrpyHcLPRl8BppoLNhE2ebeNGBedv-wdHGs9Gq7d8H7_zj7EOgIbi97eCOZsvPPz4t625679-wT_z">
+</div>
+<div class="mt-4 flex-1 flex flex-col justify-between">
+<div>
+<h4 class="text-xs font-semibold text-neutral-800 line-clamp-2 leading-snug">Apple Watch Series 5 GPS, 40mm Gold</h4>
+<div class="mt-2 flex items-center gap-2">
+<span class="text-xs text-neutral-400 line-through">$520.00</span>
+<span class="text-sm font-bold text-[#ff4d61]">$499.00</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-2">
+<button class="flex-1 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold py-2.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition">
+<i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
+<span>Add To Cart</span>
+</button>
+<button aria-label="Favorite" class="w-9 h-9 border border-neutral-900 bg-neutral-900 text-white rounded-lg flex items-center justify-center hover:bg-neutral-800 transition">
+<i class="w-4 h-4" data-lucide="heart"></i>
+</button>
+</div>
+</div>
+</div>
+<!-- Product 5: AF 1 Shadow Sneaker -->
+<div class="border border-gray-100 rounded-xl p-4 bg-white flex flex-col justify-between group hover:shadow-lg transition">
+<div class="relative bg-gray-50 rounded-lg p-4 flex items-center justify-center h-48">
+<span class="absolute top-2 left-2 bg-neutral-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">-30%</span>
+<img alt="Sneaker" class="h-32 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBG00JE-JBUH062KoQKTtQNRqYZ678TNSBpmn1x5K8Z0eQ7bcRgeJgS6mnnPuM10X7kUc36955NipONJZUqV5Nqba8eS1p5iD1liW6oy2EUBL9ftSZv7F6pZ1A6mICek7q4B35IQQtl04n9DlFTW8z9_X0bNH2QjpKSZecYTQgxjg9BHcWSLp3hdCyZo7So9Yg5I9cCbq0mc3iXNHoo5RbOhYuA9RFvOAlJ3zTyUvK3Aqc_Qz2dVgMA">
+</div>
+<div class="mt-4 flex-1 flex flex-col justify-between">
+<div>
+<h4 class="text-xs font-semibold text-neutral-800 line-clamp-2 leading-snug">AF 1 Shadow Women's Sneaker (Cream Color)</h4>
+<div class="mt-2 flex items-center gap-2">
+<span class="text-xs text-neutral-400 line-through">$999.00</span>
+<span class="text-sm font-bold text-[#ff4d61]">$699.00</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-2">
+<button class="flex-1 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold py-2.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition">
+<i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
+<span>Add To Cart</span>
+</button>
+<button aria-label="Favorite" class="w-9 h-9 border border-neutral-900 bg-neutral-900 text-white rounded-lg flex items-center justify-center hover:bg-neutral-800 transition">
+<i class="w-4 h-4" data-lucide="heart"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: FlashDealsSection -->
+<!-- BEGIN: ValuePropositionTrustBar -->
+<!-- 3-Column Shipping, Delivery, and Security Trust Features -->
+<section class="py-10 bg-white border-t border-b border-gray-100" data-purpose="trust-badges">
+<div class="max-w-7xl mx-auto px-4 md:px-8">
+<div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+<!-- Column 1: Fast, Free Shipping -->
+<div class="flex items-center justify-center gap-4 py-4 md:py-2">
+<div class="w-12 h-12 rounded-full flex items-center justify-center text-neutral-800">
+<i class="w-8 h-8 stroke-[1.5]" data-lucide="truck"></i>
+</div>
+<div>
+<h4 class="text-sm font-bold text-neutral-900">Fast, Free Shipping</h4>
+<p class="text-xs text-neutral-500">On order over $50</p>
+</div>
+</div>
+<!-- Column 2: Next Day Delivery -->
+<div class="flex items-center justify-center gap-4 py-4 md:py-2">
+<div class="w-12 h-12 rounded-full flex items-center justify-center text-neutral-800">
+<i class="w-8 h-8 stroke-[1.5]" data-lucide="package"></i>
+</div>
+<div>
+<h4 class="text-sm font-bold text-neutral-900">Next Day Delivery</h4>
+<p class="text-xs text-neutral-500">Free - spend over $99</p>
+</div>
+</div>
+<!-- Column 3: Secure Payment -->
+<div class="flex items-center justify-center gap-4 py-4 md:py-2">
+<div class="w-12 h-12 rounded-full flex items-center justify-center text-neutral-800">
+<i class="w-8 h-8 stroke-[1.5]" data-lucide="shield-check"></i>
+</div>
+<div>
+<h4 class="text-sm font-bold text-neutral-900">Secure Payment</h4>
+<p class="text-xs text-neutral-500">100% safe checkout</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: ValuePropositionTrustBar -->
+<!-- BEGIN: FeaturedCategoryBanners -->
+<!-- 3 Big Editorial Vertical Cards: Home & Garden, Electronics, Fashion -->
+<section class="py-12 bg-white" data-purpose="featured-categories">
+<div class="max-w-7xl mx-auto px-4 md:px-8">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Banner 1: Home & Garden -->
+<div class="bg-[#ddf3ec] rounded-2xl p-8 flex flex-col justify-between overflow-hidden relative min-h-[460px] group shadow-sm">
+<div class="text-center z-10">
+<h3 class="text-2xl font-bold text-neutral-900">Home &amp; Garden</h3>
+<p class="text-xs text-neutral-600 mt-1 mb-4">Furniture, Kitchen, Lighting and More!</p>
+<a class="inline-block border border-neutral-900 bg-white/70 backdrop-blur text-neutral-900 text-xs font-semibold px-6 py-2 rounded-full hover:bg-neutral-900 hover:text-white transition" href="#home-garden">
+              See More
+            </a>
+</div>
+<div class="mt-8 flex justify-center">
+<img alt="Modern sofa furniture" class="w-full max-h-56 object-contain group-hover:scale-105 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2ZHxERJhdNIrS01LYi4lJQSbMvBi4tqeYcenMe7OdJAndjVEQxRC40bqN3DYMAH9GENKS4Za4xrVBq8b8Lg54weSDQ8RltxS2jiC4Ct0f8HbFCbUaoAx2hvFbyUrIekDaBRl_qCQcDJoIsGZ7iWXbC1cw2t4BlncYOzXzwYqYh8_flZXtDlgSQ6GGKRuya-awoOhBk1hAJxRSYJmfL6stpcftVLBg2yjBo1DUCA85GvMjke3FS3QR">
+</div>
+</div>
+<!-- Banner 2: Electronics -->
+<div class="bg-[#ddf0fc] rounded-2xl p-8 flex flex-col justify-between overflow-hidden relative min-h-[460px] group shadow-sm">
+<div class="text-center z-10">
+<h3 class="text-2xl font-bold text-neutral-900">Electronics</h3>
+<p class="text-xs text-neutral-600 mt-1 mb-4">TVs, Cell Phones, Laptops and More!</p>
+<a class="inline-block border border-neutral-900 bg-white/70 backdrop-blur text-neutral-900 text-xs font-semibold px-6 py-2 rounded-full hover:bg-neutral-900 hover:text-white transition" href="#electronics">
+              See More
+            </a>
+</div>
+<div class="mt-8 flex justify-center">
+<img alt="Laptops and tech monitors" class="w-full max-h-56 object-contain group-hover:scale-105 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnE0Ig7Y2AR5diQp-CfjwsL7NS4E4CLXgLLVHWeP-v2WVqxJiFybYlenojNewlLekj8No8KrZGA7Yv_uFxBowWrYNheLuVMqMR8RMd6TPSd2y_RXD2ritQHNLZCJq_sE2JFZjHfsHESNm_I9TsjdmjTVTIc6ck423VCI_iscsGMejcfLTED4xXICK9Vz9a_IXC6DjzGSBekG6nTytJBPoJ0jviohrK1In395xcx56sq2kPwzl_iavt">
+</div>
+</div>
+<!-- Banner 3: Fashion -->
+<div class="bg-[#fce8ec] rounded-2xl p-8 flex flex-col justify-between overflow-hidden relative min-h-[460px] group shadow-sm">
+<div class="text-center z-10">
+<h3 class="text-2xl font-bold text-neutral-900">Fashion</h3>
+<p class="text-xs text-neutral-600 mt-1 mb-4">Clothing, Shoes, Accessories and More!</p>
+<a class="inline-block border border-neutral-900 bg-white/70 backdrop-blur text-neutral-900 text-xs font-semibold px-6 py-2 rounded-full hover:bg-neutral-900 hover:text-white transition" href="#fashion">
+              See More
+            </a>
+</div>
+<div class="mt-8 flex justify-center">
+<img alt="Fashion models wearing stylish outfits" class="w-full max-h-56 object-contain group-hover:scale-105 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzhBRYYMfqGsnz7UZ3UjO3L9oEnyo8sVxHZ-4ALY86BUk_68LWRWR0fp4KZ1cOh52RnbEooujPtt0ffonz3Mbf4IN3MqVM6ApyDTfjclo3K8-YgGnz5RjTGNk6Bnw-_Yo_QP7a2ufHRnyJLyD49kbea77KPfujO0r6FcYwGYcAulIpJy_yE5fSoS824qSlPudpDLI9qRRBzjb6nxxVRp4HmobQuxToMb_jWhA01J-MaucJsuI5WmD6">
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: FeaturedCategoryBanners -->
+<!-- BEGIN: CustomerMostLovedSection -->
+<!-- 2 Rows x 5 Columns Grid of Most Popular Consumer Products -->
+<section class="py-12 bg-white" data-purpose="customer-most-loved">
+<div class="max-w-7xl mx-auto px-4 md:px-8">
+<!-- Header with Countdown and See All link -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 gap-4">
+<div class="flex items-center gap-4 flex-wrap">
+<h2 class="text-2xl md:text-3xl font-bold text-neutral-950 tracking-tight">Customer Most Loved</h2>
+<!-- Countdown Badges -->
+<div class="flex items-center gap-1.5 font-bold text-neutral-900">
+<span class="w-9 h-9 rounded-full bg-neutral-900 text-white text-xs flex flex-col items-center justify-center leading-none">
+<span>13</span>
+<span class="text-[7px] text-neutral-400 font-normal">Hours</span>
+</span>
+<span class="font-bold">:</span>
+<span class="w-9 h-9 rounded-full bg-neutral-900 text-white text-xs flex flex-col items-center justify-center leading-none">
+<span>07</span>
+<span class="text-[7px] text-neutral-400 font-normal">Minutes</span>
+</span>
+<span class="font-bold">:</span>
+<span class="w-9 h-9 rounded-full bg-neutral-900 text-white text-xs flex flex-col items-center justify-center leading-none">
+<span>53</span>
+<span class="text-[7px] text-neutral-400 font-normal">Seconds</span>
+</span>
+</div>
+</div>
+<a class="text-xs font-bold text-neutral-900 hover:text-rose-500 underline underline-offset-4 uppercase tracking-wider" href="#all">
+          See All Products
+        </a>
+</div>
+<!-- 2x5 Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+<!-- ROW 1 ITEM 1 -->
+<div class="border border-gray-100 rounded-xl p-4 bg-white flex flex-col justify-between group hover:shadow-md transition">
+<div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center h-48 relative">
+<img alt="Pinkfong Baby Shark" class="h-32 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChZqt8g0E0iRraHXu2zqGkGpyYJf_OXmFPIY5kB2yvVmUW7bcAKRdI8njir8zIFzJ1PO3N8OEH7V79Do-WOvVpuu29qbM7VG8oQfwDwuYbqg3SfyTeKC2XYcLyh385hQjCC--8-DGMUap-glsethaAryqmzoIboH3kLiQ6Cf1tKzp-OjIQd4KOL1CWRruySOMwabnJKeUqw3tobRY8Xb6mhAIr3OPTsl8OmvUddS35FfUpTcg5AaeB">
+</div>
+<div class="mt-4">
+<h4 class="text-xs font-semibold text-neutral-800 line-clamp-2 leading-snug">Pinkfong Baby Shark Official Song Cube</h4>
+<div class="mt-2 text-sm font-bold text-[#ff4d61]">$15.00</div>
+</div>
+</div>
+<!-- ROW 1 ITEM 2 -->
+<div class="border border-gray-100 rounded-xl p-4 bg-white flex flex-col justify-between group hover:shadow-md transition">
+<div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center h-48 relative">
+<span class="absolute top-2 left-2 bg-neutral-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">-15%</span>
+<img alt="Keyboard Folio" class="h-32 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEPh0BbAy4w7LSFTDy66OHg51NMfZ0tCv5TSl3P0gFmhrfFYciNtG8FhjQGAPcQy_o2z0OyfSABtqHaqFxz3xgsoMPk1tJIJIuEG8bVQ5EX6KqBMv28fD3QoEf4WJBQ-TPfdvFhELz95jhQSBS2r4XAnUONOnbTZkFk-ZopcwbT1E5fgQyPn9dpPcboJOy8IxZx4HC46zkzNywMHE2WZZJCFWaGb-6g7ZeidgMA49Et5bSuAXa-mfr">
+</div>
+<div class="mt-4">
+<h4 class="text-xs font-semibold text-neutral-800 line-clamp-2 leading-snug">Smart Keyboard Folio for 12.9 (English)</h4>
+<div class="mt-2 flex items-center gap-2">
+<span class="text-xs text-neutral-400 line-through">$1,299.00</span>
+<span class="text-sm font-bold text-[#ff4d61]">$1,099.00</span>
+</div>
+</div>
+</div>
+<!-- ROW 1 ITEM 3 (With floating quick-action pill) -->
+<div class="border border-gray-100 rounded-xl p-4 bg-white flex flex-col justify-between group hover:shadow-md transition relative">
+<div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center h-48 relative">
+<!-- Floating Quick Action Pill -->
+<div class="absolute right-3 top-1/2 -translate-y-1/2 bg-white rounded-md shadow-md p-1 flex flex-col gap-1 border border-gray-100 z-10">
+<button class="p-1 hover:text-rose-500 text-neutral-600 transition" title="Add to cart"><i class="w-3.5 h-3.5" data-lucide="shopping-bag"></i></button>
+<button class="p-1 hover:text-rose-500 text-neutral-600 transition" title="Wishlist"><i class="w-3.5 h-3.5" data-lucide="heart"></i></button>
+<button class="p-1 hover:text-rose-500 text-neutral-600 transition" title="Compare"><i class="w-3.5 h-3.5" data-lucide="repeat"></i></button>
+</div>
+<img alt="Coffee Maker" class="h-32 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLVUFKvNMnyGAn3s-BRkpXsob_ZHTJW2D-s_tDLDitoVBlyAplpaojPtLsnDrxndlRqrwT-P6h0dQZ480-YsT5qD39ZCbDSWgQIXL1SMWnerEmc_UjOZRg2tZMKywbWWbcOerUed9wy6Sv8sGcbRBlkfs6tThhrqaVs7WxRgnhesl-S0Jq4A549qyod9sQLeRHeOfcgen6Jsga14nuwZok0EHnKE3_eGZW5lhlHQ0r0zIhHa2JC94A">
+</div>
+<div class="mt-4">
+<h4 class="text-xs font-semibold text-neutral-800 line-clamp-2 leading-snug">Retro Style Coffee Maker Machine</h4>
+<div class="mt-2 text-sm font-bold text-[#ff4d61]">$229.00</div>
+</div>
+</div>
+<!-- ROW 1 ITEM 4 -->
+<div class="border border-gray-100 rounded-xl p-4 bg-white flex flex-col justify-between group hover:shadow-md transition">
+<div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center h-48 relative">
+<span class="absolute top-2 left-2 bg-neutral-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">-4%</span>
+<img alt="Apple Watch" class="h-32 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBglVrzVg1vW9Vl_J1g_2bavnFaKWHTYI0IEiyixzXAZXqW3WeJgOt_SNCeWp4EWuGWvF5k_Y0s_M-TUO26TR34DYe9t6b0epLTvbyxxa3k8HtgNGH1buDywD2sNj82SVr0ScGInBh3aEIfahpPQNLvLA5CquzJKUhC8qokZkLj6C75cVtO9cGeFyGw9p5zZo8g1lZxhV9RCfuB9Ped1KvWdH82bCISJBJHjyeWKc-eSq8hPehiL6q7">
+</div>
+<div class="mt-4">
+<h4 class="text-xs font-semibold text-neutral-800 line-clamp-2 leading-snug">Apple Watch Series 5 GPS, 40mm Gold</h4>
+<div class="mt-2 flex items-center gap-2">
+<span class="text-xs text-neutral-400 line-through">$520.00</span>
+<span class="text-sm font-bold text-[#ff4d61]">$499.00</span>
+</div>
+</div>
+</div>
+<!-- ROW 1 ITEM 5 -->
+<div class="border border-gray-100 rounded-xl p-4 bg-white flex flex-col justify-between group hover:shadow-md transition">
+<div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center h-48 relative">
+<span class="absolute top-2 left-2 bg-neutral-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">-30%</span>
+<img alt="Nike AF1 Sneaker" class="h-32 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZUDL2sFx0nK699vcFbJQp9Cadk6y1bmImZmjsog-HmAWkUxKRbS-EHEY8dC5Yky7ywKeJD8xcDTdYZ3R8ozGbQLnu3BVqVj_bKq4-O7QOL7C5xsNM2GxnSslfc6nuOxiXwZj9WkSoBc0KlH1jnhUlK59O7zGMQECd0cxiI1oXlAeNPq-xv3S21cPFq-JXh8bpQGqA5RQlQY6ZTHB9jrEuriGyQTMC5b5cFqSOr2QeamRfoFR1ndm3">
+</div>
+<div class="mt-4">
+<h4 class="text-xs font-semibold text-neutral-800 line-clamp-2 leading-snug">AF 1 Shadow Women's Sneaker (Cream Color)</h4>
+<div class="mt-2 flex items-center gap-2">
+<span class="text-xs text-neutral-400 line-through">$999.00</span>
+<span class="text-sm font-bold text-[#ff4d61]">$699.00</span>
+</div>
+</div>
+</div>
+<!-- ROW 2 ITEM 1 -->
+<div class="border border-gray-100 rounded-xl p-4 bg-white flex flex-col justify-between group hover:shadow-md transition">
+<div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center h-48 relative">
+<img alt="Apple MacBook Air" class="h-32 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSy7J_76YjgBnmjBbJPUUaOa3_YAlDu5dLBfmTJOh9OgL1o2MoWrP1nJPlOwps5Ocbzqd_sT4Q7fOMmWK__cf-nDOQjz2b2B0KYlaZyE5WeFA4ojEPEyghsAR4qZ5rZvIUnHm4DEPcB6vwTFuOEwTdZhyTenogHbtZfiq_Vvalk8mzDcVVbsePMv4JD7rxL7gNq2FHLocMol6tT1JI1Xaqtg1cDzMJ3YBjnaD68ruugFPJrMc0jJnV">
+</div>
+<div class="mt-4">
+<h4 class="text-xs font-semibold text-neutral-800 line-clamp-2 leading-snug">Apple MacBook Air MGNA3HN/A 13.3 inch</h4>
+<div class="mt-2 text-sm font-bold text-[#ff4d61]">$1,199.00</div>
+</div>
+</div>
+<!-- ROW 2 ITEM 2 -->
+<div class="border border-gray-100 rounded-xl p-4 bg-white flex flex-col justify-between group hover:shadow-md transition">
+<div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center h-48 relative">
+<span class="absolute top-2 left-2 bg-neutral-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">-11%</span>
+<img alt="Bluetooth Wireless Speaker" class="h-32 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXCsh8pZCAVBSBSJQZ8WCF4EPfZirc2wP1HcgeeKh3dOUUtyNiNHM2AJ47H11WrUrZKR2Zzw3O4Yz9IVMf2YjgUjuD6acHpwHvesoBCPKZspxbgQMIDuKarCJ9iqH4LJA1XliPL2Qel20kSd04XW7FNYkFNm-5iQEwJ6VJ4VemcxACSmpzBWLZP437oY6TBQ2kBrSoLY1NUcC0_RwD44_NNbe7aBRVEOK_rCffyNh8Io5v0iIqu0Dh">
+</div>
+<div class="mt-4">
+<h4 class="text-xs font-semibold text-neutral-800 line-clamp-2 leading-snug">Bass Dual EQ Bluetooth 5.0 Wireless Speaker</h4>
+<div class="mt-2 flex items-center gap-2">
+<span class="text-xs text-neutral-400 line-through">$180.00</span>
+<span class="text-sm font-bold text-[#ff4d61]">$160.00</span>
+</div>
+</div>
+</div>
+<!-- ROW 2 ITEM 3 -->
+<div class="border border-gray-100 rounded-xl p-4 bg-white flex flex-col justify-between group hover:shadow-md transition">
+<div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center h-48 relative">
+<span class="absolute top-2 left-2 bg-neutral-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">-28%</span>
+<img alt="Galaxy Watch" class="h-32 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtCnJiOwFnEs0D_JTecjwSEcA0NUr0a7OHqnoApvhJ8AowG8f1OPhlbotVoHCTo_dTDAB1OPICiinulhBXUcduZDDlskrFv717PhtFNp6gz6hfQQwDNsyKtxFi7fBd-vFpjFpNLKU2IHL5D4zFTN9bRl_2OSpJPamSt9LaYmI4C3KnuaMBRkiU6bDEwLJQFQZbr7JxAOlLXLdXXTXp5X5wYYlrsGU7W34gY8Sd1NB38ezcSMAep0x0">
+</div>
+<div class="mt-4">
+<h4 class="text-xs font-semibold text-neutral-800 line-clamp-2 leading-snug">Galaxy Watch Active 2 Aluminum Smart Watch</h4>
+<div class="mt-2 flex items-center gap-2">
+<span class="text-xs text-neutral-400 line-through">$489.00</span>
+<span class="text-sm font-bold text-[#ff4d61]">$350.00</span>
+</div>
+</div>
+</div>
+<!-- ROW 2 ITEM 4 -->
+<div class="border border-gray-100 rounded-xl p-4 bg-white flex flex-col justify-between group hover:shadow-md transition">
+<div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center h-48 relative">
+<span class="absolute top-2 left-2 bg-neutral-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">-19%</span>
+<img alt="Beats Pro" class="h-32 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJcuy8i2M527QE3i2hjNRPWIySFoilyQG-8UdUlJmC6bJ7UUDXw0oea2UXqwxyLYVaCquXwJ3Ppaw9kxp0adQkRDgRxTyibQQsYuD_7tzzEuR7SlyxfU4M3cQIGiVPpNdlf2JHoxMK7PxNBJmoQL4nGA-ACwzKdz4nCk6OVJ9m0g_86qFPY8PLS9rRvJyf-BxhuiNXFEkQGuiQ01fm-YwrUXMw9iBHi9RTlzwxKqXnN773tfc1JoDp">
+</div>
+<div class="mt-4">
+<h4 class="text-xs font-semibold text-neutral-800 line-clamp-2 leading-snug">Beats Pro Over-Ear Headphones - Black</h4>
+<div class="mt-2 flex items-center gap-2">
+<span class="text-xs text-neutral-400 line-through">$74.00</span>
+<span class="text-sm font-bold text-[#ff4d61]">$60.00</span>
+</div>
+</div>
+</div>
+<!-- ROW 2 ITEM 5 -->
+<div class="border border-gray-100 rounded-xl p-4 bg-white flex flex-col justify-between group hover:shadow-md transition">
+<div class="bg-gray-50 rounded-lg p-3 flex items-center justify-center h-48 relative">
+<img alt="Converse All Star" class="h-32 object-contain group-hover:scale-105 transition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu03AZz0UBflDusu6H_9IXBdseQnDayOO6PvcI3eOqN5-50lLItSnqoK0JkH7Erhp_oAatY_xSKhR5CV7DmPX2espklRp5QfmymsqvvZfLs_12WnS6Uu-N5GSH5ZYKFd-QMXX0fAkFZxUSifSdlr7oJRrHwuLpFvWsz4dYcr-vurmrKEHR6GMrGa7w5aeReGMmMOOqnzoclQ6Jn8uor3FkKDDpjvlFj7xdybIydC-2Xo8ECGFHB61L">
+</div>
+<div class="mt-4">
+<h4 class="text-xs font-semibold text-neutral-800 line-clamp-2 leading-snug">Cnvrs All Star Disrupt Cx Hi Field Surplus</h4>
+<div class="mt-2 text-sm font-bold text-[#ff4d61]">$59.00</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: CustomerMostLovedSection -->
+<!-- BEGIN: TrendingBrandsSection -->
+<!-- Monochromatic Brand Logo Grid -->
+<section class="py-14 bg-neutral-50/70 border-t border-b border-gray-200" data-purpose="trending-brands">
+<div class="max-w-7xl mx-auto px-4 md:px-8">
+<h3 class="text-xl font-bold text-neutral-900 mb-8">Trending Brands</h3>
+<!-- 2-Row Brand Logos Grid -->
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-8 items-center text-center">
+<!-- Row 1 -->
+<div class="flex items-center justify-center py-2 text-2xl font-black lowercase tracking-tighter text-neutral-800 hover:opacity-75 transition">
+          dyson
+        </div>
+<div class="flex items-center justify-center py-2 text-xl font-bold tracking-tight text-neutral-800 hover:opacity-75 transition">
+          Lenovo
+        </div>
+<div class="flex items-center justify-center py-2 text-xl font-extrabold tracking-widest text-neutral-800 hover:opacity-75 transition">
+          CISCO
+        </div>
+<div class="flex items-center justify-center py-2 text-lg font-black tracking-widest text-neutral-800 uppercase hover:opacity-75 transition">
+          SAMSUNG
+        </div>
+<div class="flex items-center justify-center py-2 text-xl font-black tracking-widest text-neutral-800 hover:opacity-75 transition">
+          LG
+        </div>
+<div class="flex items-center justify-center py-2 text-xl font-black italic tracking-widest text-neutral-800 hover:opacity-75 transition">
+          BOSE
+        </div>
+<!-- Row 2 -->
+<div class="flex items-center justify-center py-2 gap-1.5 text-neutral-800 hover:opacity-75 transition">
+<i class="w-5 h-5 fill-current" data-lucide="apple"></i>
+<span class="text-[10px] font-bold text-left leading-tight">Authorized<br>Reseller</span>
+</div>
+<div class="flex items-center justify-center py-2 text-xl font-semibold tracking-normal text-neutral-800 hover:opacity-75 transition">
+          Google
+        </div>
+<div class="flex items-center justify-center py-2 text-base font-extrabold tracking-wider text-neutral-800 hover:opacity-75 transition">
+          NVIDIA.
+        </div>
+<div class="flex items-center justify-center py-2 text-base font-semibold text-neutral-800 hover:opacity-75 transition">
+          Electrolux
+        </div>
+<div class="flex items-center justify-center py-2 text-lg font-bold tracking-widest text-neutral-800 uppercase hover:opacity-75 transition">
+          SONY
+        </div>
+<div class="flex items-center justify-center py-2 text-2xl font-light lowercase text-neutral-800 hover:opacity-75 transition">
+          intel
+        </div>
+</div>
+</div>
+</section>
+<!-- END: TrendingBrandsSection -->
+<!-- BEGIN: FourPillarServiceGuarantee -->
+<!-- 4-Pillar Service Strip -->
+<section class="py-10 bg-white border-b border-gray-100" data-purpose="service-guarantees">
+<div class="max-w-7xl mx-auto px-4 md:px-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Pillar 1 -->
+<div class="flex items-start gap-4">
+<div class="p-2 text-neutral-800">
+<i class="w-8 h-8 stroke-[1.4]" data-lucide="globe"></i>
+</div>
+<div>
+<h4 class="text-sm font-bold text-neutral-900 leading-tight">Worldwide Delivery</h4>
+<p class="text-xs text-neutral-500 mt-1 leading-snug">200 countries and regions worldwide</p>
+</div>
+</div>
+<!-- Pillar 2 -->
+<div class="flex items-start gap-4">
+<div class="p-2 text-neutral-800">
+<i class="w-8 h-8 stroke-[1.4]" data-lucide="credit-card"></i>
+</div>
+<div>
+<h4 class="text-sm font-bold text-neutral-900 leading-tight">Secure Payment</h4>
+<p class="text-xs text-neutral-500 mt-1 leading-snug">Pay with popular and secure payment methods</p>
+</div>
+</div>
+<!-- Pillar 3 -->
+<div class="flex items-start gap-4">
+<div class="p-2 text-neutral-800">
+<i class="w-8 h-8 stroke-[1.4]" data-lucide="rotate-ccw"></i>
+</div>
+<div>
+<h4 class="text-sm font-bold text-neutral-900 leading-tight">60-day Return Policy</h4>
+<p class="text-xs text-neutral-500 mt-1 leading-snug">Merchandise must be returned within 60 days.</p>
+</div>
+</div>
+<!-- Pillar 4 -->
+<div class="flex items-start gap-4">
+<div class="p-2 text-neutral-800">
+<i class="w-8 h-8 stroke-[1.4]" data-lucide="headphones"></i>
+</div>
+<div>
+<h4 class="text-sm font-bold text-neutral-900 leading-tight">24/7 Help Center</h4>
+<p class="text-xs text-neutral-500 mt-1 leading-snug">We'll respond to you within 24 hours</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: FourPillarServiceGuarantee -->
+<!-- BEGIN: MainFooter -->
+<!-- 4-Column Footer with Newsletter Subscription and Copyright Bar -->
+<footer class="bg-white pt-14 pb-8 border-t border-gray-100" data-purpose="main-footer">
+<div class="max-w-7xl mx-auto px-4 md:px-8">
+<!-- 4 Columns Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 pb-12 border-b border-gray-100">
+<!-- Col 1: About Us -->
+<div class="lg:col-span-4 space-y-4">
+<h4 class="text-base font-bold text-neutral-900">About Us</h4>
+<p class="text-xs text-neutral-500 leading-relaxed pr-6">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.
+          </p>
+<div class="space-y-2 pt-2 text-xs text-neutral-700">
+<div class="flex items-center gap-2.5">
+<i class="w-4 h-4 text-neutral-600" data-lucide="phone-call"></i>
+<span class="font-medium">+(805) 498-4719</span>
+</div>
+<div class="flex items-center gap-2.5">
+<i class="w-4 h-4 text-neutral-600" data-lucide="mail"></i>
+<span class="font-medium">Medplus@info.com</span>
+</div>
+<div class="flex items-center gap-2.5">
+<i class="w-4 h-4 text-neutral-600" data-lucide="map-pin"></i>
+<span class="font-medium">3421 Lesser Dr Newbury Park, CA 91320</span>
+</div>
+</div>
+</div>
+<!-- Col 2: Departments -->
+<div class="lg:col-span-2 space-y-3">
+<h4 class="text-base font-bold text-neutral-900">Departments</h4>
+<ul class="space-y-2 text-xs text-neutral-600 font-medium">
+<li><a class="hover:text-rose-500 transition" href="#">Who Are We</a></li>
+<li><a class="hover:text-rose-500 transition" href="#">Our Mission</a></li>
+<li><a class="hover:text-rose-500 transition" href="#">Awards</a></li>
+<li><a class="hover:text-rose-500 transition" href="#">Experience</a></li>
+<li><a class="hover:text-rose-500 transition" href="#">Success Story</a></li>
+</ul>
+</div>
+<!-- Col 3: Quick Links -->
+<div class="lg:col-span-2 space-y-3">
+<h4 class="text-base font-bold text-neutral-900">Quick Links</h4>
+<ul class="space-y-2 text-xs text-neutral-600 font-medium">
+<li><a class="hover:text-rose-500 transition" href="#">Who Are We</a></li>
+<li><a class="hover:text-rose-500 transition" href="#">Our Mission</a></li>
+<li><a class="hover:text-rose-500 transition" href="#">Awards</a></li>
+<li><a class="hover:text-rose-500 transition" href="#">Experience</a></li>
+<li><a class="hover:text-rose-500 transition" href="#">Success Story</a></li>
+</ul>
+</div>
+<!-- Col 4: Newsletter Subscription -->
+<div class="lg:col-span-4 space-y-3">
+<h4 class="text-base font-bold text-neutral-900">Let's keep in touch</h4>
+<p class="text-xs text-neutral-500">Get recommendations, tips, updates and more.</p>
+<!-- Input + Pill Button -->
+<form class="flex items-center gap-2 mt-4" onsubmit="event.preventDefault();">
+<input class="flex-1 text-xs border border-gray-300 rounded-full px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-rose-500 focus:border-rose-500" placeholder="info@mail.com" type="email">
+<button class="bg-[#ff4d61] hover:bg-rose-600 text-white text-xs font-semibold px-6 py-2.5 rounded-full transition shadow-sm" type="submit">
+              Subscribe
+            </button>
+</form>
+<p class="text-[11px] text-neutral-400 mt-2">
+            Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.
+          </p>
+</div>
+</div>
+<!-- Bottom Copyright Bar -->
+<div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-500 gap-4">
+<div>
+          Copyright © 2025 Nayyar Shaikh, All rights reserved.
+        </div>
+<div class="flex items-center space-x-3 text-neutral-400">
+<span class="hover:text-neutral-700 cursor-pointer">Privacy Policy</span>
+<span>•</span>
+<span class="hover:text-neutral-700 cursor-pointer">Terms &amp; Conditions</span>
+<span>•</span>
+<span class="hover:text-neutral-700 cursor-pointer">Security</span>
+</div>
+</div>
+</div>
+</footer>
+<!-- END: MainFooter -->
+<!-- BEGIN: FloatingSocialProofToast -->
+<!-- Fixed Floating Product Purchase Toast at Bottom-Left -->
+<aside class="fixed bottom-5 left-5 bg-white border border-gray-100 rounded-xl p-3.5 shadow-xl max-w-sm flex items-center gap-3.5 z-50 transition-all duration-300 transform translate-y-0" data-purpose="social-proof-toast" id="purchase-toast">
+<!-- Close Button -->
+<button aria-label="Close Notification" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700 p-0.5" onclick="document.getElementById('purchase-toast').style.display='none'">
+<i class="w-3.5 h-3.5" data-lucide="x"></i>
+</button>
+<!-- Product Mini Thumbnail -->
+<div class="w-12 h-12 bg-gray-50 rounded-lg p-1 flex-shrink-0 flex items-center justify-center">
+<img alt="Pinkfong Baby Shark" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJ9m2ljGSH28dTOOdXJJ6reaW8nsRtquBp5S7w3XsNPyqMyJLoAPK40czGUgXbX8MYZq9Wzq9pl2GBuRpoR5Nsur8d9fUi1ZYk4GFICzDidFnaxmEJ87_CVfv6cSVjqCb_t1LieTTUyQGInz1-NHSzCle7y3aUd5M5sKwxvrb63xS9LDT9aBKPRMXrLKRfYFm91UCTgPZ97e4twmluTEmabPzHm7uY2GkMLQ6ZDUiS6N9XLJ2x4fr6">
+</div>
+<!-- Notification Details -->
+<div class="pr-4">
+<p class="text-[11px] text-neutral-400 font-medium leading-none">xyz z just purchased</p>
+<h5 class="text-xs font-bold text-neutral-900 mt-1 line-clamp-1 leading-snug">Pinkfong Baby Shark Official Song Cube</h5>
+<span class="text-[10px] text-neutral-400 italic">a day ago</span>
+</div>
+</aside>
+<!-- END: FloatingSocialProofToast -->
+<!-- Icons initialization -->
+<script data-purpose="lucide-init">
+    lucide.createIcons();
+  </script>
+</body></html>

@@ -2,6 +2,7 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
+    { "source": "/product/:handle", "destination": "/product.html?handle=:handle" },
     { "source": "/product", "destination": "/product.html" }
   ]
 }

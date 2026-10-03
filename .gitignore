@@ -3,3 +3,7 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+.env
+.env.local
+.env.*.local
+.vercel
