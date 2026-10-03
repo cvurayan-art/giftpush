@@ -305,7 +305,7 @@ export async function getShopifyProducts(options: {
         reverse: options.reverse || false,
       },
     });
-    return data.products.nodes;
+    return data.products.nodes.length > 0 ? data.products.nodes : getFallbackProducts(options.query);
   } catch (err) {
     console.warn('[Shopify] Falling back to default catalog:', err);
     return getFallbackProducts(options.query);
@@ -368,7 +368,7 @@ export async function getShopifyCollections(first = 16): Promise<ShopifyCollecti
       query,
       variables: { first },
     });
-    return data.collections.nodes;
+    return data.collections.nodes.length > 0 ? data.collections.nodes : getFallbackCollections();
   } catch (err) {
     console.warn('[Shopify] Error fetching collections, using fallback:', err);
     return getFallbackCollections();
