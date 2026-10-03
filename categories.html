@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title id="pdp-meta-title">Product Details | Present Panic</title>
-  <meta id="pdp-meta-desc" name="description" content="Shop curated, premium gifts at Present Panic. Fast tracked delivery, secure guest checkout.">
+  <title>Gift Categories &amp; Collections | Present Panic</title>
+  <meta name="description" content="Explore our gift collections and departments: Home & Decor, Personalized Keepsakes, Tech & Lifestyle, Gourmet Hampers, and Jewelry.">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="apple-touch-icon" href="/favicon.png">
 
@@ -17,7 +17,7 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- Tailwind Custom Config -->
+  <!-- Tailwind Config -->
   <script data-purpose="tailwind-config">
     tailwind.config = {
       theme: {
@@ -43,9 +43,6 @@
 </head>
 <body class="bg-[#fafafa] text-neutral-900 font-sans antialiased min-h-screen flex flex-col selection:bg-rose-500 selection:text-white">
 
-  <!-- Skip link for accessibility -->
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-black text-white px-4 py-2 rounded-lg">Skip to main content</a>
-
   <!-- Top Announcement Bar -->
   <div class="w-full bg-neutral-950 text-white text-xs font-semibold py-2.5 px-4 text-center tracking-wide">
     <span>🎁 Free Tracked Delivery on Orders Over $75 &bull; 100% Secure Guest Checkout</span>
@@ -55,12 +52,10 @@
   <header class="w-full bg-white border-b border-gray-100 sticky top-0 z-40" data-purpose="main-header">
     <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 h-20 flex items-center justify-between">
       <div class="flex items-center gap-4 sm:gap-6 lg:gap-10 xl:gap-14">
-        <!-- Hamburger Menu Button -->
         <button id="btn-open-mobile-menu" aria-label="Open Navigation Menu" class="lg:hidden p-2 text-neutral-800 hover:text-[#ff4d61] hover:bg-neutral-50 rounded-lg transition cursor-pointer">
           <i class="w-6 h-6 stroke-[2.2]" data-lucide="menu"></i>
         </button>
 
-        <!-- Brand Logo & Name -->
         <a class="flex items-center gap-2.5 sm:gap-3 select-none transition-opacity hover:opacity-90" href="/">
           <img src="/logo.png" alt="Present Panic Logo" class="h-10 sm:h-12 w-auto object-contain">
           <span class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-neutral-950 uppercase whitespace-nowrap">
@@ -68,22 +63,23 @@
           </span>
         </a>
 
-        <!-- Main Desktop Navigation -->
         <nav class="hidden lg:flex items-center space-x-6 xl:space-x-8 text-sm font-semibold text-neutral-700">
           <a class="hover:text-[#ff4d61] transition-colors py-2" href="/">Home</a>
           <a class="hover:text-[#ff4d61] transition-colors py-2" href="/shop.html">Shop</a>
-          <a class="hover:text-[#ff4d61] transition-colors py-2" href="/categories.html">Categories</a>
+          <a class="text-[#ff4d61] font-bold hover:text-[#e63946] relative py-2" href="/categories.html">
+            Categories
+            <span class="absolute bottom-0 left-0 w-full h-[2px] bg-[#ff4d61] rounded-full"></span>
+          </a>
           <a class="hover:text-[#ff4d61] transition-colors py-2" href="/about.html">About Us</a>
           <a class="hover:text-[#ff4d61] transition-colors py-2" href="/contact.html">Contact Us</a>
         </nav>
       </div>
 
-      <!-- Right Action Icons: Search, Support, Cart -->
       <div class="flex items-center space-x-2 sm:space-x-4 lg:space-x-6 text-neutral-700">
         <button id="btn-header-search" aria-label="Search" class="p-2.5 hover:text-[#ff4d61] hover:bg-neutral-50 rounded-full transition cursor-pointer">
           <i class="w-5 h-5 stroke-[2.2]" data-lucide="search"></i>
         </button>
-        <a href="/contact.html" aria-label="Customer Support" class="p-2.5 hover:text-[#ff4d61] hover:bg-neutral-50 rounded-full transition cursor-pointer hidden sm:block" title="Customer Support & Help">
+        <a href="/contact.html" aria-label="Customer Support" class="p-2.5 hover:text-[#ff4d61] hover:bg-neutral-50 rounded-full transition cursor-pointer hidden sm:block" title="Customer Support">
           <i class="w-5 h-5 stroke-[2.2]" data-lucide="help-circle"></i>
         </a>
         <button id="btn-header-cart" aria-label="Shopping Cart" class="relative p-2.5 hover:text-[#ff4d61] hover:bg-neutral-50 rounded-full transition cursor-pointer">
@@ -94,7 +90,7 @@
     </div>
   </header>
 
-  <!-- MOBILE DRAWER NAVIGATION -->
+  <!-- MOBILE DRAWER -->
   <div id="mobile-menu-drawer" class="fixed inset-0 z-50 pointer-events-none transition-all duration-300">
     <div id="mobile-menu-backdrop" class="absolute inset-0 bg-neutral-950/60 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
     <div id="mobile-menu-panel" class="absolute top-0 left-0 bottom-0 w-4/5 max-w-sm bg-white shadow-2xl p-6 flex flex-col justify-between transform -translate-x-full transition-transform duration-300 pointer-events-auto">
@@ -111,8 +107,8 @@
 
         <nav class="flex flex-col space-y-3 pt-6 text-sm font-semibold text-neutral-800">
           <a class="mobile-nav-link hover:text-[#ff4d61] py-2 px-3 rounded-lg hover:bg-neutral-50" href="/">Home</a>
-          <a class="mobile-nav-link text-[#ff4d61] py-2 px-3 rounded-lg bg-rose-50" href="/shop.html">Shop All Products</a>
-          <a class="mobile-nav-link hover:text-[#ff4d61] py-2 px-3 rounded-lg hover:bg-neutral-50" href="/categories.html">Categories &amp; Collections</a>
+          <a class="mobile-nav-link hover:text-[#ff4d61] py-2 px-3 rounded-lg hover:bg-neutral-50" href="/shop.html">Shop All Products</a>
+          <a class="mobile-nav-link text-[#ff4d61] py-2 px-3 rounded-lg bg-rose-50" href="/categories.html">Categories &amp; Collections</a>
           <a class="mobile-nav-link hover:text-[#ff4d61] py-2 px-3 rounded-lg hover:bg-neutral-50" href="/about.html">About Us</a>
           <a class="mobile-nav-link hover:text-[#ff4d61] py-2 px-3 rounded-lg hover:bg-neutral-50" href="/contact.html">Contact Us</a>
           <a class="mobile-nav-link hover:text-[#ff4d61] py-2 px-3 rounded-lg hover:bg-neutral-50" href="/cart.html">View Cart</a>
@@ -120,253 +116,173 @@
       </div>
 
       <div class="pt-6 border-t border-gray-100 space-y-2 text-xs text-neutral-500">
-        <p class="font-medium text-neutral-800">Need shopping assistance?</p>
+        <p class="font-medium text-neutral-800">Need help shopping?</p>
         <p>Email: support@presentpanic.com</p>
-        <p>Mon - Fri: 9:00 AM - 6:00 PM EST</p>
       </div>
     </div>
   </div>
 
-  <!-- MAIN CONTENT CONTAINER -->
-  <main id="main-content" class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+  <!-- CATEGORIES PAGE MAIN CONTENT -->
+  <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    
+    <div class="mb-10 text-center max-w-2xl mx-auto">
+      <span class="text-xs uppercase font-extrabold tracking-widest text-[#ff4d61]">Departments &amp; Themes</span>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-950 mt-1 tracking-tight">
+        Browse by Category
+      </h1>
+      <p class="mt-2 text-sm sm:text-base text-neutral-500 leading-relaxed">
+        Find the ideal gift tailored to the occasion, recipient, and style.
+      </p>
+    </div>
 
-    <!-- Breadcrumb -->
-    <nav class="flex items-center gap-2 text-xs sm:text-sm text-neutral-500 mb-6 sm:mb-8 font-medium overflow-x-auto whitespace-nowrap" aria-label="Breadcrumb">
-      <a href="/" class="hover:text-neutral-900 transition">Home</a>
-      <span>/</span>
-      <a href="/shop.html" class="hover:text-neutral-900 transition">Shop</a>
-      <span>/</span>
-      <span id="pdp-breadcrumb-category" class="hover:text-neutral-900 transition">Product</span>
-      <span>/</span>
-      <span id="pdp-breadcrumb-title" class="text-neutral-900 font-semibold truncate max-w-xs">Loading...</span>
-    </nav>
-
-    <!-- PRODUCT HERO GRID (2 Columns: Left Gallery, Right Buy Box) -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16 items-start">
-
-      <!-- LEFT: Image Gallery Column -->
-      <div class="lg:col-span-7 flex flex-col gap-4">
-        <!-- Main Image Stage -->
-        <div class="relative bg-white border border-gray-100 rounded-3xl p-6 sm:p-10 flex items-center justify-center overflow-hidden shadow-sm aspect-square">
-          <!-- Genuine Badge -->
-          <div id="pdp-badge-container" class="absolute top-4 left-4 z-10 flex flex-col gap-2">
-            <span id="pdp-sale-badge" class="hidden bg-[#ff4d61] text-white text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
-              Sale
-            </span>
-          </div>
-
-          <img 
-            id="pdp-active-image" 
-            src="/images/personalized_box.jpg" 
-            alt="Product image" 
-            class="w-full h-full object-contain max-h-[500px] transition-transform duration-300 hover:scale-105"
-            loading="eager"
-          >
-        </div>
-
-        <!-- Thumbnails Reel -->
-        <div id="pdp-thumbnails-strip" class="flex items-center gap-3 overflow-x-auto no-scrollbar py-2">
-          <!-- Dynamically populated from Shopify product.images -->
-        </div>
-      </div>
-
-      <!-- RIGHT: Buy Box & Product Options -->
-      <div class="lg:col-span-5 flex flex-col gap-6">
-
-        <!-- Vendor & Title -->
+    <!-- PRIMARY COLLECTIONS GRID -->
+    <div id="categories-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-16">
+      
+      <!-- 1. Personalized Keepsakes -->
+      <a href="/collection.html?handle=personalized-keepsakes" class="group bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 flex flex-col justify-between hover:shadow-xl transition-all duration-300">
         <div>
-          <span id="pdp-vendor" class="text-xs uppercase tracking-widest font-bold text-neutral-400">
-            Present Panic Curated
-          </span>
-          <h1 id="pdp-title" class="text-2xl sm:text-3xl lg:text-4xl font-black text-neutral-950 mt-1 leading-tight tracking-tight">
-            Loading Product...
-          </h1>
-
-          <!-- Live Price & Status -->
-          <div class="mt-4 flex items-center gap-3 flex-wrap">
-            <span id="pdp-display-price" class="text-2xl sm:text-3xl font-extrabold text-[#ff4d61]">
-              $0.00
-            </span>
-            <span id="pdp-compare-price" class="hidden text-base sm:text-lg text-neutral-400 line-through">
-              $0.00
-            </span>
-            <span id="pdp-save-badge" class="hidden bg-rose-50 text-[#ff4d61] text-xs font-bold px-2.5 py-1 rounded-full">
-              Save 0%
-            </span>
-
-            <div id="pdp-stock-status" class="ml-auto flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>In Stock</span>
-            </div>
+          <div class="w-14 h-14 rounded-2xl bg-rose-50 text-[#ff4d61] flex items-center justify-center font-bold mb-6 group-hover:scale-110 transition-transform">
+            <i data-lucide="sparkles" class="w-7 h-7"></i>
           </div>
-        </div>
-
-        <!-- Short Description -->
-        <div id="pdp-lead-description" class="text-sm text-neutral-600 leading-relaxed border-t border-b border-gray-100 py-4">
-          Detailed product information loading directly from Shopify...
-        </div>
-
-        <!-- REAL SHOPIFY VARIANTS (Size, Color, Material, etc.) -->
-        <div id="pdp-variants-container" class="space-y-4">
-          <!-- Injected dynamically by storefront.ts based on product.options -->
-        </div>
-
-        <!-- REAL CUSTOMER PERSONALIZATION FORM (Requirement 10, 11, 12) -->
-        <!-- Only shown if this product is tagged or named as personalized in Shopify -->
-        <div id="pdp-personalization-section" class="hidden border border-rose-100 bg-rose-50/40 rounded-2xl p-5 space-y-4">
-          <div class="flex items-center gap-2">
-            <i data-lucide="edit-3" class="w-4 h-4 text-[#ff4d61]"></i>
-            <h3 class="text-sm font-bold text-neutral-900">Personalize Your Gift</h3>
-          </div>
-          <p class="text-xs text-neutral-500">
-            Enter the exact name or dedication message you want crafted onto this item.
+          <h2 class="text-xl sm:text-2xl font-bold text-neutral-900 group-hover:text-[#ff4d61] transition">
+            Personalized Keepsakes
+          </h2>
+          <p class="text-xs sm:text-sm text-neutral-500 mt-2 leading-relaxed">
+            Laser-engraved solid wood heirloom boxes, monogrammed keepsakes, and family dedication treasures.
           </p>
-
-          <div class="space-y-3">
-            <div>
-              <label for="input-custom-name" class="block text-xs font-semibold text-neutral-700 mb-1">
-                Name / Personalization Text <span class="text-[#ff4d61] font-bold">*</span>
-              </label>
-              <input 
-                type="text" 
-                id="input-custom-name" 
-                placeholder="Enter recipient name or initials" 
-                maxlength="40" 
-                class="w-full text-xs sm:text-sm bg-white border border-gray-300 rounded-xl px-4 py-2.5 focus:border-[#ff4d61] focus:ring-1 focus:ring-[#ff4d61] outline-none transition"
-              >
-              <span class="text-[11px] text-neutral-400 mt-1 block">Maximum 40 characters</span>
-            </div>
-
-            <div>
-              <label for="input-custom-message" class="block text-xs font-semibold text-neutral-700 mb-1">
-                Optional Gift Message / Dedication (Optional)
-              </label>
-              <input 
-                type="text" 
-                id="input-custom-message" 
-                placeholder="e.g. Happy Anniversary, or holiday dedication" 
-                maxlength="100" 
-                class="w-full text-xs sm:text-sm bg-white border border-gray-300 rounded-xl px-4 py-2.5 focus:border-[#ff4d61] focus:ring-1 focus:ring-[#ff4d61] outline-none transition"
-              >
-            </div>
+          <!-- Micro-categories -->
+          <div class="mt-4 flex flex-wrap gap-1.5">
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Engraved Boxes</span>
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Family Signs</span>
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Laser Crafts</span>
           </div>
         </div>
-
-        <!-- QUANTITY & ADD TO CART -->
-        <div class="space-y-3 pt-2">
-          <div class="flex items-center gap-3">
-            <!-- Quantity Counter -->
-            <div class="flex items-center border border-gray-200 rounded-2xl bg-white p-1 shadow-xs">
-              <button type="button" id="btn-qty-minus" aria-label="Decrease quantity" class="w-10 h-10 flex items-center justify-center text-neutral-600 hover:text-neutral-950 hover:bg-neutral-50 rounded-xl transition cursor-pointer font-bold">
-                &minus;
-              </button>
-              <span id="qty-val" class="w-10 text-center text-sm font-bold text-neutral-900 select-none">1</span>
-              <button type="button" id="btn-qty-plus" aria-label="Increase quantity" class="w-10 h-10 flex items-center justify-center text-neutral-600 hover:text-neutral-950 hover:bg-neutral-50 rounded-xl transition cursor-pointer font-bold">
-                &#43;
-              </button>
-            </div>
-
-            <!-- Add to Cart Button -->
-            <button 
-              type="button" 
-              id="btn-add-pdp-cart" 
-              class="flex-1 bg-neutral-900 hover:bg-[#ff4d61] text-white text-sm font-bold py-3.5 px-6 rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <i class="w-4 h-4" data-lucide="shopping-bag"></i>
-              <span id="btn-add-text">Add to Cart</span>
-            </button>
-          </div>
-
-          <!-- Direct Buy / Checkout Button -->
-          <button 
-            type="button" 
-            id="btn-buy-now" 
-            class="w-full bg-[#ff4d61] hover:bg-[#e63946] text-white text-sm font-bold py-3.5 px-6 rounded-2xl transition shadow-sm hover:shadow-md flex items-center justify-center gap-2 cursor-pointer"
-          >
-            <span>Buy It Now &rarr;</span>
-          </button>
+        <div class="mt-6 flex items-center gap-2 text-xs font-bold text-[#ff4d61] group-hover:translate-x-1 transition-transform">
+          <span>Explore Collection</span>
+          <span>&rarr;</span>
         </div>
+      </a>
 
-        <!-- Honest Shipping & Trust Badges -->
-        <div class="border border-gray-100 rounded-2xl p-4 bg-white space-y-2 text-xs text-neutral-600">
-          <div class="flex items-center gap-2.5 font-medium text-neutral-800">
-            <i data-lucide="truck" class="w-4 h-4 text-[#ff4d61]"></i>
-            <span>Tracked shipping calculated at checkout.</span>
-          </div>
-          <div class="flex items-center gap-2.5 font-medium text-neutral-800">
-            <i data-lucide="shield-check" class="w-4 h-4 text-[#ff4d61]"></i>
-            <span>30-Day returns on standard items. Guaranteed safe arrival.</span>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- PRODUCT DETAILS & SPECIFICATIONS ACCORDION / TABS -->
-    <div class="mt-16 sm:mt-24 border-t border-gray-200 pt-10">
-      <div class="max-w-4xl mx-auto space-y-8">
-        
-        <!-- Section 1: Detailed Description -->
+      <!-- 2. Home & Decor -->
+      <a href="/collection.html?handle=home-decor" class="group bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 flex flex-col justify-between hover:shadow-xl transition-all duration-300">
         <div>
-          <h2 class="text-xl sm:text-2xl font-bold text-neutral-950 mb-4">Product Details &amp; Story</h2>
-          <div id="pdp-full-description" class="prose prose-neutral max-w-none text-sm sm:text-base text-neutral-600 leading-relaxed space-y-3">
-            Loading full description...
+          <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold mb-6 group-hover:scale-110 transition-transform">
+            <i data-lucide="home" class="w-7 h-7"></i>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-neutral-900 group-hover:text-[#ff4d61] transition">
+            Home &amp; Decor
+          </h2>
+          <p class="text-xs sm:text-sm text-neutral-500 mt-2 leading-relaxed">
+            Artisan holiday candles, cozy ceramics, warm mood lighting, and timeless home accents.
+          </p>
+          <div class="mt-4 flex flex-wrap gap-1.5">
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Fragrance Candles</span>
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Ceramic Mugs</span>
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Vases &amp; Accents</span>
           </div>
         </div>
-
-        <!-- Section 2: Specifications -->
-        <div class="border-t border-gray-100 pt-8">
-          <h2 class="text-xl sm:text-2xl font-bold text-neutral-950 mb-4">Specifications</h2>
-          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
-            <div class="bg-white p-4 rounded-xl border border-gray-100">
-              <dt class="text-neutral-400 uppercase font-semibold text-[11px]">Brand / Vendor</dt>
-              <dd id="pdp-spec-vendor" class="font-bold text-neutral-800 mt-1">Present Panic</dd>
-            </div>
-            <div class="bg-white p-4 rounded-xl border border-gray-100">
-              <dt class="text-neutral-400 uppercase font-semibold text-[11px]">Category</dt>
-              <dd id="pdp-spec-type" class="font-bold text-neutral-800 mt-1">Curated Gifts</dd>
-            </div>
-            <div class="bg-white p-4 rounded-xl border border-gray-100">
-              <dt class="text-neutral-400 uppercase font-semibold text-[11px]">SKU Reference</dt>
-              <dd id="pdp-spec-sku" class="font-bold text-neutral-800 mt-1">Standard Item</dd>
-            </div>
-            <div class="bg-white p-4 rounded-xl border border-gray-100">
-              <dt class="text-neutral-400 uppercase font-semibold text-[11px]">Availability</dt>
-              <dd id="pdp-spec-stock" class="font-bold text-emerald-600 mt-1">Available for Order</dd>
-            </div>
-          </dl>
+        <div class="mt-6 flex items-center gap-2 text-xs font-bold text-[#ff4d61] group-hover:translate-x-1 transition-transform">
+          <span>Explore Collection</span>
+          <span>&rarr;</span>
         </div>
+      </a>
 
-        <!-- Section 3: Shipping & Return Policy -->
-        <div class="border-t border-gray-100 pt-8">
-          <h2 class="text-xl sm:text-2xl font-bold text-neutral-950 mb-4">Shipping &amp; Returns</h2>
-          <div class="space-y-3 text-xs sm:text-sm text-neutral-600 leading-relaxed">
-            <p>
-              <strong>Processing Times:</strong> Standard orders are typically dispatched within 1-2 business days. Personalized or custom-crafted gifts require an extra 24-48 hours for precise workshop production and inspection.
-            </p>
-            <p>
-              <strong>Tracking:</strong> You will receive a direct tracking link via email as soon as your package ships.
-            </p>
-            <p>
-              <strong>Returns:</strong> Non-personalized items can be returned within 30 days of delivery in original unused condition. If your gift arrives damaged or defective, we provide an immediate replacement or full refund.
-            </p>
+      <!-- 3. Gift Hampers -->
+      <a href="/collection.html?handle=gift-hampers" class="group bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 flex flex-col justify-between hover:shadow-xl transition-all duration-300">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold mb-6 group-hover:scale-110 transition-transform">
+            <i data-lucide="gift" class="w-7 h-7"></i>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-neutral-900 group-hover:text-[#ff4d61] transition">
+            Gift Hampers &amp; Gourmet
+          </h2>
+          <p class="text-xs sm:text-sm text-neutral-500 mt-2 leading-relaxed">
+            Curated celebration baskets, fine Belgian chocolates, specialty preserves, and celebratory sets.
+          </p>
+          <div class="mt-4 flex flex-wrap gap-1.5">
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Holiday Hampers</span>
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Gourmet Sweets</span>
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Luxury Baskets</span>
           </div>
         </div>
+        <div class="mt-6 flex items-center gap-2 text-xs font-bold text-[#ff4d61] group-hover:translate-x-1 transition-transform">
+          <span>Explore Collection</span>
+          <span>&rarr;</span>
+        </div>
+      </a>
 
-      </div>
-    </div>
+      <!-- 4. Tech & Lifestyle -->
+      <a href="/collection.html?handle=tech-lifestyle" class="group bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 flex flex-col justify-between hover:shadow-xl transition-all duration-300">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold mb-6 group-hover:scale-110 transition-transform">
+            <i data-lucide="headphones" class="w-7 h-7"></i>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-neutral-900 group-hover:text-[#ff4d61] transition">
+            Tech &amp; Gadgets
+          </h2>
+          <p class="text-xs sm:text-sm text-neutral-500 mt-2 leading-relaxed">
+            Smart electronics, wireless audio devices, stylish keyboards, and everyday carry gadgets.
+          </p>
+          <div class="mt-4 flex flex-wrap gap-1.5">
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Headphones</span>
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Smart Folios</span>
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Accessories</span>
+          </div>
+        </div>
+        <div class="mt-6 flex items-center gap-2 text-xs font-bold text-[#ff4d61] group-hover:translate-x-1 transition-transform">
+          <span>Explore Collection</span>
+          <span>&rarr;</span>
+        </div>
+      </a>
 
-    <!-- RELATED PRODUCTS SECTION -->
-    <div class="mt-20 sm:mt-28 border-t border-gray-200 pt-12">
-      <div class="text-center max-w-xl mx-auto mb-10">
-        <span class="text-xs uppercase font-extrabold tracking-widest text-[#ff4d61]">More To Explore</span>
-        <h2 class="text-2xl sm:text-3xl font-black text-neutral-950 mt-1 tracking-tight">You May Also Like</h2>
-      </div>
+      <!-- 5. Fashion & Wearables -->
+      <a href="/collection.html?handle=fashion-wearables" class="group bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 flex flex-col justify-between hover:shadow-xl transition-all duration-300">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold mb-6 group-hover:scale-110 transition-transform">
+            <i data-lucide="watch" class="w-7 h-7"></i>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-neutral-900 group-hover:text-[#ff4d61] transition">
+            Fashion &amp; Timepieces
+          </h2>
+          <p class="text-xs sm:text-sm text-neutral-500 mt-2 leading-relaxed">
+            Refined timepieces, leather wallets, smart watch bands, and stylish footwear.
+          </p>
+          <div class="mt-4 flex flex-wrap gap-1.5">
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Watches</span>
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Wallets</span>
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Sneakers</span>
+          </div>
+        </div>
+        <div class="mt-6 flex items-center gap-2 text-xs font-bold text-[#ff4d61] group-hover:translate-x-1 transition-transform">
+          <span>Explore Collection</span>
+          <span>&rarr;</span>
+        </div>
+      </a>
 
-      <div id="pdp-recommendations-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-        <!-- Dynamically injected from Shopify Recommendations -->
-      </div>
+      <!-- 6. Daily Deals -->
+      <a href="/collection.html?handle=daily-deals" class="group bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 flex flex-col justify-between hover:shadow-xl transition-all duration-300">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-rose-50 text-[#ff4d61] flex items-center justify-center font-bold mb-6 group-hover:scale-110 transition-transform">
+            <i data-lucide="tag" class="w-7 h-7"></i>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-neutral-900 group-hover:text-[#ff4d61] transition">
+            Holiday Deals &amp; Specials
+          </h2>
+          <p class="text-xs sm:text-sm text-neutral-500 mt-2 leading-relaxed">
+            Special discounts and promotional bundles on top-rated holiday gift selections.
+          </p>
+          <div class="mt-4 flex flex-wrap gap-1.5">
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Flash Deals</span>
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Bundles</span>
+            <span class="text-[11px] bg-neutral-100 text-neutral-700 px-2.5 py-1 rounded-lg">Special Values</span>
+          </div>
+        </div>
+        <div class="mt-6 flex items-center gap-2 text-xs font-bold text-[#ff4d61] group-hover:translate-x-1 transition-transform">
+          <span>Explore Collection</span>
+          <span>&rarr;</span>
+        </div>
+      </a>
+
     </div>
 
   </main>
@@ -375,8 +291,6 @@
   <footer class="w-full bg-white border-t border-gray-100 pt-16 pb-12 mt-20" data-purpose="main-footer">
     <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-gray-100">
-        
-        <!-- Col 1: Brand Info -->
         <div class="lg:col-span-4 space-y-4">
           <a class="flex items-center gap-3 select-none" href="/">
             <img src="/logo.png" alt="Present Panic" class="h-10 w-auto object-contain">
@@ -387,7 +301,6 @@
           </p>
         </div>
 
-        <!-- Col 2: Navigation Links -->
         <div class="lg:col-span-2 space-y-3">
           <h4 class="text-base font-bold text-neutral-900">Explore</h4>
           <ul class="space-y-2.5 text-xs sm:text-sm text-neutral-600 font-medium">
@@ -399,9 +312,8 @@
           </ul>
         </div>
 
-        <!-- Col 3: Customer Care -->
         <div class="lg:col-span-2 space-y-3">
-          <h4 class="text-base font-bold text-neutral-900">Help &amp; Policies</h4>
+          <h4 class="text-base font-bold text-neutral-900">Customer Care</h4>
           <ul class="space-y-2.5 text-xs sm:text-sm text-neutral-600 font-medium">
             <li><a class="hover:text-[#ff4d61] transition" href="/faq.html">FAQ &amp; Help</a></li>
             <li><a class="hover:text-[#ff4d61] transition" href="/shipping.html">Shipping &amp; Delivery</a></li>
@@ -411,7 +323,6 @@
           </ul>
         </div>
 
-        <!-- Col 4: Newsletter -->
         <div class="lg:col-span-4 space-y-3">
           <h4 class="text-base font-bold text-neutral-900">Stay Connected</h4>
           <p class="text-xs sm:text-sm text-neutral-500">Subscribe for thoughtful gift inspiration, new product drops, and exclusive offers.</p>
@@ -439,12 +350,11 @@
     </div>
   </footer>
 
-  <!-- SHOPPING CART SLIDE-OUT DRAWER -->
+  <!-- CART DRAWER -->
   <div id="cart-drawer-overlay" class="fixed inset-0 z-[120] pointer-events-none transition-all duration-300" role="dialog" aria-modal="true" aria-label="Shopping Cart Drawer">
     <div id="cart-drawer-backdrop" class="absolute inset-0 bg-neutral-950/60 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
 
     <div id="cart-drawer-panel" class="absolute top-0 right-0 bottom-0 w-full max-w-md sm:max-w-lg bg-white shadow-2xl flex flex-col justify-between transform translate-x-full transition-transform duration-300 pointer-events-auto">
-      <!-- Drawer Header -->
       <div class="p-5 sm:p-6 border-b border-gray-100 flex items-center justify-between bg-white z-10">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-2xl bg-rose-50 text-[#ff4d61] flex items-center justify-center font-bold">
@@ -460,7 +370,6 @@
         </button>
       </div>
 
-      <!-- Free Shipping Progress Bar -->
       <div id="cart-shipping-bar" class="bg-neutral-50 px-5 py-3 border-b border-gray-100">
         <div class="flex items-center justify-between text-xs font-semibold text-neutral-700 mb-1.5">
           <span id="cart-shipping-text">Add items to unlock Free Shipping</span>
@@ -471,32 +380,25 @@
         </div>
       </div>
 
-      <!-- Items List -->
-      <div id="cart-items-list" class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 divide-y divide-gray-100 no-scrollbar">
-        <!-- Injected via JS -->
-      </div>
+      <div id="cart-items-list" class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 divide-y divide-gray-100 no-scrollbar"></div>
 
-      <!-- Empty State -->
       <div id="cart-empty-view" class="hidden flex-1 flex-col items-center justify-center p-8 text-center">
         <div class="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center text-[#ff4d61] mb-4">
           <i class="w-10 h-10" data-lucide="shopping-bag"></i>
         </div>
         <h4 class="font-extrabold text-neutral-900 text-lg mb-1">Your Bag is Empty</h4>
         <p class="text-xs text-neutral-500 max-w-xs mb-6">Discover curated gifts and personalized keepsakes ready for any occasion.</p>
-        <a href="/shop.html" id="btn-cart-empty-shop" class="bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-bold py-3 px-6 rounded-xl transition shadow-md cursor-pointer">
+        <button id="btn-cart-empty-shop" class="bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-bold py-3 px-6 rounded-xl transition shadow-md cursor-pointer">
           Explore All Gifts &rarr;
-        </a>
+        </button>
       </div>
 
-      <!-- Footer Checkout Summary -->
       <div id="cart-footer-section" class="p-5 sm:p-6 border-t border-gray-100 bg-neutral-50/80 space-y-4">
-        <!-- Subtotal -->
         <div class="flex items-center justify-between">
           <span class="text-sm font-semibold text-neutral-600">Subtotal</span>
           <span id="cart-subtotal-price" class="text-xl font-extrabold text-neutral-950">$0.00</span>
         </div>
 
-        <!-- Promo Code Input -->
         <div class="flex items-center gap-2">
           <input id="cart-promo-input" type="text" placeholder="Promo / Discount Code" class="flex-1 text-xs border border-gray-300 rounded-xl px-3.5 py-2.5 bg-white uppercase tracking-wider focus:outline-none focus:ring-1 focus:ring-rose-500">
           <button id="btn-apply-promo" type="button" class="bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer">
@@ -508,7 +410,6 @@
           <button id="btn-remove-promo" class="text-neutral-400 hover:text-red-500 text-xs font-bold">&times;</button>
         </div>
 
-        <!-- Checkout Button -->
         <button id="btn-proceed-checkout" type="button" class="w-full bg-[#ff4d61] hover:bg-[#e63946] text-white font-extrabold text-sm py-4 px-6 rounded-2xl transition shadow-lg flex items-center justify-center gap-2 cursor-pointer">
           <i class="w-4 h-4" data-lucide="lock"></i>
           <span>Checkout via Shopify &bull; <span id="cart-checkout-btn-total">$0.00</span></span>
@@ -522,7 +423,7 @@
     </div>
   </div>
 
-  <!-- LIVE SEARCH MODAL -->
+  <!-- SEARCH MODAL -->
   <div id="search-modal-overlay" class="fixed inset-0 z-[130] bg-neutral-950/70 backdrop-blur-sm hidden items-start justify-center p-4 pt-16 sm:pt-24" role="dialog" aria-modal="true" aria-label="Search Gift Catalog">
     <div class="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl p-6 sm:p-7 border border-neutral-100 transition-all duration-300 max-h-[85vh] flex flex-col">
       <button id="btn-close-search-modal" aria-label="Close search modal" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition cursor-pointer">
@@ -550,22 +451,18 @@
         <i class="w-4 h-4 text-neutral-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" data-lucide="search"></i>
       </div>
 
-      <!-- Results Container -->
       <div id="search-results-container" class="flex-1 overflow-y-auto space-y-3 no-scrollbar max-h-80">
-        <div class="text-center py-8 text-neutral-400 text-xs">
-          Type to search live products from Shopify...
-        </div>
+        <div class="text-center py-8 text-neutral-400 text-xs">Type to search live products from Shopify...</div>
       </div>
     </div>
   </div>
 
-  <!-- Toast Notification -->
+  <!-- Toast -->
   <div id="action-toast" class="fixed top-6 right-6 z-[200] bg-neutral-950 text-white text-xs sm:text-sm font-medium px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 transform translate-y-[-100px] opacity-0 transition-all duration-300 pointer-events-none">
     <i class="w-5 h-5 text-emerald-400" data-lucide="check-circle"></i>
     <span id="action-toast-text">Updated!</span>
   </div>
 
-  <!-- Shopify Storefront Core Controller -->
   <script type="module" src="/src/storefront.ts"></script>
 </body>
 </html>

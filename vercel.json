@@ -2,7 +2,22 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
+    { "source": "/products/:handle", "destination": "/product.html?handle=:handle" },
     { "source": "/product/:handle", "destination": "/product.html?handle=:handle" },
-    { "source": "/product", "destination": "/product.html" }
+    { "source": "/product", "destination": "/product.html" },
+    { "source": "/collections/:handle", "destination": "/collection.html?handle=:handle" },
+    { "source": "/collection/:handle", "destination": "/collection.html?handle=:handle" },
+    { "source": "/collection", "destination": "/collection.html" },
+    { "source": "/shop", "destination": "/shop.html" },
+    { "source": "/categories", "destination": "/categories.html" },
+    { "source": "/collections", "destination": "/categories.html" },
+    { "source": "/cart", "destination": "/cart.html" },
+    { "source": "/about", "destination": "/about.html" },
+    { "source": "/contact", "destination": "/contact.html" },
+    { "source": "/faq", "destination": "/faq.html" },
+    { "source": "/shipping", "destination": "/shipping.html" },
+    { "source": "/returns", "destination": "/returns.html" },
+    { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/terms", "destination": "/terms.html" }
   ]
 }

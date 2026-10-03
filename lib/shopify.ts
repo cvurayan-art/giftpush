@@ -376,6 +376,69 @@ export async function getShopifyCollections(first = 16): Promise<ShopifyCollecti
 }
 
 /**
+ * Fetch collection by handle with its products
+ */
+export async function getShopifyCollectionByHandle(
+  handle: string,
+  first = 24
+): Promise<{ collection: ShopifyCollection; products: ShopifyProduct[] } | null> {
+  if (!isShopifyConfigured()) {
+    const col = getFallbackCollections().find(c => c.handle === handle) || getFallbackCollections()[0];
+    const prods = getFallbackProducts();
+    return { collection: col, products: prods };
+  }
+
+  const query = `
+    query GetCollectionByHandle($handle: String!, $first: Int!) {
+      collection(handle: $handle) {
+        id
+        title
+        handle
+        description
+        image { url altText }
+        products(first: $first) {
+          nodes {
+            ${PRODUCT_FRAGMENT}
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const data = await shopifyFetch<{
+      collection: (ShopifyCollection & { products: { nodes: ShopifyProduct[] } }) | null;
+    }>({
+      query,
+      variables: { handle, first },
+    });
+
+    if (!data.collection) {
+      const col = getFallbackCollections().find(c => c.handle === handle) || getFallbackCollections()[0];
+      return { collection: col, products: getFallbackProducts() };
+    }
+
+    return {
+      collection: {
+        id: data.collection.id,
+        title: data.collection.title,
+        handle: data.collection.handle,
+        description: data.collection.description,
+        image: data.collection.image,
+      },
+      products: data.collection.products?.nodes && data.collection.products.nodes.length > 0
+        ? data.collection.products.nodes
+        : getFallbackProducts(),
+    };
+  } catch (err) {
+    console.warn('[Shopify] Error fetching collection by handle:', err);
+    const col = getFallbackCollections().find(c => c.handle === handle) || getFallbackCollections()[0];
+    return { collection: col, products: getFallbackProducts() };
+  }
+}
+
+
+/**
  * Search products
  */
 export async function searchShopifyProducts(searchQuery: string, first = 10): Promise<ShopifyProduct[]> {

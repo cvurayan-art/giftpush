@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Returns &amp; Refunds Policy | Present Panic</title>
+  <meta name="description" content="Read our clear 30-day returns and replacement policy for standard and personalized gifts at Present Panic.">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/favicon.png">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script data-purpose="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              pink: '#ff4d61',
+              pinkHover: '#e63946',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#fafafa] text-neutral-900 font-sans antialiased min-h-screen flex flex-col selection:bg-rose-500 selection:text-white">
+
+  <!-- Top Announcement Bar -->
+  <div class="w-full bg-neutral-950 text-white text-xs font-semibold py-2.5 px-4 text-center tracking-wide">
+    <span>🎁 Free Tracked Delivery on Orders Over $75 &bull; 100% Secure Guest Checkout</span>
+  </div>
+
+  <!-- MAIN HEADER -->
+  <header class="w-full bg-white border-b border-gray-100 sticky top-0 z-40" data-purpose="main-header">
+    <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 h-20 flex items-center justify-between">
+      <div class="flex items-center gap-4 sm:gap-6 lg:gap-10 xl:gap-14">
+        <button id="btn-open-mobile-menu" aria-label="Open Navigation Menu" class="lg:hidden p-2 text-neutral-800 hover:text-[#ff4d61] hover:bg-neutral-50 rounded-lg transition cursor-pointer">
+          <i class="w-6 h-6 stroke-[2.2]" data-lucide="menu"></i>
+        </button>
+
+        <a class="flex items-center gap-2.5 sm:gap-3 select-none transition-opacity hover:opacity-90" href="/">
+          <img src="/logo.png" alt="Present Panic Logo" class="h-10 sm:h-12 w-auto object-contain">
+          <span class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-neutral-950 uppercase whitespace-nowrap">
+            Present Panic
+          </span>
+        </a>
+
+        <nav class="hidden lg:flex items-center space-x-6 xl:space-x-8 text-sm font-semibold text-neutral-700">
+          <a class="hover:text-[#ff4d61] transition-colors py-2" href="/">Home</a>
+          <a class="hover:text-[#ff4d61] transition-colors py-2" href="/shop.html">Shop</a>
+          <a class="hover:text-[#ff4d61] transition-colors py-2" href="/categories.html">Categories</a>
+          <a class="hover:text-[#ff4d61] transition-colors py-2" href="/about.html">About Us</a>
+          <a class="hover:text-[#ff4d61] transition-colors py-2" href="/contact.html">Contact Us</a>
+        </nav>
+      </div>
+
+      <div class="flex items-center space-x-2 sm:space-x-4 lg:space-x-6 text-neutral-700">
+        <button id="btn-header-search" aria-label="Search" class="p-2.5 hover:text-[#ff4d61] hover:bg-neutral-50 rounded-full transition cursor-pointer">
+          <i class="w-5 h-5 stroke-[2.2]" data-lucide="search"></i>
+        </button>
+        <a href="/contact.html" aria-label="Customer Support" class="p-2.5 hover:text-[#ff4d61] hover:bg-neutral-50 rounded-full transition cursor-pointer hidden sm:block" title="Customer Support">
+          <i class="w-5 h-5 stroke-[2.2]" data-lucide="help-circle"></i>
+        </a>
+        <button id="btn-header-cart" aria-label="Shopping Cart" class="relative p-2.5 hover:text-[#ff4d61] hover:bg-neutral-50 rounded-full transition cursor-pointer">
+          <i class="w-5 h-5 stroke-[2.2]" data-lucide="shopping-bag"></i>
+          <span id="cart-badge" class="absolute top-0 right-0 bg-[#ff4d61] text-white text-[11px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE DRAWER -->
+  <div id="mobile-menu-drawer" class="fixed inset-0 z-50 pointer-events-none transition-all duration-300">
+    <div id="mobile-menu-backdrop" class="absolute inset-0 bg-neutral-950/60 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
+    <div id="mobile-menu-panel" class="absolute top-0 left-0 bottom-0 w-4/5 max-w-sm bg-white shadow-2xl p-6 flex flex-col justify-between transform -translate-x-full transition-transform duration-300 pointer-events-auto">
+      <div>
+        <div class="flex items-center justify-between pb-6 border-b border-gray-100">
+          <a href="/" class="flex items-center gap-2">
+            <img src="/logo.png" alt="Present Panic" class="h-8 w-auto object-contain">
+            <span class="text-xl font-black uppercase tracking-tight text-neutral-950">Present Panic</span>
+          </a>
+          <button id="btn-close-mobile-menu" aria-label="Close Navigation Menu" class="p-2 text-neutral-500 hover:text-neutral-900 rounded-lg hover:bg-neutral-100">
+            <i class="w-5 h-5" data-lucide="x"></i>
+          </button>
+        </div>
+
+        <nav class="flex flex-col space-y-3 pt-6 text-sm font-semibold text-neutral-800">
+          <a class="mobile-nav-link hover:text-[#ff4d61] py-2 px-3 rounded-lg hover:bg-neutral-50" href="/">Home</a>
+          <a class="mobile-nav-link hover:text-[#ff4d61] py-2 px-3 rounded-lg hover:bg-neutral-50" href="/shop.html">Shop All Products</a>
+          <a class="mobile-nav-link hover:text-[#ff4d61] py-2 px-3 rounded-lg hover:bg-neutral-50" href="/categories.html">Categories &amp; Collections</a>
+          <a class="mobile-nav-link hover:text-[#ff4d61] py-2 px-3 rounded-lg hover:bg-neutral-50" href="/about.html">About Us</a>
+          <a class="mobile-nav-link hover:text-[#ff4d61] py-2 px-3 rounded-lg hover:bg-neutral-50" href="/contact.html">Contact Us</a>
+          <a class="mobile-nav-link hover:text-[#ff4d61] py-2 px-3 rounded-lg hover:bg-neutral-50" href="/cart.html">View Cart</a>
+        </nav>
+      </div>
+
+      <div class="pt-6 border-t border-gray-100 space-y-2 text-xs text-neutral-500">
+        <p class="font-medium text-neutral-800">Need help shopping?</p>
+        <p>Email: support@presentpanic.com</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RETURNS MAIN CONTENT -->
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    
+    <div class="text-center mb-12">
+      <span class="text-xs uppercase font-extrabold tracking-widest text-[#ff4d61]">Peace of Mind</span>
+      <h1 class="text-3xl sm:text-5xl font-black text-neutral-950 mt-1 tracking-tight">
+        Returns &amp; Refunds Policy
+      </h1>
+      <p class="mt-4 text-sm sm:text-base text-neutral-500 max-w-xl mx-auto leading-relaxed">
+        We stand behind the quality of every product. Here is how our returns and replacement process works.
+      </p>
+    </div>
+
+    <div class="space-y-8 bg-white border border-gray-100 rounded-3xl p-8 sm:p-12 shadow-xs">
+      
+      <!-- 30-Day Policy -->
+      <section>
+        <h2 class="text-xl font-bold text-neutral-900 mb-3">30-Day Return Window for Standard Items</h2>
+        <p class="text-xs sm:text-sm text-neutral-600 leading-relaxed mb-3">
+          For non-personalized items (such as standard candles, mugs, accessories, and packaged gift hampers), you may return eligible items within <strong>30 calendar days</strong> from the date of delivery.
+        </p>
+        <p class="text-xs sm:text-sm text-neutral-600 leading-relaxed">
+          Items must be in original, unused condition with all original packaging intact. Return shipping costs are covered by the customer unless the return is due to a defect or our fulfillment error.
+        </p>
+      </section>
+
+      <!-- Personalized Products Policy -->
+      <section class="border-t border-gray-100 pt-8">
+        <h2 class="text-xl font-bold text-neutral-900 mb-3">Custom &amp; Personalized Keepsakes Policy</h2>
+        <p class="text-xs sm:text-sm text-neutral-600 leading-relaxed mb-3">
+          Because personalized and laser-engraved items are created uniquely to your specifications, they cannot be restocked or resold once crafted. Consequently, personalized gifts are not eligible for standard returns or buyer's remorse exchanges.
+        </p>
+        <div class="bg-rose-50/60 border border-rose-100 rounded-2xl p-4 text-xs text-neutral-700 leading-relaxed">
+          <strong>Our Craftsmanship Guarantee:</strong> If your personalized item arrives with a typographical error caused by our workshop, or if there is a defect in the material or assembly, notify us within 14 days and we will immediately remake and ship a replacement at zero cost, or issue a full refund.
+        </div>
+      </section>
+
+      <!-- Damaged in Transit -->
+      <section class="border-t border-gray-100 pt-8">
+        <h2 class="text-xl font-bold text-neutral-900 mb-3">Damaged or Defective Items</h2>
+        <p class="text-xs sm:text-sm text-neutral-600 leading-relaxed mb-3">
+          If your package arrives visibly damaged by the shipping carrier, please snap 1–2 photos of the damaged box and contents, and email them along with your order number to <a href="mailto:support@presentpanic.com" class="text-[#ff4d61] font-bold underline">support@presentpanic.com</a>.
+        </p>
+        <p class="text-xs sm:text-sm text-neutral-600 leading-relaxed">
+          We prioritize transit damage claims within 24 hours to ensure a prompt replacement arrives without unnecessary delays.
+        </p>
+      </section>
+
+      <!-- Refund Timelines -->
+      <section class="border-t border-gray-100 pt-8">
+        <h2 class="text-xl font-bold text-neutral-900 mb-3">Refund Processing Timeline</h2>
+        <p class="text-xs sm:text-sm text-neutral-600 leading-relaxed">
+          Once your returned item is received and inspected at our facility, refunds are credited back to your original payment method (via Shopify Payments). Credit card refunds typically appear on your statement within 3–5 business days depending on your banking provider.
+        </p>
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full bg-white border-t border-gray-100 pt-16 pb-12 mt-20" data-purpose="main-footer">
+    <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-gray-100">
+        <div class="lg:col-span-4 space-y-4">
+          <a class="flex items-center gap-3 select-none" href="/">
+            <img src="/logo.png" alt="Present Panic" class="h-10 w-auto object-contain">
+            <span class="text-2xl font-black tracking-tight text-neutral-950 uppercase">Present Panic</span>
+          </a>
+          <p class="text-xs sm:text-sm text-neutral-500 leading-relaxed max-w-sm">
+            Curating remarkable gifts designed to delight. From handcrafted personalized keepsakes to modern lifestyle accents, every piece is made to remember.
+          </p>
+        </div>
+
+        <div class="lg:col-span-2 space-y-3">
+          <h4 class="text-base font-bold text-neutral-900">Explore</h4>
+          <ul class="space-y-2.5 text-xs sm:text-sm text-neutral-600 font-medium">
+            <li><a class="hover:text-[#ff4d61] transition" href="/shop.html">Shop All Products</a></li>
+            <li><a class="hover:text-[#ff4d61] transition" href="/categories.html">Gift Collections</a></li>
+            <li><a class="hover:text-[#ff4d61] transition" href="/about.html">About Us</a></li>
+            <li><a class="hover:text-[#ff4d61] transition" href="/contact.html">Customer Care</a></li>
+            <li><a class="hover:text-[#ff4d61] transition" href="/cart.html">Shopping Cart</a></li>
+          </ul>
+        </div>
+
+        <div class="lg:col-span-2 space-y-3">
+          <h4 class="text-base font-bold text-neutral-900">Customer Care</h4>
+          <ul class="space-y-2.5 text-xs sm:text-sm text-neutral-600 font-medium">
+            <li><a class="hover:text-[#ff4d61] transition" href="/faq.html">FAQ &amp; Help</a></li>
+            <li><a class="hover:text-[#ff4d61] transition" href="/shipping.html">Shipping &amp; Delivery</a></li>
+            <li><a class="text-[#ff4d61] font-bold" href="/returns.html">Returns &amp; Refunds</a></li>
+            <li><a class="hover:text-[#ff4d61] transition" href="/privacy.html">Privacy Policy</a></li>
+            <li><a class="hover:text-[#ff4d61] transition" href="/terms.html">Terms &amp; Conditions</a></li>
+          </ul>
+        </div>
+
+        <div class="lg:col-span-4 space-y-3">
+          <h4 class="text-base font-bold text-neutral-900">Stay Connected</h4>
+          <p class="text-xs sm:text-sm text-neutral-500">Subscribe for thoughtful gift inspiration, new product drops, and exclusive offers.</p>
+          <form class="flex items-center gap-2 mt-4" onsubmit="event.preventDefault(); showToast('Subscribed to Present Panic updates!');">
+            <input class="flex-1 text-xs sm:text-sm border border-gray-300 rounded-full px-5 py-3 focus:outline-none focus:ring-1 focus:ring-[#ff4d61] focus:border-[#ff4d61]" placeholder="your.email@example.com" type="email" required>
+            <button class="bg-[#ff4d61] hover:bg-[#e63946] text-white text-xs sm:text-sm font-semibold px-7 py-3 rounded-full transition shadow-sm cursor-pointer" type="submit">
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs sm:text-sm text-neutral-500 gap-4">
+        <div>Copyright &copy; 2026 Present Panic. All rights reserved.</div>
+        <div class="flex items-center space-x-4 text-neutral-400">
+          <a href="/privacy.html" class="hover:text-neutral-700 transition">Privacy Policy</a>
+          <span>&bull;</span>
+          <a href="/terms.html" class="hover:text-neutral-700 transition">Terms &amp; Conditions</a>
+          <span>&bull;</span>
+          <a href="/shipping.html" class="hover:text-neutral-700 transition">Shipping</a>
+          <span>&bull;</span>
+          <a href="/returns.html" class="hover:text-neutral-700 transition">Returns</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/storefront.ts"></script>
+</body>
+</html>
