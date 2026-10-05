@@ -269,6 +269,23 @@ const CART_FRAGMENT = `
 `;
 
 // ----------------------------------------------------
+// Currency Formatting Helper
+// ----------------------------------------------------
+export function formatShopifyMoney(amount: string | number, currencyCode = 'USD'): string {
+  const num = typeof amount === 'number' ? amount : parseFloat(amount || '0');
+  const symbols: Record<string, string> = {
+    USD: '$',
+    GBP: '£',
+    EUR: '€',
+    CAD: 'CA$',
+    AUD: 'AU$',
+    JPY: '¥',
+  };
+  const sym = symbols[(currencyCode || 'USD').toUpperCase()] || `${currencyCode} `;
+  return `${sym}${num.toFixed(2)}`;
+}
+
+// ----------------------------------------------------
 // Public API Methods
 // ----------------------------------------------------
 
@@ -305,7 +322,14 @@ export async function getShopifyProducts(options: {
         reverse: options.reverse || false,
       },
     });
-    return data.products.nodes.length > 0 ? data.products.nodes : getFallbackProducts(options.query);
+
+    if (data.products?.nodes && data.products.nodes.length > 0) {
+      return data.products.nodes;
+    }
+    if (options.query) {
+      return [];
+    }
+    return getFallbackProducts();
   } catch (err) {
     console.warn('[Shopify] Falling back to default catalog:', err);
     return getFallbackProducts(options.query);
@@ -334,17 +358,20 @@ export async function getShopifyProductByHandle(handle: string): Promise<Shopify
       query,
       variables: { handle },
     });
-    return data.product || (getFallbackProducts().find(p => p.handle === handle) || null);
+    if (data.product) {
+      return data.product;
+    }
+    return getFallbackProducts().find(p => p.handle === handle) || null;
   } catch (err) {
     console.warn('[Shopify] Error fetching product by handle, using fallback:', err);
-    return getFallbackProducts().find(p => p.handle === handle) || getFallbackProducts()[0];
+    return getFallbackProducts().find(p => p.handle === handle) || null;
   }
 }
 
 /**
- * Fetch collections list
+ * Fetch collections list directly from Shopify
  */
-export async function getShopifyCollections(first = 16): Promise<ShopifyCollection[]> {
+export async function getShopifyCollections(first = 25): Promise<ShopifyCollection[]> {
   if (!isShopifyConfigured()) {
     return getFallbackCollections();
   }
@@ -368,7 +395,10 @@ export async function getShopifyCollections(first = 16): Promise<ShopifyCollecti
       query,
       variables: { first },
     });
-    return data.collections.nodes.length > 0 ? data.collections.nodes : getFallbackCollections();
+    // Filter out internal 'frontpage' if other collections exist
+    const valid = data.collections.nodes.filter(c => c.handle !== 'frontpage');
+    const result = valid.length > 0 ? valid : data.collections.nodes;
+    return result.length > 0 ? result : getFallbackCollections();
   } catch (err) {
     console.warn('[Shopify] Error fetching collections, using fallback:', err);
     return getFallbackCollections();
@@ -413,27 +443,27 @@ export async function getShopifyCollectionByHandle(
       variables: { handle, first },
     });
 
-    if (!data.collection) {
-      const col = getFallbackCollections().find(c => c.handle === handle) || getFallbackCollections()[0];
-      return { collection: col, products: getFallbackProducts() };
+    if (data.collection) {
+      return {
+        collection: {
+          id: data.collection.id,
+          title: data.collection.title,
+          handle: data.collection.handle,
+          description: data.collection.description,
+          image: data.collection.image,
+        },
+        products: data.collection.products?.nodes || [],
+      };
     }
 
-    return {
-      collection: {
-        id: data.collection.id,
-        title: data.collection.title,
-        handle: data.collection.handle,
-        description: data.collection.description,
-        image: data.collection.image,
-      },
-      products: data.collection.products?.nodes && data.collection.products.nodes.length > 0
-        ? data.collection.products.nodes
-        : getFallbackProducts(),
-    };
+    const col = getFallbackCollections().find(c => c.handle === handle);
+    if (col) {
+      return { collection: col, products: getFallbackProducts() };
+    }
+    return null;
   } catch (err) {
     console.warn('[Shopify] Error fetching collection by handle:', err);
-    const col = getFallbackCollections().find(c => c.handle === handle) || getFallbackCollections()[0];
-    return { collection: col, products: getFallbackProducts() };
+    return null;
   }
 }
 

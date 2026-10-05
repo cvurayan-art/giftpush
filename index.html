@@ -255,125 +255,29 @@
         <i class="w-5 h-5" data-lucide="chevron-right"></i>
       </button>
 
-      <!-- Categories Track -->
+      <!-- Categories Track (Populated Dynamically from Shopify Collections) -->
       <div id="category-stories-track" class="flex items-center gap-6 sm:gap-8 lg:gap-10 overflow-x-auto no-scrollbar py-2 text-center scroll-smooth select-none cursor-grab active:cursor-grabbing">
-        <!-- 1. Bags -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105">
-            <img alt="Bags" class="w-full h-full object-cover pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjucY1tliPsWhu7mbzkOZVf91StIi4vODr2GpHZnlNvBBzoAItGUuv_erwxFKe8aAZPLCdRAmKw1EktoBD3zVKbE0rO_PEMliyIuO8eZE4vSo733zCs9GTFj7OIquscuFIosEM4P78zUhY08oQMqHUwd8E1679KDCrwgTtK8RQEcHoCgAHCcr6J2qiWmTOM09JcXgygFKZRPw7qpj1H9Eip6J6bhZdnrg5Tl1zmZFVz5zMf7R5WE2K">
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Bags</span>
-        </a>
-        <!-- 2. Beauty -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105">
-            <img alt="Beauty" class="w-full h-full object-cover pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDr3D-d8rtTPrMiHHnGC61-ZJ9eWYFgtIp1uVY9D9CPjFaSNLsf6OmHJwpbdETb6thD7ocNe_eqSvuAYCnddhSpbAnuBYK0VsvWk7iDLaE3FTOm6tczQdDF4cNyv1YF1xaACx5h_HGxPyjIkthwjDlFJbMZNuZPf1n9LdqwPIimI5x635PxeOsYVIc8SnlI7Y4csaOOR67N-c-BVSHAaWDozJbS8P5gS2J1UkxjxfE7ScYd-qb9glua">
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Beauty</span>
-        </a>
-        <!-- 3. Electronics -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-[#b8f72c] transition-transform duration-200 group-hover:scale-105">
-            <div class="flex flex-col items-center justify-center text-neutral-900 leading-tight">
-              <span class="text-sm font-bold">25%</span>
-              <span class="text-[10px] font-black uppercase tracking-tight">OFF</span>
-            </div>
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Electronics</span>
-        </a>
-        <!-- 4. Fashion -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105">
-            <img alt="Fashion" class="w-full h-full object-cover pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaaBFMyO9AXbj1jCGkokb6kVIMzCHuc0h-3VDrB1uJE22rDUHlN3BW1qOeXVwu3wvRJ_PofvBjOM-jfMP1K-TjrPmTG4KxQjvjkX2oSk2GQT6Bc5TxsO-AtNQGdkYlEcwZ2fqMTEwUPwgPsQVuNw3qkzkFwcdEf-ZRk0xUP1W8-nxVmY34d2lch5Dkii03UYuA5wAdGC86eIB-x7Hzz9jFu5iqpmkDNdVqccJKO15g_q1CKS3sZ8Sk">
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Fashion</span>
-        </a>
-        <!-- 5. Headphones -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105">
-            <img alt="Headphone" class="w-full h-full object-cover pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXYFDT80YIsxFIttXNcH8X_MIaB63xGveFdT18qVUu4rNeDb5fkG_mJmlTszPblMb6lOH3JdFvcCSRJz8z0IZlWIfk90gxDJzxAREuQk7X-fzuUu0t4BuSIdmuGR3AeEq7uaZRPRz9leHJx2HGv7OPI6Rs4I466s-nfH45owy40Op7s9WoPuaZID8srIXN-2DYjR_GXr4vp7Q9K9ORadLwZRMm3U8Zjen3kUKBxL5UrlA7aN_BRPgN">
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Headphones</span>
-        </a>
-        <!-- 6. Laptops -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-[#fadb14] text-neutral-900 transition-transform duration-200 group-hover:scale-105">
-            <i class="w-8 h-8 stroke-[2]" data-lucide="laptop"></i>
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Laptops</span>
-        </a>
-        <!-- 7. Mobile Phones -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-[#ffc5cc] transition-transform duration-200 group-hover:scale-105">
-            <i class="w-7 h-7 text-rose-700 stroke-[2]" data-lucide="smartphone"></i>
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Phones</span>
-        </a>
-        <!-- 8. Daily Deals -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-[#ff3b4e] text-white transition-transform duration-200 group-hover:scale-105">
-            <div class="text-center font-black leading-none uppercase text-[10px] sm:text-xs tracking-tight">
-              DAILY<br>DEALS
-            </div>
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Deals</span>
-        </a>
-        <!-- 9. Toys & Games -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105">
-            <img alt="Toys" class="w-full h-full object-cover pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_efgaPRlM74lmQ2HMQ2VF5ypnG2jFdJ_4pS4Wm2gTd5cVJ4rHXcn0A7gUc6scNbOj6NtfDur9_oHzppZuaak_WzKtA1dicxPTqxDCv6_S32RxAku1mnJCLWnx6jtuLhhxC33zKFGk6uPiSilnYfvjekduTxrG0SNVBfyZVR6XlzEuJohmJ74BFLgLu0LihhXePWcS5RlFoShfYqic43aEEFvrkmXGerP9Bmc1IbKVs_wZFj9-IG75">
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Toys &amp; Kids</span>
-        </a>
-        <!-- 10. Wearables -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-[#2f54eb] text-white transition-transform duration-200 group-hover:scale-105">
-            <i class="w-7 h-7 stroke-[2]" data-lucide="glasses"></i>
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Wearables</span>
-        </a>
-        <!-- 11. Home & Living -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105">
-            <img alt="Home Decor" class="w-full h-full object-cover pointer-events-none" src="images/cinnamon_candle.jpg">
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Home &amp; Decor</span>
-        </a>
-        <!-- 12. Gift Hampers -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105">
-            <img alt="Gift Hampers" class="w-full h-full object-cover pointer-events-none" src="images/gift_hamper.jpg">
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Hampers</span>
-        </a>
-        <!-- 13. Keepsakes -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105">
-            <img alt="Keepsakes" class="w-full h-full object-cover pointer-events-none" src="images/personalized_box.jpg">
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Keepsakes</span>
-        </a>
-        <!-- 14. Gaming -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-[#722ed1] text-white transition-transform duration-200 group-hover:scale-105">
-            <i class="w-8 h-8 stroke-[2]" data-lucide="gamepad-2"></i>
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Gaming</span>
-        </a>
-        <!-- 15. Jewelry & Watches -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105">
-            <img alt="Watches" class="w-full h-full object-cover pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnpL9X2PdsU17yVff1Vwdiv3MVz4ClBXzs8n0X0vyAC5pvWtbY9cqQF0jUq5aEJp7Srq6AN5rUQ9xCLx7ZqyQU5ri-7VbiriD3Mlnxo60KCWTsuQcjTEQra1IXzAeNW5r2jwduxDJdIoJqXcZrO1KXFiyNybd8CNL0qQeItveHvE1DNifceswRv7LFpFz_PPpIDNvRAUVbiBzJ9pzQpWqBLP58tnqMYaML0PsphowFIMzDThVMyoQf">
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Jewelry</span>
-        </a>
-        <!-- 16. Footwear -->
-        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="#category">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105">
-            <img alt="Footwear" class="w-full h-full object-cover pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHV4-RM3vwWL16QXa83HDLqh8Arh5kn8rL6tIbeZR4jChdQaZgy0BHK8anl1SEzFcRSXpGqhaYEoRD-wB3R16Bf52kzrXyhyjWHjCQYu-mHviUSXe5df9Ksoalg2Y1j9O71osy0DIMJqDLzO59VYn44-sy76ZL2ao8F833_YiGV9EMXRLDn-X7MrcHGoLTncBWHzw6WRrO6zu8ushYLqHWfy3ddWV8LtSJ0rmtBGc3S97EH7kho6ga">
-          </div>
-          <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-neutral-950 transition">Footwear</span>
-        </a>
+        <!-- Skeletons shown until Shopify collections load -->
+        <div class="flex flex-col items-center flex-shrink-0 animate-pulse">
+          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full bg-neutral-200"></div>
+          <div class="h-3 w-16 bg-neutral-200 rounded mt-2.5"></div>
+        </div>
+        <div class="flex flex-col items-center flex-shrink-0 animate-pulse">
+          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full bg-neutral-200"></div>
+          <div class="h-3 w-16 bg-neutral-200 rounded mt-2.5"></div>
+        </div>
+        <div class="flex flex-col items-center flex-shrink-0 animate-pulse">
+          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full bg-neutral-200"></div>
+          <div class="h-3 w-16 bg-neutral-200 rounded mt-2.5"></div>
+        </div>
+        <div class="flex flex-col items-center flex-shrink-0 animate-pulse">
+          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full bg-neutral-200"></div>
+          <div class="h-3 w-16 bg-neutral-200 rounded mt-2.5"></div>
+        </div>
+        <div class="flex flex-col items-center flex-shrink-0 animate-pulse">
+          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full bg-neutral-200"></div>
+          <div class="h-3 w-16 bg-neutral-200 rounded mt-2.5"></div>
+        </div>
       </div>
     </div>
   </section>

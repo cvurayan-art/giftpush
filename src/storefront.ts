@@ -2,6 +2,7 @@
  * Present Panic - Production Storefront Core Controller
  * Connects Frontend UI with Shopify Backend (Storefront API, Cart, Collections, Search)
  * 100% Guest Checkout via Shopify Checkout. Zero Compare. Zero Wishlist.
+ * 100% Real Shopify Data & Collections. Real Loading Skeletons.
  */
 
 import {
@@ -11,12 +12,14 @@ import {
   getShopifyCollectionByHandle,
   searchShopifyProducts,
   getShopifyProductRecommendations,
+  formatShopifyMoney,
   ShopifyProduct,
   ShopifyVariant,
+  ShopifyCollection,
 } from '../lib/shopify';
 import { cart } from '../lib/cart';
 
-// Expose on window for runtime scripting
+// Expose on window for runtime debugging or global calls
 (window as any).ShopifyCommerce = {
   getProducts: getShopifyProducts,
   getProductByHandle: getShopifyProductByHandle,
@@ -24,6 +27,7 @@ import { cart } from '../lib/cart';
   getCollectionByHandle: getShopifyCollectionByHandle,
   searchProducts: searchShopifyProducts,
   getRecommendations: getShopifyProductRecommendations,
+  formatMoney: formatShopifyMoney,
   cart,
 };
 
@@ -47,7 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     (window as any).lucide.createIcons();
   }
 
-  // 1. Homepage Controller
+  // 1. Homepage Controller (Dynamic Categories Carousel + Products)
   if (document.getElementById('flash-deals-container') || document.getElementById('category-stories-track')) {
     initHomepageCommerce();
   }
@@ -57,18 +61,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     initShopPageCommerce();
   }
 
-  // 3. Collection Template Page Controller (collection.html)
+  // 3. Categories Hub Page Controller (categories.html)
+  if (document.getElementById('categories-grid')) {
+    initCategoriesPageCommerce();
+  }
+
+  // 4. Collection Template Page Controller (collection.html)
   if (document.getElementById('collection-products-grid')) {
     initCollectionPageCommerce();
   }
 
-  // 4. Cart Page Controller (cart.html)
+  // 5. Cart Page Controller (cart.html)
   if (document.getElementById('cart-page-items') || document.getElementById('cart-page-content')) {
     initCartPageCommerce();
   }
 
-  // 5. Product Details Page Controller (product.html)
-  if (document.getElementById('pdp-active-image') || document.getElementById('pdp-title')) {
+  // 6. Product Details Page Controller (product.html)
+  if (document.getElementById('pdp-skeleton') || document.getElementById('pdp-title')) {
     initProductPageCommerce();
   }
 });
@@ -77,16 +86,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 // SHARED PRODUCT CARD COMPONENT BUILDER
 // ====================================================
 function createProductCardHTML(p: ShopifyProduct): string {
-  const img = p.featuredImage?.url || '/images/personalized_box.jpg';
-  const price = `$${parseFloat(p.priceRange.minVariantPrice.amount).toFixed(2)}`;
+  const img = p.featuredImage?.url || (p.images?.nodes?.[0]?.url || '/images/personalized_box.jpg');
+  const currency = p.priceRange.minVariantPrice.currencyCode || 'GBP';
+  const price = formatShopifyMoney(p.priceRange.minVariantPrice.amount, currency);
+
   const hasCompare = Boolean(
     p.compareAtPriceRange?.minVariantPrice &&
     parseFloat(p.compareAtPriceRange.minVariantPrice.amount) > parseFloat(p.priceRange.minVariantPrice.amount)
   );
   const comparePrice = hasCompare
-    ? `$${parseFloat(p.compareAtPriceRange!.minVariantPrice.amount).toFixed(2)}`
+    ? formatShopifyMoney(p.compareAtPriceRange!.minVariantPrice.amount, currency)
     : '';
-  const defaultVariant = p.variants.nodes[0];
+
+  const defaultVariant = p.variants?.nodes?.[0] || null;
   const variantId = defaultVariant ? defaultVariant.id : '';
 
   return `
@@ -375,7 +387,7 @@ function setupSearchModal() {
         resultsContainer.innerHTML = `
           <div class="text-center py-8">
             <p class="text-xs font-bold text-neutral-800">No gifts found matching "${q}"</p>
-            <p class="text-[11px] text-neutral-400 mt-1">Try another search term like "Keepsake", "Candle", "Hamper", or "Sign".</p>
+            <p class="text-[11px] text-neutral-400 mt-1">Try another search term like "Crystal", "Lamp", "Gifts", or "Personalized".</p>
           </div>
         `;
         return;
@@ -384,7 +396,8 @@ function setupSearchModal() {
       resultsContainer.innerHTML = products
         .map((p) => {
           const img = p.featuredImage?.url || '/images/personalized_box.jpg';
-          const price = `$${parseFloat(p.priceRange.minVariantPrice.amount).toFixed(2)}`;
+          const cur = p.priceRange.minVariantPrice.currencyCode || 'GBP';
+          const price = formatShopifyMoney(p.priceRange.minVariantPrice.amount, cur);
           return `
             <a href="/product.html?handle=${p.handle}" class="flex items-center gap-3 p-3 rounded-2xl hover:bg-neutral-50 transition border border-transparent hover:border-gray-100 group">
               <img src="${img}" alt="${p.title}" class="w-12 h-12 object-contain rounded-xl bg-gray-50 flex-shrink-0">
@@ -409,6 +422,36 @@ function setupSearchModal() {
 // 4. HOMEPAGE COMMERCE INITIALIZATION
 // ====================================================
 async function initHomepageCommerce() {
+  // 1. DYNAMICALLY LOAD REAL SHOPIFY COLLECTIONS IN STORY BAR
+  const track = document.getElementById('category-stories-track');
+  if (track) {
+    try {
+      const collections = await getShopifyCollections(25);
+      if (collections.length > 0) {
+        track.innerHTML = collections
+          .map((col) => {
+            const imgUrl = col.image?.url;
+            const imgHtml = imgUrl
+              ? `<img alt="${col.title}" class="w-full h-full object-cover pointer-events-none" src="${imgUrl}">`
+              : `<div class="w-full h-full bg-rose-50 text-[#ff4d61] flex items-center justify-center font-bold text-xl">${col.title.charAt(0)}</div>`;
+
+            return `
+              <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="/collection.html?handle=${col.handle}">
+                <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105 border border-gray-100 shadow-xs">
+                  ${imgHtml}
+                </div>
+                <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-[#ff4d61] transition whitespace-nowrap">${col.title}</span>
+              </a>
+            `;
+          })
+          .join('');
+      }
+    } catch (err) {
+      console.warn('[Homepage] Notice loading categories from Shopify:', err);
+    }
+  }
+
+  // 2. DYNAMICALLY LOAD REAL PRODUCTS FOR FLASH DEALS
   try {
     const products = await getShopifyProducts({ first: 12 });
     const container = document.getElementById('flash-deals-container');
@@ -416,38 +459,9 @@ async function initHomepageCommerce() {
       container.innerHTML = products.map(createProductCardHTML).join('');
       bindAddToCartButtons(container);
     }
-    bindHomepageCategoryFilters();
   } catch (err) {
     console.warn('[Homepage] Notice loading products:', err);
   }
-}
-
-function bindHomepageCategoryFilters() {
-  const track = document.getElementById('category-stories-track');
-  if (!track) return;
-
-  const links = track.querySelectorAll('a');
-  links.forEach((a) => {
-    a.addEventListener('click', async (e) => {
-      e.preventDefault();
-      const catName = a.querySelector('span')?.textContent?.trim() || '';
-      showToast(`Loading collection: ${catName}...`);
-
-      const flashSection = document.getElementById('flash-deals');
-      if (flashSection) flashSection.scrollIntoView({ behavior: 'smooth' });
-
-      try {
-        const filtered = await getShopifyProducts({ query: catName, first: 12 });
-        const container = document.getElementById('flash-deals-container');
-        if (container) {
-          container.innerHTML = filtered.map(createProductCardHTML).join('');
-          bindAddToCartButtons(container);
-        }
-      } catch (err) {
-        console.error('Filter error:', err);
-      }
-    });
-  });
 }
 
 // ====================================================
@@ -459,16 +473,80 @@ async function initShopPageCommerce() {
   const emptyState = document.getElementById('shop-empty-state');
   const sortSelect = document.getElementById('shop-sort-select') as HTMLSelectElement | null;
   const searchInput = document.getElementById('shop-search-input') as HTMLInputElement | null;
-  const filterBtns = document.querySelectorAll('.shop-filter-btn');
+  const filterContainer = document.getElementById('shop-category-filters');
   const resetBtn = document.getElementById('btn-reset-filters');
 
   let allProducts: ShopifyProduct[] = [];
+  let currentProducts: ShopifyProduct[] = [];
   let currentFilter = 'all';
   let currentSearch = '';
   let currentSort = 'featured';
 
+  // 1. Fetch live collections from Shopify and build dynamic filter buttons
+  if (filterContainer) {
+    try {
+      const collections = await getShopifyCollections(25);
+      let filterHTML = `
+        <button class="shop-filter-btn active bg-neutral-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer whitespace-nowrap" data-filter="all">
+          All Products
+        </button>
+      `;
+
+      collections.forEach((col) => {
+        filterHTML += `
+          <button class="shop-filter-btn bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-semibold px-4 py-2 rounded-xl transition cursor-pointer whitespace-nowrap" data-filter="${col.handle}" data-title="${col.title}">
+            ${col.title}
+          </button>
+        `;
+      });
+
+      filterContainer.innerHTML = filterHTML;
+
+      // Attach filter clicks
+      filterContainer.querySelectorAll('.shop-filter-btn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          filterContainer.querySelectorAll('.shop-filter-btn').forEach(b => {
+            b.classList.remove('active', 'bg-neutral-900', 'text-white');
+            b.classList.add('bg-neutral-100', 'text-neutral-700');
+          });
+          btn.classList.add('active', 'bg-neutral-900', 'text-white');
+          btn.classList.remove('bg-neutral-100', 'text-neutral-700');
+
+          currentFilter = btn.getAttribute('data-filter') || 'all';
+
+          if (currentFilter === 'all') {
+            currentProducts = [...allProducts];
+            applyFilterAndSort();
+          } else {
+            // Load collection products dynamically from Shopify
+            if (grid) {
+              grid.innerHTML = `
+                <div class="animate-pulse border border-gray-100 rounded-2xl p-4 bg-white flex flex-col justify-between aspect-3/4">
+                  <div class="bg-gray-100 rounded-xl h-44 w-full mb-4"></div>
+                  <div class="h-4 bg-gray-100 rounded w-3/4 mb-2"></div>
+                </div>
+              `;
+            }
+            try {
+              const colData = await getShopifyCollectionByHandle(currentFilter, 30);
+              currentProducts = colData?.products || [];
+            } catch (e) {
+              currentProducts = [];
+            }
+            applyFilterAndSort();
+          }
+        });
+      });
+
+    } catch (err) {
+      console.warn('[Shop] Error loading collections from Shopify:', err);
+    }
+  }
+
+  // 2. Fetch all products initially
   try {
     allProducts = await getShopifyProducts({ first: 50 });
+    currentProducts = [...allProducts];
     applyFilterAndSort();
   } catch (err) {
     console.error('Error fetching catalog:', err);
@@ -477,31 +555,20 @@ async function initShopPageCommerce() {
   function applyFilterAndSort() {
     if (!grid) return;
 
-    let filtered = [...allProducts];
+    let filtered = [...currentProducts];
 
-    // 1. Filter by category
-    if (currentFilter !== 'all') {
-      const q = currentFilter.toLowerCase();
-      filtered = filtered.filter((p) => {
-        const titleMatch = p.title.toLowerCase().includes(q);
-        const typeMatch = (p.productType || '').toLowerCase().includes(q);
-        const tagMatch = p.tags.some(t => t.toLowerCase().includes(q));
-        return titleMatch || typeMatch || tagMatch;
-      });
-    }
-
-    // 2. Filter by search input
+    // Filter by keyword search
     if (currentSearch.trim()) {
       const q = currentSearch.toLowerCase().trim();
       filtered = filtered.filter((p) => {
         const titleMatch = p.title.toLowerCase().includes(q);
         const descMatch = (p.description || '').toLowerCase().includes(q);
-        const tagMatch = p.tags.some(t => t.toLowerCase().includes(q));
+        const tagMatch = p.tags?.some(t => t.toLowerCase().includes(q));
         return titleMatch || descMatch || tagMatch;
       });
     }
 
-    // 3. Sort
+    // Sort
     if (currentSort === 'price-asc') {
       filtered.sort((a, b) => parseFloat(a.priceRange.minVariantPrice.amount) - parseFloat(b.priceRange.minVariantPrice.amount));
     } else if (currentSort === 'price-desc') {
@@ -510,10 +577,8 @@ async function initShopPageCommerce() {
       filtered.sort((a, b) => a.title.localeCompare(b.title));
     }
 
-    // 4. Update count
     if (countEl) countEl.textContent = String(filtered.length);
 
-    // 5. Render
     if (filtered.length === 0) {
       grid.innerHTML = '';
       emptyState?.classList.remove('hidden');
@@ -523,20 +588,6 @@ async function initShopPageCommerce() {
       bindAddToCartButtons(grid);
     }
   }
-
-  filterBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => {
-        b.classList.remove('active', 'bg-neutral-900', 'text-white');
-        b.classList.add('bg-neutral-100', 'text-neutral-700');
-      });
-      btn.classList.add('active', 'bg-neutral-900', 'text-white');
-      btn.classList.remove('bg-neutral-100', 'text-neutral-700');
-
-      currentFilter = btn.getAttribute('data-filter') || 'all';
-      applyFilterAndSort();
-    });
-  });
 
   if (sortSelect) {
     sortSelect.addEventListener('change', (e) => {
@@ -561,46 +612,100 @@ async function initShopPageCommerce() {
       currentFilter = 'all';
       currentSearch = '';
       if (searchInput) searchInput.value = '';
-      filterBtns.forEach((b, idx) => {
-        if (idx === 0) {
-          b.classList.add('active', 'bg-neutral-900', 'text-white');
-          b.classList.remove('bg-neutral-100', 'text-neutral-700');
-        } else {
-          b.classList.remove('active', 'bg-neutral-900', 'text-white');
-          b.classList.add('bg-neutral-100', 'text-neutral-700');
-        }
-      });
+      if (filterContainer) {
+        filterContainer.querySelectorAll('.shop-filter-btn').forEach((b, idx) => {
+          if (idx === 0) {
+            b.classList.add('active', 'bg-neutral-900', 'text-white');
+            b.classList.remove('bg-neutral-100', 'text-neutral-700');
+          } else {
+            b.classList.remove('active', 'bg-neutral-900', 'text-white');
+            b.classList.add('bg-neutral-100', 'text-neutral-700');
+          }
+        });
+      }
+      currentProducts = [...allProducts];
       applyFilterAndSort();
     });
   }
 }
 
 // ====================================================
-// 6. COLLECTION TEMPLATE CONTROLLER (collection.html)
+// 6. CATEGORIES HUB PAGE CONTROLLER (categories.html)
+// ====================================================
+async function initCategoriesPageCommerce() {
+  const grid = document.getElementById('categories-grid');
+  if (!grid) return;
+
+  try {
+    const collections = await getShopifyCollections(25);
+    if (collections.length > 0) {
+      grid.innerHTML = collections
+        .map((col) => {
+          const imgUrl = col.image?.url;
+          const imgHtml = imgUrl
+            ? `<img src="${imgUrl}" alt="${col.title}" class="w-full h-full object-cover">`
+            : `<div class="w-full h-full bg-rose-50 text-[#ff4d61] flex items-center justify-center font-black text-2xl">${col.title.charAt(0)}</div>`;
+
+          return `
+            <a href="/collection.html?handle=${col.handle}" class="group bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 flex flex-col justify-between hover:shadow-xl transition-all duration-300">
+              <div>
+                <div class="w-16 h-16 rounded-2xl overflow-hidden mb-6 group-hover:scale-105 transition-transform border border-gray-100 shadow-xs">
+                  ${imgHtml}
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold text-neutral-900 group-hover:text-[#ff4d61] transition">
+                  ${col.title}
+                </h2>
+                <p class="text-xs sm:text-sm text-neutral-500 mt-2 leading-relaxed">
+                  ${col.description || 'Explore curated items available in this Shopify collection.'}
+                </p>
+              </div>
+              <div class="mt-6 flex items-center gap-2 text-xs font-bold text-[#ff4d61] group-hover:translate-x-1 transition-transform">
+                <span>Explore Collection</span>
+                <span>&rarr;</span>
+              </div>
+            </a>
+          `;
+        })
+        .join('');
+    }
+  } catch (err) {
+    console.warn('[Categories] Notice loading collections from Shopify:', err);
+  }
+}
+
+// ====================================================
+// 7. COLLECTION TEMPLATE CONTROLLER (collection.html)
 // ====================================================
 async function initCollectionPageCommerce() {
   const urlParams = new URLSearchParams(window.location.search);
-  const handle = urlParams.get('handle') || 'personalized-keepsakes';
+  const handle = urlParams.get('handle') || 'handmade-gifts';
 
   const titleEl = document.getElementById('collection-title');
   const breadcrumbEl = document.getElementById('collection-breadcrumb-title');
   const descEl = document.getElementById('collection-description');
   const countEl = document.getElementById('collection-product-count');
   const grid = document.getElementById('collection-products-grid');
+  const bannerImg = document.getElementById('collection-banner-img') as HTMLImageElement | null;
   const emptyState = document.getElementById('collection-empty-state');
   const sortSelect = document.getElementById('collection-sort-select') as HTMLSelectElement | null;
   const searchInput = document.getElementById('collection-search-input') as HTMLInputElement | null;
 
   try {
-    const collection = await getShopifyCollectionByHandle(handle, 30);
-    if (!collection) return;
+    const colData = await getShopifyCollectionByHandle(handle, 30);
+    if (!colData) return;
+
+    const { collection, products } = colData;
 
     document.title = `${collection.title} | Present Panic`;
     if (titleEl) titleEl.textContent = collection.title;
     if (breadcrumbEl) breadcrumbEl.textContent = collection.title;
-    if (descEl && collection.description) descEl.textContent = collection.description;
+    if (descEl) descEl.textContent = collection.description || `Browse curated gifts in our ${collection.title} collection.`;
 
-    let products = collection.products.nodes;
+    if (bannerImg && collection.image?.url) {
+      bannerImg.src = collection.image.url;
+      bannerImg.alt = collection.title;
+    }
+
     if (countEl) countEl.textContent = String(products.length);
 
     function renderCollectionProducts(items: ShopifyProduct[]) {
@@ -617,7 +722,6 @@ async function initCollectionPageCommerce() {
 
     renderCollectionProducts(products);
 
-    // Sort listener
     if (sortSelect) {
       sortSelect.addEventListener('change', () => {
         const val = sortSelect.value;
@@ -633,7 +737,6 @@ async function initCollectionPageCommerce() {
       });
     }
 
-    // Search input listener
     if (searchInput) {
       searchInput.addEventListener('input', () => {
         const q = searchInput.value.toLowerCase().trim();
@@ -648,7 +751,7 @@ async function initCollectionPageCommerce() {
 }
 
 // ====================================================
-// 7. CART PAGE CONTROLLER (cart.html)
+// 8. CART PAGE CONTROLLER (cart.html)
 // ====================================================
 function initCartPageCommerce() {
   const itemsContainer = document.getElementById('cart-page-items');
@@ -673,9 +776,10 @@ function initCartPageCommerce() {
     if (contentView) contentView.classList.remove('hidden');
     if (emptyView) emptyView.classList.add('hidden');
 
+    const currency = currentCart.cost.subtotalAmount.currencyCode || 'GBP';
     const subtotalNum = parseFloat(currentCart.cost.subtotalAmount.amount);
-    const subtotal = `$${subtotalNum.toFixed(2)}`;
-    const total = `$${parseFloat(currentCart.cost.totalAmount.amount).toFixed(2)}`;
+    const subtotal = formatShopifyMoney(subtotalNum, currency);
+    const total = formatShopifyMoney(parseFloat(currentCart.cost.totalAmount.amount), currency);
 
     if (subtotalEl) subtotalEl.textContent = subtotal;
     if (totalEl) totalEl.textContent = total;
@@ -689,7 +793,7 @@ function initCartPageCommerce() {
       if (diff === 0) {
         shippingText.innerHTML = `🎉 <strong>Congratulations! Free Shipping Unlocked!</strong>`;
       } else {
-        shippingText.innerHTML = `Add <strong>$${diff.toFixed(2)}</strong> more to unlock Free Tracked Delivery`;
+        shippingText.innerHTML = `Add <strong>${formatShopifyMoney(diff, currency)}</strong> more to unlock Free Tracked Delivery`;
       }
     }
 
@@ -700,8 +804,9 @@ function initCartPageCommerce() {
         const itemImg = line.merchandise.image?.url || line.merchandise.product.featuredImage?.url || '/images/personalized_box.jpg';
         const itemTitle = line.merchandise.product.title;
         const variantTitle = line.merchandise.title !== 'Default Title' ? line.merchandise.title : '';
-        const itemPrice = `$${parseFloat(line.merchandise.price.amount).toFixed(2)}`;
-        const lineTotal = `$${parseFloat(line.cost.totalAmount.amount).toFixed(2)}`;
+        const itemCur = line.merchandise.price.currencyCode || currency;
+        const itemPrice = formatShopifyMoney(parseFloat(line.merchandise.price.amount), itemCur);
+        const lineTotal = formatShopifyMoney(parseFloat(line.cost.totalAmount.amount), line.cost.totalAmount.currencyCode || itemCur);
         const handle = line.merchandise.product.handle;
 
         const attributesHtml = line.attributes && line.attributes.length > 0
@@ -760,7 +865,6 @@ function initCartPageCommerce() {
       })
       .join('');
 
-    // Attach listeners for line item controls
     itemsContainer.querySelectorAll('.page-cart-qty-minus').forEach((btn) => {
       btn.addEventListener('click', () => {
         const lineId = btn.getAttribute('data-line-id');
@@ -788,22 +892,18 @@ function initCartPageCommerce() {
     });
   }
 
-  // Initial render
   renderPageCart();
 
-  // Listen to custom cart updates
   window.addEventListener('shopify:cart:updated', () => {
     renderPageCart();
   });
 
-  // Checkout trigger
   if (checkoutBtn) {
     checkoutBtn.addEventListener('click', () => {
       cart.proceedToCheckout();
     });
   }
 
-  // Apply promo code on cart page
   if (applyPromoBtn && promoInput) {
     applyPromoBtn.addEventListener('click', async () => {
       const code = promoInput.value.trim();
@@ -823,15 +923,38 @@ function initCartPageCommerce() {
 }
 
 // ====================================================
-// 8. PRODUCT DETAILS PAGE CONTROLLER (product.html)
+// 9. PRODUCT DETAILS PAGE CONTROLLER (product.html)
 // ====================================================
 async function initProductPageCommerce() {
   const urlParams = new URLSearchParams(window.location.search);
-  const handle = urlParams.get('handle') || 'engraved-family-keepsake-box';
+  let handle = urlParams.get('handle');
+
+  const skeleton = document.getElementById('pdp-skeleton');
+  const mainStage = document.getElementById('pdp-main-stage');
+  const notFound = document.getElementById('pdp-not-found');
 
   try {
+    // If no handle provided in URL (e.g. visiting /product.html directly),
+    // fetch the first available product from the merchant's live Shopify catalog!
+    if (!handle) {
+      const initialProducts = await getShopifyProducts({ first: 1 });
+      if (initialProducts && initialProducts.length > 0) {
+        handle = initialProducts[0].handle;
+      }
+    }
+
+    if (!handle) {
+      if (skeleton) skeleton.classList.add('hidden');
+      if (notFound) notFound.classList.remove('hidden');
+      return;
+    }
+
     const product = await getShopifyProductByHandle(handle);
-    if (!product) return;
+    if (!product) {
+      if (skeleton) skeleton.classList.add('hidden');
+      if (notFound) notFound.classList.remove('hidden');
+      return;
+    }
 
     // 1. Meta & Title
     document.title = `${product.title} | Present Panic`;
@@ -845,12 +968,13 @@ async function initProductPageCommerce() {
     if (breadcrumbCat) breadcrumbCat.textContent = product.productType || 'Gifts';
 
     const vendorEl = document.getElementById('pdp-vendor');
-    if (vendorEl && product.vendor) vendorEl.textContent = product.vendor;
+    if (vendorEl) vendorEl.textContent = product.vendor || 'Present Panic Curated';
 
-    // 2. Pricing & Sale Indications
+    // 2. Pricing & Currency Formatting
+    const currency = product.priceRange.minVariantPrice.currencyCode || 'GBP';
     const minPrice = parseFloat(product.priceRange.minVariantPrice.amount);
     const displayPriceEl = document.getElementById('pdp-display-price');
-    if (displayPriceEl) displayPriceEl.textContent = `$${minPrice.toFixed(2)}`;
+    if (displayPriceEl) displayPriceEl.textContent = formatShopifyMoney(minPrice, currency);
 
     const comparePriceEl = document.getElementById('pdp-compare-price');
     const saveBadge = document.getElementById('pdp-save-badge');
@@ -860,7 +984,7 @@ async function initProductPageCommerce() {
       const cmp = parseFloat(product.compareAtPriceRange.minVariantPrice.amount);
       if (cmp > minPrice) {
         if (comparePriceEl) {
-          comparePriceEl.textContent = `$${cmp.toFixed(2)}`;
+          comparePriceEl.textContent = formatShopifyMoney(cmp, currency);
           comparePriceEl.classList.remove('hidden');
         }
         if (saleBadge) saleBadge.classList.remove('hidden');
@@ -874,23 +998,23 @@ async function initProductPageCommerce() {
 
     // 3. Descriptions & Specs
     const leadDesc = document.getElementById('pdp-lead-description');
-    if (leadDesc && product.description) leadDesc.textContent = product.description;
+    if (leadDesc) leadDesc.textContent = product.description || 'Handcrafted and tailored with exceptional care.';
 
     const fullDesc = document.getElementById('pdp-full-description');
-    if (fullDesc && product.description) {
-      fullDesc.innerHTML = `<p>${product.description}</p>`;
+    if (fullDesc) {
+      fullDesc.innerHTML = `<p>${product.description || 'Discover a truly thoughtful gift created to be treasured for years to come.'}</p>`;
     }
 
     const specVendor = document.getElementById('pdp-spec-vendor');
-    if (specVendor && product.vendor) specVendor.textContent = product.vendor;
+    if (specVendor) specVendor.textContent = product.vendor || 'Present Panic';
 
     const specType = document.getElementById('pdp-spec-type');
-    if (specType && product.productType) specType.textContent = product.productType;
+    if (specType) specType.textContent = product.productType || 'Curated Gifts';
 
     // 4. Main Gallery & Thumbnails
     const activeImg = document.getElementById('pdp-active-image') as HTMLImageElement | null;
-    const featuredUrl = product.featuredImage?.url || '/images/personalized_box.jpg';
-    if (activeImg) {
+    const featuredUrl = product.featuredImage?.url || (product.images.nodes[0] ? product.images.nodes[0].url : '');
+    if (activeImg && featuredUrl) {
       activeImg.src = featuredUrl;
       activeImg.alt = product.title;
     }
@@ -925,12 +1049,11 @@ async function initProductPageCommerce() {
     const selectedOptionsState: Record<string, string> = {};
 
     if (selectedVariant) {
-      selectedVariant.selectedOptions.forEach((opt) => {
+      selectedVariant.selectedOptions?.forEach((opt) => {
         selectedOptionsState[opt.name] = opt.value;
       });
     }
 
-    // Render variant options if product has real variant choices
     if (variantsContainer && product.options && product.options.length > 0) {
       const meaningfulOptions = product.options.filter(
         opt => opt.name !== 'Title' || (opt.values.length > 1 && opt.values[0] !== 'Default Title')
@@ -968,7 +1091,6 @@ async function initProductPageCommerce() {
           })
           .join('');
 
-        // Attach option click listeners
         variantsContainer.querySelectorAll('.pdp-option-pill').forEach((pill) => {
           pill.addEventListener('click', () => {
             const optName = pill.getAttribute('data-option');
@@ -977,11 +1099,9 @@ async function initProductPageCommerce() {
 
             selectedOptionsState[optName] = optVal;
 
-            // Update label
             const lbl = document.getElementById(`opt-label-${optName}`);
             if (lbl) lbl.textContent = optVal;
 
-            // Update button styles in this option group
             const group = variantsContainer.querySelector(`[data-option-name="${optName}"]`);
             group?.querySelectorAll('.pdp-option-pill').forEach((btn) => {
               if (btn.getAttribute('data-value') === optVal) {
@@ -993,9 +1113,8 @@ async function initProductPageCommerce() {
               }
             });
 
-            // Find matching variant
             const match = product.variants.nodes.find((v) => {
-              return v.selectedOptions.every(
+              return v.selectedOptions?.every(
                 (so) => selectedOptionsState[so.name] === so.value
               );
             });
@@ -1006,12 +1125,15 @@ async function initProductPageCommerce() {
             }
           });
         });
+      } else {
+        variantsContainer.innerHTML = '';
       }
     }
 
     function updateVariantUI(v: ShopifyVariant) {
       const vPrice = parseFloat(v.price.amount);
-      if (displayPriceEl) displayPriceEl.textContent = `$${vPrice.toFixed(2)}`;
+      const cur = v.price.currencyCode || currency;
+      if (displayPriceEl) displayPriceEl.textContent = formatShopifyMoney(vPrice, cur);
 
       if (v.image?.url && activeImg) {
         activeImg.src = v.image.url;
@@ -1063,11 +1185,11 @@ async function initProductPageCommerce() {
     if (selectedVariant) updateVariantUI(selectedVariant);
 
     // 6. REAL PERSONALIZATION FLOW (Requirements 9, 10, 11, 12)
-    // Only show personalization form if this product is tagged or configured for it
     const isPersonalized =
       product.title.toLowerCase().includes('personalized') ||
+      product.title.toLowerCase().includes('personlized') ||
       product.title.toLowerCase().includes('custom') ||
-      product.tags.some(t => /personaliz|custom|engrav/i.test(t));
+      (product.tags && product.tags.some(t => /personaliz|custom|engrav/i.test(t)));
 
     const personalSection = document.getElementById('pdp-personalization-section');
     const inputName = document.getElementById('input-custom-name') as HTMLInputElement | null;
@@ -1081,7 +1203,12 @@ async function initProductPageCommerce() {
       }
     }
 
-    // 7. Quantity Controls
+    // 7. Hide Skeleton & Reveal Main Stage
+    if (skeleton) skeleton.classList.add('hidden');
+    if (mainStage) mainStage.classList.remove('hidden');
+    if (notFound) notFound.classList.add('hidden');
+
+    // 8. Quantity Controls
     let quantity = 1;
     const minusBtn = document.getElementById('btn-qty-minus');
     const plusBtn = document.getElementById('btn-qty-plus');
@@ -1103,7 +1230,7 @@ async function initProductPageCommerce() {
       });
     }
 
-    // 8. Add to Cart with Genuine Custom Attributes
+    // 9. Add to Cart with Genuine Custom Attributes
     const addBtn = document.getElementById('btn-add-pdp-cart');
     if (addBtn) {
       addBtn.addEventListener('click', async () => {
@@ -1111,7 +1238,6 @@ async function initProductPageCommerce() {
 
         const customAttributes: { key: string; value: string }[] = [];
 
-        // Validate personalization if section is active
         if (isPersonalized && inputName) {
           const val = inputName.value.trim();
           if (!val) {
@@ -1134,7 +1260,6 @@ async function initProductPageCommerce() {
           await cart.addItem(selectedVariant.id, quantity, customAttributes);
           showToast(`Added "${product.title}" to bag!`);
 
-          // Open cart drawer
           const cartTrigger = document.getElementById('btn-header-cart');
           if (cartTrigger) cartTrigger.click();
         } catch (err) {
@@ -1145,7 +1270,7 @@ async function initProductPageCommerce() {
       });
     }
 
-    // 9. Buy Now Direct Checkout
+    // 10. Buy Now Direct Checkout
     const buyNowBtn = document.getElementById('btn-buy-now');
     if (buyNowBtn) {
       buyNowBtn.addEventListener('click', async () => {
@@ -1177,7 +1302,7 @@ async function initProductPageCommerce() {
       });
     }
 
-    // 10. Load Real Recommendations
+    // 11. Load Real Recommendations
     const recsGrid = document.getElementById('pdp-recommendations-grid');
     if (recsGrid) {
       try {
@@ -1193,6 +1318,8 @@ async function initProductPageCommerce() {
 
   } catch (err) {
     console.error('Error initializing PDP:', err);
+    if (skeleton) skeleton.classList.add('hidden');
+    if (notFound) notFound.classList.remove('hidden');
   }
 }
 

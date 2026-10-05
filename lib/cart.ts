@@ -11,6 +11,7 @@ import {
   shopifyCartLinesUpdate,
   shopifyCartLinesRemove,
   shopifyCartDiscountCodesUpdate,
+  formatShopifyMoney,
 } from './shopify';
 
 const SHOPIFY_CART_ID_KEY = 'present_panic_shopify_cart_id';
@@ -225,10 +226,11 @@ class CartManager {
   public renderCartUI() {
     if (!this.cart) return;
 
+    const currency = this.cart.cost.subtotalAmount.currencyCode || 'GBP';
     const qty = this.cart.totalQuantity;
     const subtotalNum = parseFloat(this.cart.cost.subtotalAmount.amount);
-    const subtotal = `$${subtotalNum.toFixed(2)}`;
-    const total = `$${parseFloat(this.cart.cost.totalAmount.amount).toFixed(2)}`;
+    const subtotal = formatShopifyMoney(subtotalNum, currency);
+    const total = formatShopifyMoney(parseFloat(this.cart.cost.totalAmount.amount), currency);
 
     // 1. Update Badges
     const badgeIds = ['cart-badge', 'cart-count', 'cart-drawer-count', 'cart-drawer-count-header'];
@@ -248,6 +250,9 @@ class CartManager {
 
     const totalEl = document.getElementById('cart-total-price');
     if (totalEl) totalEl.textContent = total;
+
+    const checkoutBtnTotal = document.getElementById('cart-checkout-btn-total');
+    if (checkoutBtnTotal) checkoutBtnTotal.textContent = total;
 
     // Free shipping tracker ($50 threshold)
     const shippingBar = document.getElementById('cart-shipping-bar');
@@ -326,8 +331,9 @@ class CartManager {
         const itemImg = line.merchandise.image?.url || line.merchandise.product.featuredImage?.url || '/images/personalized_box.jpg';
         const itemTitle = line.merchandise.product.title;
         const variantTitle = line.merchandise.title !== 'Default Title' ? line.merchandise.title : '';
-        const itemPrice = `$${parseFloat(line.merchandise.price.amount).toFixed(2)}`;
-        const lineTotal = `$${parseFloat(line.cost.totalAmount.amount).toFixed(2)}`;
+        const itemCurrency = line.merchandise.price.currencyCode || currency;
+        const itemPrice = formatShopifyMoney(parseFloat(line.merchandise.price.amount), itemCurrency);
+        const lineTotal = formatShopifyMoney(parseFloat(line.cost.totalAmount.amount), line.cost.totalAmount.currencyCode || itemCurrency);
         const handle = line.merchandise.product.handle;
 
         const attributesHtml = line.attributes && line.attributes.length > 0
