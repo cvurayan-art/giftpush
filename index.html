@@ -256,7 +256,7 @@
       </button>
 
       <!-- Categories Track (Populated Dynamically from Shopify Collections) -->
-      <div id="category-stories-track" class="flex items-center gap-6 sm:gap-8 lg:gap-10 overflow-x-auto no-scrollbar py-2 text-center scroll-smooth select-none cursor-grab active:cursor-grabbing">
+      <div id="category-stories-track" class="w-full flex items-center justify-evenly gap-6 sm:gap-8 lg:gap-10 overflow-x-auto no-scrollbar py-2 text-center scroll-smooth select-none cursor-grab active:cursor-grabbing">
         <!-- Skeletons shown until Shopify collections load -->
         <div class="flex flex-col items-center flex-shrink-0 animate-pulse">
           <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full bg-neutral-200"></div>
@@ -288,96 +288,132 @@
     <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-stretch">
         
-        <!-- Left Large Hero Banner -->
-        <div class="lg:col-span-7 xl:col-span-7 bg-[#fceee8] rounded-3xl overflow-hidden relative p-8 sm:p-10 lg:p-12 xl:p-14 flex flex-col md:flex-row items-center justify-between min-h-[480px] lg:min-h-[520px] shadow-sm">
-          <!-- Text Content -->
-          <div class="w-full md:w-1/2 z-10 space-y-5">
-            <span class="inline-block bg-[#ff4d61]/10 text-[#ff4d61] font-extrabold text-[11px] tracking-wider uppercase px-3 py-1 rounded-full">
-              Trending Gift Collection
-            </span>
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-neutral-900 leading-[1.08] tracking-tight">
-              Style<br>and<br>Speed
-            </h1>
-            <p class="text-neutral-600 text-sm sm:text-base lg:text-lg font-normal pt-1 pb-3 leading-relaxed">
-              Do it all with style, performance, and speed. Unbox handpicked gifts designed to amaze.
-            </p>
-            <div class="flex items-center gap-3 sm:gap-4 flex-wrap">
-              <a class="inline-block bg-neutral-900 text-white font-semibold text-xs sm:text-sm uppercase tracking-wider px-8 py-3.5 rounded-full hover:bg-neutral-800 transition duration-200 shadow-sm" href="#flash-deals">
-                Shop Now
-              </a>
-              <button id="hero-quiz-btn" class="inline-flex items-center gap-2 bg-[#ff4d61] text-white font-semibold text-xs sm:text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-[#e63946] transition duration-200 shadow-sm cursor-pointer">
-                <i class="w-4 h-4" data-lucide="sparkles"></i>
-                <span>Take Gift Quiz</span>
-              </button>
+        <!-- Left Large Hero Banner (Slider) -->
+        <div class="lg:col-span-7 xl:col-span-7 rounded-3xl overflow-hidden relative shadow-sm w-full group bg-[#fcf8f3]">
+          <!-- Slider Track -->
+          <div id="hero-slider" class="w-full flex transition-transform duration-700 ease-in-out">
+            <div class="w-full flex-shrink-0 relative">
+              <img src="/images/hero-1.jpg" class="w-full h-auto block" alt="Slide 1">
             </div>
-            <!-- Sponsor Tag -->
-            <div class="pt-4 flex items-center gap-2">
-              <span class="text-xs font-bold tracking-widest text-neutral-800 flex items-center gap-1.5">
-                <i class="w-4 h-4 text-green-600 fill-current" data-lucide="sparkle"></i>
-                NVIDIA. Certified High-Performance Gear
-              </span>
+            <div class="w-full flex-shrink-0 relative">
+              <img src="/images/hero-2.jpg" class="w-full h-auto block" alt="Slide 2">
             </div>
           </div>
-          <!-- Hero Image -->
-          <div class="w-full md:w-1/2 h-full flex items-center justify-center md:justify-end mt-8 md:mt-0">
-            <img alt="Two young stylish models laughing" class="max-h-[360px] lg:max-h-[440px] xl:max-h-[480px] w-auto object-cover rounded-2xl shadow-md filter contrast-105 hover:scale-102 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSSYX0CliS6Ucr0wtGfXIEhOrS02ZxYTwCWb1rVHirx1lA1R65k_kp84Hm8-0ycPvPqxcPoquC2c0o8tE9_VCVnVveUQgB-DrfZJGtu0dgcQC2uXOkO8zNwSW_0FBRKTHy0xgHUrMwtczteddzvn4abUCQ7z7b80DXoGvYs-jMRmg284gBOq1udghRbPFM6TjOyG-a5vlYxJbpBW5MziyAFWPQ0c9zzg7tXj3mV2u4AyociVMTLvUU">
+          
+          <!-- Controls -->
+          <button id="hero-prev" aria-label="Previous Slide" class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center text-gray-800 transition shadow-sm z-10 opacity-0 group-hover:opacity-100 cursor-pointer">
+            <i class="w-5 h-5" data-lucide="chevron-left"></i>
+          </button>
+          <button id="hero-next" aria-label="Next Slide" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center text-gray-800 transition shadow-sm z-10 opacity-0 group-hover:opacity-100 cursor-pointer">
+            <i class="w-5 h-5" data-lucide="chevron-right"></i>
+          </button>
+
+          <!-- Dots -->
+          <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+            <button aria-label="Slide 1" class="hero-dot w-2 h-2 rounded-full bg-neutral-900 transition-all cursor-pointer"></button>
+            <button aria-label="Slide 2" class="hero-dot w-2 h-2 rounded-full bg-neutral-900/30 transition-all cursor-pointer"></button>
           </div>
+          
+          <!-- Slider Script -->
+          <script>
+            document.addEventListener('DOMContentLoaded', () => {
+              const track = document.getElementById('hero-slider');
+              const prev = document.getElementById('hero-prev');
+              const next = document.getElementById('hero-next');
+              const dots = document.querySelectorAll('.hero-dot');
+              let currentSlide = 0;
+              let timer;
+
+              function goToSlide(index) {
+                currentSlide = index;
+                if (track) track.style.transform = `translateX(-${currentSlide * 100}%)`;
+                dots.forEach((d, i) => {
+                  if (i === currentSlide) {
+                    d.classList.add('bg-neutral-900');
+                    d.classList.remove('bg-neutral-900/30');
+                  } else {
+                    d.classList.remove('bg-neutral-900');
+                    d.classList.add('bg-neutral-900/30');
+                  }
+                });
+              }
+
+              function nextSlide() {
+                goToSlide((currentSlide + 1) % 2);
+              }
+
+              function prevSlide() {
+                goToSlide((currentSlide - 1 + 2) % 2);
+              }
+
+              function resetTimer() {
+                clearInterval(timer);
+                timer = setInterval(nextSlide, 5000);
+              }
+
+              if (next) next.addEventListener('click', () => { nextSlide(); resetTimer(); });
+              if (prev) prev.addEventListener('click', () => { prevSlide(); resetTimer(); });
+              dots.forEach((d, i) => d.addEventListener('click', () => { goToSlide(i); resetTimer(); }));
+              
+              resetTimer();
+            });
+          </script>
         </div>
 
         <!-- Right 2x2 Bento Grid (Wide-Screen Optimized) -->
-        <div class="lg:col-span-5 xl:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5">
+        <div class="lg:col-span-5 xl:col-span-5 grid grid-cols-2 gap-3 sm:gap-4 lg:gap-5">
           <!-- 1. Top-Left: High Classic Watch -->
-          <div class="bg-[#ebf9f3] rounded-3xl p-6 lg:p-7 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[230px] lg:min-h-[250px]">
+          <div class="bg-[#ebf9f3] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px]">
             <div>
-              <span class="inline-block bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Hot</span>
-              <h3 class="text-lg lg:text-xl font-bold text-neutral-900 mt-2 leading-tight">High Classic<br>Watch!</h3>
-              <p class="text-xs text-neutral-500 mt-1">Weekly Offers</p>
-              <p class="text-xl font-extrabold text-neutral-900 mt-1">$59</p>
+              <span class="inline-block bg-emerald-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Hot</span>
+              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">High Classic<br>Watch!</h3>
+              <p class="text-[10px] sm:text-xs text-neutral-500 mt-1">Weekly Offers</p>
+              <p class="text-lg sm:text-xl font-extrabold text-neutral-900 mt-1">$59</p>
             </div>
-            <div class="mt-4 flex justify-end">
-              <img alt="Watch" class="w-28 h-28 sm:w-32 sm:h-32 lg:w-36 lg:h-36 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnpL9X2PdsU17yVff1Vwdiv3MVz4ClBXzs8n0X0vyAC5pvWtbY9cqQF0jUq5aEJp7Srq6AN5rUQ9xCLx7ZqyQU5ri-7VbiriD3Mlnxo60KCWTsuQcjTEQra1IXzAeNW5r2jwduxDJdIoJqXcZrO1KXFiyNybd8CNL0qQeItveHvE1DNifceswRv7LFpFz_PPpIDNvRAUVbiBzJ9pzQpWqBLP58tnqMYaML0PsphowFIMzDThVMyoQf">
+            <div class="absolute bottom-0 right-0 w-20 h-20 sm:w-28 sm:h-28 lg:w-36 lg:h-36 flex items-end justify-end pointer-events-none">
+              <img alt="Watch" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/sub-banner1.png">
             </div>
           </div>
 
           <!-- 2. Top-Right: Sunglasses -->
-          <div class="bg-[#f2eefa] rounded-3xl p-6 lg:p-7 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[230px] lg:min-h-[250px]">
+          <div class="bg-[#f2eefa] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px]">
             <div>
               <div class="flex items-center gap-1.5">
-                <span class="inline-block bg-indigo-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">New</span>
-                <span class="text-xs font-semibold text-neutral-600">25% OFF</span>
+                <span class="inline-block bg-indigo-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">New</span>
+                <span class="text-[9px] sm:text-xs font-semibold text-neutral-600">25% OFF</span>
               </div>
-              <h3 class="text-lg lg:text-xl font-bold text-neutral-900 mt-2 leading-tight">Polarized<br>Sunglasses</h3>
-              <p class="text-xs text-neutral-500 mt-1">Special Offers</p>
-              <p class="text-xl font-extrabold text-neutral-900 mt-1">$19</p>
+              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">Polarized<br>Sunglasses</h3>
+              <p class="text-[10px] sm:text-xs text-neutral-500 mt-1">Special Offers</p>
+              <p class="text-lg sm:text-xl font-extrabold text-neutral-900 mt-1">$19</p>
             </div>
-            <div class="mt-4 flex justify-end">
-              <img alt="Sunglasses" class="w-28 h-28 sm:w-32 sm:h-32 lg:w-36 lg:h-36 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxhMQRHqtrn3JAS3BFmfkyfu-t1BzwY9RiEorwzhMGiJ1TVFwswxCNzTsLe-tn-OHNtvHS2f7o9lhOdnRLhmHmV83qgi7N2x3gRIbpawTStTgGkWgyU3cWSFbrC7xQZ-Jc6RQ4KFLDvw3KXaU45uV42fTMr3FPU3aj-uo9cA_JOnUJEcNS5MvfMs-HGK8tFFUP7wx8HdNv5qP2nTDcjL4IEtmnrdKs-fLxTlHOA55hPYFrBbEguFdr">
+            <div class="absolute bottom-0 right-0 w-20 h-20 sm:w-32 sm:h-32 lg:w-40 lg:h-40 flex items-end justify-end pointer-events-none">
+              <img alt="Sunglasses" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/sub-banner2.png">
             </div>
           </div>
 
           <!-- 3. Bottom-Left: Video Games -->
-          <div class="bg-[#ebf4fc] rounded-3xl p-6 lg:p-7 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[230px] lg:min-h-[250px]">
+          <div class="bg-[#ebf4fc] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px]">
             <div>
-              <span class="inline-block bg-sky-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Top Deal</span>
-              <h3 class="text-lg lg:text-xl font-bold text-neutral-900 mt-2 leading-tight">Video Games<br>Offers!</h3>
-              <p class="text-xs text-neutral-500 mt-1">Top Deals</p>
-              <p class="text-xl font-extrabold text-neutral-900 mt-1">$89</p>
+              <span class="inline-block bg-sky-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Top Deal</span>
+              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">Video Games<br>Offers!</h3>
+              <p class="text-[10px] sm:text-xs text-neutral-500 mt-1">Top Deals</p>
+              <p class="text-lg sm:text-xl font-extrabold text-neutral-900 mt-1">$89</p>
             </div>
-            <div class="mt-4 flex justify-end">
-              <img alt="Game Controller" class="w-28 h-28 sm:w-32 sm:h-32 lg:w-36 lg:h-36 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAA9mq5Zi3MaqYOz8YT-JEsdZGCiMdN5-jan7sTEZEP531-Cf-COIcNw_Qufnkzh4IsC_HJiT1v8k7dNcMniQ_H5nuT3hXzwlcbv5oc06Q-BpZ5EbF6-aOk1JbA7h_FPoIWxiBAtqEhoJcxLn5FwVky_lGOnWOrnPqphY9ZBJxR9kAJWZwk2hTVDBHqVqqfnRvgkXCY01TD1ZL_bYNdHDt4k45GRTn703DmvpWirD6dJN-kKn4V4FpR">
+            <div class="absolute bottom-0 right-0 w-20 h-20 sm:w-28 sm:h-28 lg:w-36 lg:h-36 flex items-end justify-end pointer-events-none">
+              <img alt="Game Controller" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/sub-banner03.png">
             </div>
           </div>
 
           <!-- 4. Bottom-Right: Top Brands Shoes -->
-          <div class="bg-[#fdf2eb] rounded-3xl p-6 lg:p-7 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[230px] lg:min-h-[250px]">
+          <div class="bg-[#fdf2eb] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px]">
             <div>
-              <span class="inline-block bg-orange-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Best Seller</span>
-              <h3 class="text-lg lg:text-xl font-bold text-neutral-900 mt-2 leading-tight">Top Brands<br>Shoes</h3>
-              <p class="text-xs text-neutral-500 mt-1">Weekly Offers</p>
-              <p class="text-xl font-extrabold text-neutral-900 mt-1">$129</p>
+              <span class="inline-block bg-orange-500 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Best Seller</span>
+              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">Top Brands<br>Shoes</h3>
+              <p class="text-[10px] sm:text-xs text-neutral-500 mt-1">Weekly Offers</p>
+              <p class="text-lg sm:text-xl font-extrabold text-neutral-900 mt-1">$129</p>
             </div>
-            <div class="mt-4 flex justify-end">
-              <img alt="Sneakers" class="w-28 h-28 sm:w-32 sm:h-32 lg:w-36 lg:h-36 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHV4-RM3vwWL16QXa83HDLqh8Arh5kn8rL6tIbeZR4jChdQaZgy0BHK8anl1SEzFcRSXpGqhaYEoRD-wB3R16Bf52kzrXyhyjWHjCQYu-mHviUSXe5df9Ksoalg2Y1j9O71osy0DIMJqDLzO59VYn44-sy76ZL2ao8F833_YiGV9EMXRLDn-X7MrcHGoLTncBWHzw6WRrO6zu8ushYLqHWfy3ddWV8LtSJ0rmtBGc3S97EH7kho6ga">
+            <div class="absolute bottom-0 right-0 w-20 h-20 sm:w-28 sm:h-28 lg:w-36 lg:h-36 flex items-end justify-end pointer-events-none">
+              <img alt="Sneakers" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/sub-banner4.png">
             </div>
           </div>
         </div>
@@ -428,18 +464,19 @@
         </button>
 
         <!-- Cards Row (Grid spanning across 1 to 5 columns smoothly) -->
-        <div id="flash-deals-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 overflow-x-auto no-scrollbar scroll-smooth">
+        <div id="flash-deals-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth">
           <!-- Product 1: Baby Shark Cube -->
-          <div class="border border-gray-100 rounded-2xl p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
-            <div class="relative bg-gray-50 rounded-xl p-5 flex items-center justify-center h-52 lg:h-56">
-              <img alt="Baby Shark Cube" class="h-36 lg:h-40 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAbpL3DDBevdG7mICAKmSPCEMvSxy1REopIlTY-lDRKUU6SCucxpdwA4dukABgDgYKb6_BQviOaWJlspcSEWn5cEY7PM6d4GRFLQtMzsZLGZECskQF0ZhYejULGLBJxBVoaAFV_TFs63AxQvQSPAe_u27W5DSqemKH4JQizwZdWxaSvukw19YAUP9AmpbUFm2yuGSQKLF_mJlQPhy0zHh3BrvvACmOGAlFPJx7c10LAwKwp4DLwE-w">
+          <div class="flex flex-col group transition-all duration-300 w-full relative">
+            <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
+              <img alt="Baby Shark Cube" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAbpL3DDBevdG7mICAKmSPCEMvSxy1REopIlTY-lDRKUU6SCucxpdwA4dukABgDgYKb6_BQviOaWJlspcSEWn5cEY7PM6d4GRFLQtMzsZLGZECskQF0ZhYejULGLBJxBVoaAFV_TFs63AxQvQSPAe_u27W5DSqemKH4JQizwZdWxaSvukw19YAUP9AmpbUFm2yuGSQKLF_mJlQPhy0zHh3BrvvACmOGAlFPJx7c10LAwKwp4DLwE-w">
             </div>
-            <div class="mt-5 flex-1 flex flex-col justify-between">
+            <div class="flex-1 flex flex-col justify-start text-left px-1">
               <div>
-                <h4 class="text-sm font-semibold text-neutral-800 line-clamp-2 leading-snug">Pinkfong Baby Shark Official Song Cube</h4>
-                <div class="mt-2 text-base font-bold text-[#ff4d61]">$15.00</div>
+                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
+                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Pinkfong Baby Shark Official Song Cube</h4>
+                <div class="mt-2 text-base font-medium text-neutral-900">$15.00</div>
               </div>
-              <div class="mt-5">
+              <div class="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <button class="add-to-cart-btn w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-3 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Pinkfong Baby Shark Official Song Cube" data-price="15.00">
                   <i class="w-4 h-4" data-lucide="shopping-cart"></i>
                   <span>Add To Cart</span>
@@ -449,20 +486,21 @@
           </div>
 
           <!-- Product 2: Smart Keyboard Folio -->
-          <div class="border border-gray-100 rounded-2xl p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
-            <div class="relative bg-gray-50 rounded-xl p-5 flex items-center justify-center h-52 lg:h-56">
+          <div class="flex flex-col group transition-all duration-300 w-full relative">
+            <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
               <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-15%</span>
-              <img alt="Smart Keyboard" class="h-36 lg:h-40 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApDPK8TWzUOizUU3LAPphRFXsUMewmF5Kacm5vCHqKZRSXz4QojncX5nOWXwOXX85aDy7K_qGT_9uOUR9EMhljJHdFH7ON1SNvYSuJSBATh6e4rvdYKJGTc6F_hXfg0VEGzMUGnKAd1ZX5Lc9qt3uADP90lhIihyp3eYX07bVSOLf7JG_AM0rYZzIpehvcxNAlUA0gy6Gm11i9eaPZDhCm_etpv-UDzn2mVsKy5DE-1ba9tnQifJdN">
+              <img alt="Smart Keyboard" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApDPK8TWzUOizUU3LAPphRFXsUMewmF5Kacm5vCHqKZRSXz4QojncX5nOWXwOXX85aDy7K_qGT_9uOUR9EMhljJHdFH7ON1SNvYSuJSBATh6e4rvdYKJGTc6F_hXfg0VEGzMUGnKAd1ZX5Lc9qt3uADP90lhIihyp3eYX07bVSOLf7JG_AM0rYZzIpehvcxNAlUA0gy6Gm11i9eaPZDhCm_etpv-UDzn2mVsKy5DE-1ba9tnQifJdN">
             </div>
-            <div class="mt-5 flex-1 flex flex-col justify-between">
+            <div class="flex-1 flex flex-col justify-start text-left px-1">
               <div>
-                <h4 class="text-sm font-semibold text-neutral-800 line-clamp-2 leading-snug">Smart Keyboard Folio for 12.9 (English)</h4>
+                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
+                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Smart Keyboard Folio for 12.9 (English)</h4>
                 <div class="mt-2 flex items-center gap-2">
                   <span class="text-xs text-neutral-400 line-through">$1,299.00</span>
-                  <span class="text-base font-bold text-[#ff4d61]">$1,099.00</span>
+                  <span class="text-base font-medium text-neutral-900">$1,099.00</span>
                 </div>
               </div>
-              <div class="mt-5">
+              <div class="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <button class="add-to-cart-btn w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-3 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Smart Keyboard Folio for 12.9 (English)" data-price="1099.00">
                   <i class="w-4 h-4" data-lucide="shopping-cart"></i>
                   <span>Add To Cart</span>
@@ -472,16 +510,17 @@
           </div>
 
           <!-- Product 3: Retro Coffee Maker -->
-          <div class="border border-gray-100 rounded-2xl p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
-            <div class="relative bg-gray-50 rounded-xl p-5 flex items-center justify-center h-52 lg:h-56">
-              <img alt="Coffee Maker" class="h-36 lg:h-40 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCC2ZQ_M4SyGUXrLeJVZWFta13x96nqu8p5_ZBwZehIpgg0fgU78DEv4Kd88z3Qh728mPgQ7pqiE52PkZ5IdztMW_v6oFkW3XMkjYZZvncCcLL4MEO9rzwpfJ1Qiql2iOeo1EDzKVUmZ_D71BEhbNP37Dn9EGcnOX7i93hgrSq1jiZ390uvDPXoZ9AiuiOWBJqYhThtEBQrTGmcp72ld63M7rn0zXXGFd3LedMJxwTUsNncpAITJsd">
+          <div class="flex flex-col group transition-all duration-300 w-full relative">
+            <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
+              <img alt="Coffee Maker" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCC2ZQ_M4SyGUXrLeJVZWFta13x96nqu8p5_ZBwZehIpgg0fgU78DEv4Kd88z3Qh728mPgQ7pqiE52PkZ5IdztMW_v6oFkW3XMkjYZZvncCcLL4MEO9rzwpfJ1Qiql2iOeo1EDzKVUmZ_D71BEhbNP37Dn9EGcnOX7i93hgrSq1jiZ390uvDPXoZ9AiuiOWBJqYhThtEBQrTGmcp72ld63M7rn0zXXGFd3LedMJxwTUsNncpAITJsd">
             </div>
-            <div class="mt-5 flex-1 flex flex-col justify-between">
+            <div class="flex-1 flex flex-col justify-start text-left px-1">
               <div>
-                <h4 class="text-sm font-semibold text-neutral-800 line-clamp-2 leading-snug">Retro Style Coffee Maker Machine</h4>
-                <div class="mt-2 text-base font-bold text-[#ff4d61]">$229.00</div>
+                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
+                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Retro Style Coffee Maker Machine</h4>
+                <div class="mt-2 text-base font-medium text-neutral-900">$229.00</div>
               </div>
-              <div class="mt-5">
+              <div class="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <button class="add-to-cart-btn w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-3 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Retro Style Coffee Maker Machine" data-price="229.00">
                   <i class="w-4 h-4" data-lucide="shopping-cart"></i>
                   <span>Add To Cart</span>
@@ -491,20 +530,21 @@
           </div>
 
           <!-- Product 4: Apple Watch Series 5 -->
-          <div class="border border-gray-100 rounded-2xl p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
-            <div class="relative bg-gray-50 rounded-xl p-5 flex items-center justify-center h-52 lg:h-56">
+          <div class="flex flex-col group transition-all duration-300 w-full relative">
+            <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
               <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-4%</span>
-              <img alt="Apple Watch" class="h-36 lg:h-40 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtuE99cs-6_cyaPwZrlesKmbzDsv9lrhPkO52LxdTdS9BjY4W_KrVhyeuhAAXRZk4u8mNiUOXNjsmppsRQq_x704W3L8zIf55ZjIGpBCINbQs2_Zi-SE6OFF_CYrFp80-srKY5Jtv6_EESLn6hS6EZJfGbZ9S10h-qMiUtq-oLrpyHcLPRl8BppoLNhE2ebeNGBedv-wdHGs9Gq7d8H7_zj7EOgIbi97eCOZsvPPz4t625679-wT_z">
+              <img alt="Apple Watch" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtuE99cs-6_cyaPwZrlesKmbzDsv9lrhPkO52LxdTdS9BjY4W_KrVhyeuhAAXRZk4u8mNiUOXNjsmppsRQq_x704W3L8zIf55ZjIGpBCINbQs2_Zi-SE6OFF_CYrFp80-srKY5Jtv6_EESLn6hS6EZJfGbZ9S10h-qMiUtq-oLrpyHcLPRl8BppoLNhE2ebeNGBedv-wdHGs9Gq7d8H7_zj7EOgIbi97eCOZsvPPz4t625679-wT_z">
             </div>
-            <div class="mt-5 flex-1 flex flex-col justify-between">
+            <div class="flex-1 flex flex-col justify-start text-left px-1">
               <div>
-                <h4 class="text-sm font-semibold text-neutral-800 line-clamp-2 leading-snug">Apple Watch Series 5 GPS, 40mm Gold</h4>
+                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
+                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Apple Watch Series 5 GPS, 40mm Gold</h4>
                 <div class="mt-2 flex items-center gap-2">
                   <span class="text-xs text-neutral-400 line-through">$520.00</span>
-                  <span class="text-base font-bold text-[#ff4d61]">$499.00</span>
+                  <span class="text-base font-medium text-neutral-900">$499.00</span>
                 </div>
               </div>
-              <div class="mt-5">
+              <div class="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <button class="add-to-cart-btn w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-3 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Apple Watch Series 5 GPS, 40mm Gold" data-price="499.00">
                   <i class="w-4 h-4" data-lucide="shopping-cart"></i>
                   <span>Add To Cart</span>
@@ -514,20 +554,21 @@
           </div>
 
           <!-- Product 5: AF 1 Shadow Sneaker -->
-          <div class="border border-gray-100 rounded-2xl p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
-            <div class="relative bg-gray-50 rounded-xl p-5 flex items-center justify-center h-52 lg:h-56">
+          <div class="flex flex-col group transition-all duration-300 w-full relative">
+            <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
               <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-30%</span>
-              <img alt="Sneaker" class="h-36 lg:h-40 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBG00JE-JBUH062KoQKTtQNRqYZ678TNSBpmn1x5K8Z0eQ7bcRgeJgS6mnnPuM10X7kUc36955NipONJZUqV5Nqba8eS1p5iD1liW6oy2EUBL9ftSZv7F6pZ1A6mICek7q4B35IQQtl04n9DlFTW8z9_X0bNH2QjpKSZecYTQgxjg9BHcWSLp3hdCyZo7So9Yg5I9cCbq0mc3iXNHoo5RbOhYuA9RFvOAlJ3zTyUvK3Aqc_Qz2dVgMA">
+              <img alt="Sneaker" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBG00JE-JBUH062KoQKTtQNRqYZ678TNSBpmn1x5K8Z0eQ7bcRgeJgS6mnnPuM10X7kUc36955NipONJZUqV5Nqba8eS1p5iD1liW6oy2EUBL9ftSZv7F6pZ1A6mICek7q4B35IQQtl04n9DlFTW8z9_X0bNH2QjpKSZecYTQgxjg9BHcWSLp3hdCyZo7So9Yg5I9cCbq0mc3iXNHoo5RbOhYuA9RFvOAlJ3zTyUvK3Aqc_Qz2dVgMA">
             </div>
-            <div class="mt-5 flex-1 flex flex-col justify-between">
+            <div class="flex-1 flex flex-col justify-start text-left px-1">
               <div>
-                <h4 class="text-sm font-semibold text-neutral-800 line-clamp-2 leading-snug">AF 1 Shadow Women's Sneaker (Cream Color)</h4>
+                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
+                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">AF 1 Shadow Women's Sneaker (Cream Color)</h4>
                 <div class="mt-2 flex items-center gap-2">
                   <span class="text-xs text-neutral-400 line-through">$999.00</span>
-                  <span class="text-base font-bold text-[#ff4d61]">$699.00</span>
+                  <span class="text-base font-medium text-neutral-900">$699.00</span>
                 </div>
               </div>
-              <div class="mt-5">
+              <div class="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <button class="add-to-cart-btn w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-3 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="AF 1 Shadow Women's Sneaker (Cream Color)" data-price="699.00">
                   <i class="w-4 h-4" data-lucide="shopping-cart"></i>
                   <span>Add To Cart</span>
@@ -541,38 +582,91 @@
   </section>
   <!-- END: FlashDealsSection -->
 
-  <!-- BEGIN: ValuePropositionTrustBar (Full Width) -->
-  <section class="w-full py-12 bg-white border-t border-b border-gray-100" data-purpose="trust-badges">
+
+  <!-- BEGIN: TrendingBrands (Replaced Featured Categories) -->
+  <section class="w-full py-12 lg:py-16 bg-[#fafafa]" data-purpose="trending-brands">
     <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
-      <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100">
-        <!-- Column 1: Fast, Free Shipping -->
-        <div class="flex items-center justify-center gap-5 py-6 md:py-4 px-4">
-          <div class="w-14 h-14 rounded-2xl bg-neutral-50 flex items-center justify-center text-neutral-900 flex-shrink-0">
-            <i class="w-8 h-8 stroke-[1.5]" data-lucide="truck"></i>
-          </div>
-          <div>
-            <h4 class="text-base font-bold text-neutral-900">Fast, Free Shipping</h4>
-            <p class="text-xs text-neutral-500 mt-0.5">On orders over $50 with guaranteed arrival</p>
+      <h2 class="text-xl sm:text-2xl font-bold text-neutral-900 mb-10">Trending Brands</h2>
+      
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8 sm:gap-12 items-center justify-items-center opacity-80">
+        <!-- Brand 1: SONY -->
+        <div class="text-xl sm:text-2xl font-black tracking-widest text-neutral-800 uppercase">Sony</div>
+        <!-- Brand 2: Lenovo -->
+        <div class="text-xl sm:text-2xl font-bold text-neutral-800">Lenovo</div>
+        <!-- Brand 3: CISCO -->
+        <div class="text-xl sm:text-2xl font-black tracking-widest text-neutral-800 uppercase">Cisco</div>
+        <!-- Brand 4: SAMSUNG -->
+        <div class="text-xl sm:text-2xl font-black tracking-wider text-neutral-800 uppercase">Samsung</div>
+        <!-- Brand 5: LG -->
+        <div class="text-2xl sm:text-3xl font-black tracking-tighter text-neutral-800 uppercase">LG</div>
+        <!-- Brand 6: BOSE -->
+        <div class="text-xl sm:text-2xl font-black italic text-neutral-800 uppercase">Bose</div>
+        
+        <!-- Brand 7: Apple Authorized Reseller -->
+        <div class="flex items-center gap-1.5 text-neutral-900">
+          <i data-lucide="apple" class="w-6 h-6 sm:w-8 sm:h-8 fill-current"></i>
+          <div class="flex flex-col text-[7px] sm:text-[9px] leading-[1.1] font-bold">
+            <span>Authorized</span>
+            <span>Reseller</span>
           </div>
         </div>
-        <!-- Column 2: Next Day Delivery -->
-        <div class="flex items-center justify-center gap-5 py-6 md:py-4 px-4">
-          <div class="w-14 h-14 rounded-2xl bg-neutral-50 flex items-center justify-center text-neutral-900 flex-shrink-0">
-            <i class="w-8 h-8 stroke-[1.5]" data-lucide="package"></i>
+        <!-- Brand 8: Google -->
+        <div class="text-xl sm:text-2xl font-medium text-neutral-800">Google</div>
+        <!-- Brand 9: NVIDIA -->
+        <div class="text-xl sm:text-2xl font-black text-neutral-800 uppercase">Nvidia.</div>
+        <!-- Brand 10: Electrolux -->
+        <div class="text-lg sm:text-xl font-semibold text-neutral-800">Electrolux</div>
+        <!-- Brand 11: PHILIPS -->
+        <div class="text-lg sm:text-xl font-bold tracking-widest text-neutral-800 uppercase">Philips</div>
+        <!-- Brand 12: intel -->
+        <div class="text-2xl sm:text-3xl font-light text-neutral-600 lowercase tracking-tight">intel</div>
+      </div>
+    </div>
+  </section>
+  <!-- END: TrendingBrands -->
+
+  <!-- BEGIN: ValuePropositionTrustBar (Full Width) -->
+  <section class="w-full py-10 bg-white border-b border-gray-100" data-purpose="trust-badges">
+    <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4">
+        <!-- Column 1: Worldwide Delivery -->
+        <div class="flex items-center justify-start gap-4 px-4">
+          <div class="w-12 h-12 rounded-full bg-[#f8f8f8] flex items-center justify-center text-neutral-900 flex-shrink-0 border border-gray-100">
+            <i class="w-5 h-5 stroke-[1.5]" data-lucide="globe"></i>
           </div>
           <div>
-            <h4 class="text-base font-bold text-neutral-900">Next Day Delivery</h4>
-            <p class="text-xs text-neutral-500 mt-0.5">Free courier service on spend over $99</p>
+            <h4 class="text-sm font-bold text-neutral-900">Worldwide Delivery</h4>
+            <p class="text-[11px] text-neutral-500 mt-0.5">Fast track shipping to 200+ countries worldwide.</p>
           </div>
         </div>
-        <!-- Column 3: Secure Payment -->
-        <div class="flex items-center justify-center gap-5 py-6 md:py-4 px-4">
-          <div class="w-14 h-14 rounded-2xl bg-neutral-50 flex items-center justify-center text-neutral-900 flex-shrink-0">
-            <i class="w-8 h-8 stroke-[1.5]" data-lucide="shield-check"></i>
+        <!-- Column 2: Secure Payment -->
+        <div class="flex items-center justify-start gap-4 px-4">
+          <div class="w-12 h-12 rounded-full bg-[#f8f8f8] flex items-center justify-center text-neutral-900 flex-shrink-0 border border-gray-100">
+            <i class="w-5 h-5 stroke-[1.5]" data-lucide="credit-card"></i>
           </div>
           <div>
-            <h4 class="text-base font-bold text-neutral-900">Secure Payment</h4>
-            <p class="text-xs text-neutral-500 mt-0.5">100% encrypted, safe checkout guarantee</p>
+            <h4 class="text-sm font-bold text-neutral-900">Secure Payment</h4>
+            <p class="text-[11px] text-neutral-500 mt-0.5">Pay with Stripe, Apple Pay, PayPal and more.</p>
+          </div>
+        </div>
+        <!-- Column 3: 60-day Return Policy -->
+        <div class="flex items-center justify-start gap-4 px-4">
+          <div class="w-12 h-12 rounded-full bg-[#f8f8f8] flex items-center justify-center text-neutral-900 flex-shrink-0 border border-gray-100">
+            <i class="w-5 h-5 stroke-[1.5]" data-lucide="rotate-ccw"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-neutral-900">60-day Return Policy</h4>
+            <p class="text-[11px] text-neutral-500 mt-0.5">Hassle-free 100% money back within 60 days.</p>
+          </div>
+        </div>
+        <!-- Column 4: 24/7 Help Center -->
+        <div class="flex items-center justify-start gap-4 px-4">
+          <div class="w-12 h-12 rounded-full bg-[#f8f8f8] flex items-center justify-center text-neutral-900 flex-shrink-0 border border-gray-100">
+            <i class="w-5 h-5 stroke-[1.5]" data-lucide="headphones"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-neutral-900">24/7 Help Center</h4>
+            <p class="text-[11px] text-neutral-500 mt-0.5">Expert customer care team available around the clock.</p>
           </div>
         </div>
       </div>
@@ -580,55 +674,6 @@
   </section>
   <!-- END: ValuePropositionTrustBar -->
 
-  <!-- BEGIN: FeaturedCategoryBanners (Full Width, Scaled for Wide Screens) -->
-  <section class="w-full py-14 lg:py-18 bg-white" data-purpose="featured-categories">
-    <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-        <!-- Banner 1: Home & Garden -->
-        <div class="bg-[#ddf3ec] rounded-3xl p-8 sm:p-10 lg:p-12 flex flex-col justify-between overflow-hidden relative min-h-[480px] lg:min-h-[520px] group shadow-sm hover:shadow-xl transition-all duration-300">
-          <div class="text-center z-10">
-            <h3 class="text-2xl lg:text-3xl font-bold text-neutral-900">Home &amp; Garden</h3>
-            <p class="text-xs sm:text-sm text-neutral-600 mt-2 mb-5">Furniture, Kitchen, Lighting and More!</p>
-            <a class="inline-block border border-neutral-900 bg-white/80 backdrop-blur text-neutral-900 text-xs sm:text-sm font-semibold px-8 py-2.5 rounded-full hover:bg-neutral-900 hover:text-white transition shadow-sm" href="#customer-loved">
-              See More &rarr;
-            </a>
-          </div>
-          <div class="mt-8 flex justify-center">
-            <img alt="Modern sofa furniture" class="w-full max-h-64 lg:max-h-72 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2ZHxERJhdNIrS01LYi4lJQSbMvBi4tqeYcenMe7OdJAndjVEQxRC40bqN3DYMAH9GENKS4Za4xrVBq8b8Lg54weSDQ8RltxS2jiC4Ct0f8HbFCbUaoAx2hvFbyUrIekDaBRl_qCQcDJoIsGZ7iWXbC1cw2t4BlncYOzXzwYqYh8_flZXtDlgSQ6GGKRuya-awoOhBk1hAJxRSYJmfL6stpcftVLBg2yjBo1DUCA85GvMjke3FS3QR">
-          </div>
-        </div>
-
-        <!-- Banner 2: Electronics -->
-        <div class="bg-[#ddf0fc] rounded-3xl p-8 sm:p-10 lg:p-12 flex flex-col justify-between overflow-hidden relative min-h-[480px] lg:min-h-[520px] group shadow-sm hover:shadow-xl transition-all duration-300">
-          <div class="text-center z-10">
-            <h3 class="text-2xl lg:text-3xl font-bold text-neutral-900">Electronics</h3>
-            <p class="text-xs sm:text-sm text-neutral-600 mt-2 mb-5">TVs, Cell Phones, Laptops and More!</p>
-            <a class="inline-block border border-neutral-900 bg-white/80 backdrop-blur text-neutral-900 text-xs sm:text-sm font-semibold px-8 py-2.5 rounded-full hover:bg-neutral-900 hover:text-white transition shadow-sm" href="#customer-loved">
-              See More &rarr;
-            </a>
-          </div>
-          <div class="mt-8 flex justify-center">
-            <img alt="Laptops and tech monitors" class="w-full max-h-64 lg:max-h-72 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnE0Ig7Y2AR5diQp-CfjwsL7NS4E4CLXgLLVHWeP-v2WVqxJiFybYlenojNewlLekj8No8KrZGA7Yv_uFxBowWrYNheLuVMqMR8RMd6TPSd2y_RXD2ritQHNLZCJq_sE2JFZjHfsHESNm_I9TsjdmjTVTIc6ck423VCI_iscsGMejcfLTED4xXICK9Vz9a_IXC6DjzGSBekG6nTytJBPoJ0jviohrK1In395xcx56sq2kPwzl_iavt">
-          </div>
-        </div>
-
-        <!-- Banner 3: Fashion -->
-        <div class="bg-[#fce8ec] rounded-3xl p-8 sm:p-10 lg:p-12 flex flex-col justify-between overflow-hidden relative min-h-[480px] lg:min-h-[520px] group shadow-sm hover:shadow-xl transition-all duration-300">
-          <div class="text-center z-10">
-            <h3 class="text-2xl lg:text-3xl font-bold text-neutral-900">Fashion</h3>
-            <p class="text-xs sm:text-sm text-neutral-600 mt-2 mb-5">Clothing, Shoes, Accessories and More!</p>
-            <a class="inline-block border border-neutral-900 bg-white/80 backdrop-blur text-neutral-900 text-xs sm:text-sm font-semibold px-8 py-2.5 rounded-full hover:bg-neutral-900 hover:text-white transition shadow-sm" href="#customer-loved">
-              See More &rarr;
-            </a>
-          </div>
-          <div class="mt-8 flex justify-center">
-            <img alt="Fashion models wearing stylish outfits" class="w-full max-h-64 lg:max-h-72 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzhBRYYMfqGsnz7UZ3UjO3L9oEnyo8sVxHZ-4ALY86BUk_68LWRWR0fp4KZ1cOh52RnbEooujPtt0ffonz3Mbf4IN3MqVM6ApyDTfjclo3K8-YgGnz5RjTGNk6Bnw-_Yo_QP7a2ufHRnyJLyD49kbea77KPfujO0r6FcYwGYcAulIpJy_yE5fSoS824qSlPudpDLI9qRRBzjb6nxxVRp4HmobQuxToMb_jWhA01J-MaucJsuI5WmD6">
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- END: FeaturedCategoryBanners -->
 
   <!-- BEGIN: CustomerMostLovedSection (Full Width, Scaled for Wide Screens) -->
   <section id="customer-loved" class="w-full py-14 lg:py-18 bg-white" data-purpose="customer-most-loved">
@@ -661,17 +706,18 @@
       </div>
 
       <!-- 2 Rows Grid: 1 col on mobile, 2 on small tablet, 3 on tablet, 4 on desktop, 5 on wide screens -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pt-8">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6 pt-8">
         
         <!-- ROW 1 ITEM 1 -->
-        <div class="border border-gray-100 rounded-2xl p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
-          <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-center h-52 relative">
-            <img alt="Pinkfong Baby Shark" class="h-36 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChZqt8g0E0iRraHXu2zqGkGpyYJf_OXmFPIY5kB2yvVmUW7bcAKRdI8njir8zIFzJ1PO3N8OEH7V79Do-WOvVpuu29qbM7VG8oQfwDwuYbqg3SfyTeKC2XYcLyh385hQjCC--8-DGMUap-glsethaAryqmzoIboH3kLiQ6Cf1tKzp-OjIQd4KOL1CWRruySOMwabnJKeUqw3tobRY8Xb6mhAIr3OPTsl8OmvUddS35FfUpTcg5AaeB">
+        <div class="flex flex-col group transition-all duration-300 w-full relative">
+          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
+            <img alt="Pinkfong Baby Shark" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChZqt8g0E0iRraHXu2zqGkGpyYJf_OXmFPIY5kB2yvVmUW7bcAKRdI8njir8zIFzJ1PO3N8OEH7V79Do-WOvVpuu29qbM7VG8oQfwDwuYbqg3SfyTeKC2XYcLyh385hQjCC--8-DGMUap-glsethaAryqmzoIboH3kLiQ6Cf1tKzp-OjIQd4KOL1CWRruySOMwabnJKeUqw3tobRY8Xb6mhAIr3OPTsl8OmvUddS35FfUpTcg5AaeB">
           </div>
-          <div class="mt-4 flex-1 flex flex-col justify-between">
+          <div class="flex-1 flex flex-col justify-start text-left px-1">
             <div>
-              <h4 class="text-sm font-semibold text-neutral-800 line-clamp-2 leading-snug">Pinkfong Baby Shark Official Song Cube</h4>
-              <div class="mt-2 text-base font-bold text-[#ff4d61]">$15.00</div>
+                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
+                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Pinkfong Baby Shark Official Song Cube</h4>
+              <div class="mt-2 text-base font-medium text-neutral-900">$15.00</div>
             </div>
             <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Pinkfong Baby Shark Official Song Cube" data-price="15.00">
               <i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
@@ -681,17 +727,18 @@
         </div>
 
         <!-- ROW 1 ITEM 2 -->
-        <div class="border border-gray-100 rounded-2xl p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
-          <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-center h-52 relative">
+        <div class="flex flex-col group transition-all duration-300 w-full relative">
+          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
             <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-15%</span>
-            <img alt="Keyboard Folio" class="h-36 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEPh0BbAy4w7LSFTDy66OHg51NMfZ0tCv5TSl3P0gFmhrfFYciNtG8FhjQGAPcQy_o2z0OyfSABtqHaqFxz3xgsoMPk1tJIJIuEG8bVQ5EX6KqBMv28fD3QoEf4WJBQ-TPfdvFhELz95jhQSBS2r4XAnUONOnbTZkFk-ZopcwbT1E5fgQyPn9dpPcboJOy8IxZx4HC46zkzNywMHE2WZZJCFWaGb-6g7ZeidgMA49Et5bSuAXa-mfr">
+            <img alt="Keyboard Folio" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEPh0BbAy4w7LSFTDy66OHg51NMfZ0tCv5TSl3P0gFmhrfFYciNtG8FhjQGAPcQy_o2z0OyfSABtqHaqFxz3xgsoMPk1tJIJIuEG8bVQ5EX6KqBMv28fD3QoEf4WJBQ-TPfdvFhELz95jhQSBS2r4XAnUONOnbTZkFk-ZopcwbT1E5fgQyPn9dpPcboJOy8IxZx4HC46zkzNywMHE2WZZJCFWaGb-6g7ZeidgMA49Et5bSuAXa-mfr">
           </div>
-          <div class="mt-4 flex-1 flex flex-col justify-between">
+          <div class="flex-1 flex flex-col justify-start text-left px-1">
             <div>
-              <h4 class="text-sm font-semibold text-neutral-800 line-clamp-2 leading-snug">Smart Keyboard Folio for 12.9 (English)</h4>
+                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
+                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Smart Keyboard Folio for 12.9 (English)</h4>
               <div class="mt-2 flex items-center gap-2">
                 <span class="text-xs text-neutral-400 line-through">$1,299.00</span>
-                <span class="text-base font-bold text-[#ff4d61]">$1,099.00</span>
+                <span class="text-base font-medium text-neutral-900">$1,099.00</span>
               </div>
             </div>
             <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Smart Keyboard Folio for 12.9 (English)" data-price="1099.00">
@@ -702,14 +749,15 @@
         </div>
 
         <!-- ROW 1 ITEM 3 (With floating quick-action pill) -->
-        <div class="border border-gray-100 rounded-2xl p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300 relative">
-          <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-center h-52 relative">
-            <img alt="Coffee Maker" class="h-36 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLVUFKvNMnyGAn3s-BRkpXsob_ZHTJW2D-s_tDLDitoVBlyAplpaojPtLsnDrxndlRqrwT-P6h0dQZ480-YsT5qD39ZCbDSWgQIXL1SMWnerEmc_UjOZRg2tZMKywbWWbcOerUed9wy6Sv8sGcbRBlkfs6tThhrqaVs7WxRgnhesl-S0Jq4A549qyod9sQLeRHeOfcgen6Jsga14nuwZok0EHnKE3_eGZW5lhlHQ0r0zIhHa2JC94A">
+        <div class="flex flex-col group transition-all duration-300 w-full relative">
+          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
+            <img alt="Coffee Maker" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLVUFKvNMnyGAn3s-BRkpXsob_ZHTJW2D-s_tDLDitoVBlyAplpaojPtLsnDrxndlRqrwT-P6h0dQZ480-YsT5qD39ZCbDSWgQIXL1SMWnerEmc_UjOZRg2tZMKywbWWbcOerUed9wy6Sv8sGcbRBlkfs6tThhrqaVs7WxRgnhesl-S0Jq4A549qyod9sQLeRHeOfcgen6Jsga14nuwZok0EHnKE3_eGZW5lhlHQ0r0zIhHa2JC94A">
           </div>
-          <div class="mt-4 flex-1 flex flex-col justify-between">
+          <div class="flex-1 flex flex-col justify-start text-left px-1">
             <div>
-              <h4 class="text-sm font-semibold text-neutral-800 line-clamp-2 leading-snug">Retro Style Coffee Maker Machine</h4>
-              <div class="mt-2 text-base font-bold text-[#ff4d61]">$229.00</div>
+                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
+                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Retro Style Coffee Maker Machine</h4>
+              <div class="mt-2 text-base font-medium text-neutral-900">$229.00</div>
             </div>
             <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Retro Style Coffee Maker Machine" data-price="229.00">
               <i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
@@ -719,17 +767,18 @@
         </div>
 
         <!-- ROW 1 ITEM 4 -->
-        <div class="border border-gray-100 rounded-2xl p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
-          <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-center h-52 relative">
+        <div class="flex flex-col group transition-all duration-300 w-full relative">
+          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
             <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-4%</span>
-            <img alt="Apple Watch" class="h-36 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBglVrzVg1vW9Vl_J1g_2bavnFaKWHTYI0IEiyixzXAZXqW3WeJgOt_SNCeWp4EWuGWvF5k_Y0s_M-TUO26TR34DYe9t6b0epLTvbyxxa3k8HtgNGH1buDywD2sNj82SVr0ScGInBh3aEIfahpPQNLvLA5CquzJKUhC8qokZkLj6C75cVtO9cGeFyGw9p5zZo8g1lZxhV9RCfuB9Ped1KvWdH82bCISJBJHjyeWKc-eSq8hPehiL6q7">
+            <img alt="Apple Watch" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBglVrzVg1vW9Vl_J1g_2bavnFaKWHTYI0IEiyixzXAZXqW3WeJgOt_SNCeWp4EWuGWvF5k_Y0s_M-TUO26TR34DYe9t6b0epLTvbyxxa3k8HtgNGH1buDywD2sNj82SVr0ScGInBh3aEIfahpPQNLvLA5CquzJKUhC8qokZkLj6C75cVtO9cGeFyGw9p5zZo8g1lZxhV9RCfuB9Ped1KvWdH82bCISJBJHjyeWKc-eSq8hPehiL6q7">
           </div>
-          <div class="mt-4 flex-1 flex flex-col justify-between">
+          <div class="flex-1 flex flex-col justify-start text-left px-1">
             <div>
-              <h4 class="text-sm font-semibold text-neutral-800 line-clamp-2 leading-snug">Apple Watch Series 5 GPS, 40mm Gold</h4>
+                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
+                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Apple Watch Series 5 GPS, 40mm Gold</h4>
               <div class="mt-2 flex items-center gap-2">
                 <span class="text-xs text-neutral-400 line-through">$520.00</span>
-                <span class="text-base font-bold text-[#ff4d61]">$499.00</span>
+                <span class="text-base font-medium text-neutral-900">$499.00</span>
               </div>
             </div>
             <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Apple Watch Series 5 GPS, 40mm Gold" data-price="499.00">
@@ -740,17 +789,18 @@
         </div>
 
         <!-- ROW 1 ITEM 5 -->
-        <div class="border border-gray-100 rounded-2xl p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
-          <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-center h-52 relative">
+        <div class="flex flex-col group transition-all duration-300 w-full relative">
+          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
             <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-30%</span>
-            <img alt="Nike AF1 Sneaker" class="h-36 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZUDL2sFx0nK699vcFbJQp9Cadk6y1bmImZmjsog-HmAWkUxKRbS-EHEY8dC5Yky7ywKeJD8xcDTdYZ3R8ozGbQLnu3BVqVj_bKq4-O7QOL7C5xsNM2GxnSslfc6nuOxiXwZj9WkSoBc0KlH1jnhUlK59O7zGMQECd0cxiI1oXlAeNPq-xv3S21cPFq-JXh8bpQGqA5RQlQY6ZTHB9jrEuriGyQTMC5b5cFqSOr2QeamRfoFR1ndm3">
+            <img alt="Nike AF1 Sneaker" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZUDL2sFx0nK699vcFbJQp9Cadk6y1bmImZmjsog-HmAWkUxKRbS-EHEY8dC5Yky7ywKeJD8xcDTdYZ3R8ozGbQLnu3BVqVj_bKq4-O7QOL7C5xsNM2GxnSslfc6nuOxiXwZj9WkSoBc0KlH1jnhUlK59O7zGMQECd0cxiI1oXlAeNPq-xv3S21cPFq-JXh8bpQGqA5RQlQY6ZTHB9jrEuriGyQTMC5b5cFqSOr2QeamRfoFR1ndm3">
           </div>
-          <div class="mt-4 flex-1 flex flex-col justify-between">
+          <div class="flex-1 flex flex-col justify-start text-left px-1">
             <div>
-              <h4 class="text-sm font-semibold text-neutral-800 line-clamp-2 leading-snug">AF 1 Shadow Women's Sneaker (Cream Color)</h4>
+                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
+                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">AF 1 Shadow Women's Sneaker (Cream Color)</h4>
               <div class="mt-2 flex items-center gap-2">
                 <span class="text-xs text-neutral-400 line-through">$999.00</span>
-                <span class="text-base font-bold text-[#ff4d61]">$699.00</span>
+                <span class="text-base font-medium text-neutral-900">$699.00</span>
               </div>
             </div>
             <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="AF 1 Shadow Women's Sneaker (Cream Color)" data-price="699.00">
@@ -761,14 +811,15 @@
         </div>
 
         <!-- ROW 2 ITEM 1 -->
-        <div class="border border-gray-100 rounded-2xl p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
-          <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-center h-52 relative">
-            <img alt="Apple MacBook Air" class="h-36 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSy7J_76YjgBnmjBbJPUUaOa3_YAlDu5dLBfmTJOh9OgL1o2MoWrP1nJPlOwps5Ocbzqd_sT4Q7fOMmWK__cf-nDOQjz2b2B0KYlaZyE5WeFA4ojEPEyghsAR4qZ5rZvIUnHm4DEPcB6vwTFuOEwTdZhyTenogHbtZfiq_Vvalk8mzDcVVbsePMv4JD7rxL7gNq2FHLocMol6tT1JI1Xaqtg1cDzMJ3YBjnaD68ruugFPJrMc0jJnV">
+        <div class="flex flex-col group transition-all duration-300 w-full relative">
+          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
+            <img alt="Apple MacBook Air" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSy7J_76YjgBnmjBbJPUUaOa3_YAlDu5dLBfmTJOh9OgL1o2MoWrP1nJPlOwps5Ocbzqd_sT4Q7fOMmWK__cf-nDOQjz2b2B0KYlaZyE5WeFA4ojEPEyghsAR4qZ5rZvIUnHm4DEPcB6vwTFuOEwTdZhyTenogHbtZfiq_Vvalk8mzDcVVbsePMv4JD7rxL7gNq2FHLocMol6tT1JI1Xaqtg1cDzMJ3YBjnaD68ruugFPJrMc0jJnV">
           </div>
-          <div class="mt-4 flex-1 flex flex-col justify-between">
+          <div class="flex-1 flex flex-col justify-start text-left px-1">
             <div>
-              <h4 class="text-sm font-semibold text-neutral-800 line-clamp-2 leading-snug">Apple MacBook Air MGNA3HN/A 13.3 inch</h4>
-              <div class="mt-2 text-base font-bold text-[#ff4d61]">$1,199.00</div>
+                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
+                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Apple MacBook Air MGNA3HN/A 13.3 inch</h4>
+              <div class="mt-2 text-base font-medium text-neutral-900">$1,199.00</div>
             </div>
             <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Apple MacBook Air MGNA3HN/A 13.3 inch" data-price="1199.00">
               <i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
@@ -778,17 +829,18 @@
         </div>
 
         <!-- ROW 2 ITEM 2 -->
-        <div class="border border-gray-100 rounded-2xl p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
-          <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-center h-52 relative">
+        <div class="flex flex-col group transition-all duration-300 w-full relative">
+          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
             <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-11%</span>
-            <img alt="Bluetooth Wireless Speaker" class="h-36 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXCsh8pZCAVBSBSJQZ8WCF4EPfZirc2wP1HcgeeKh3dOUUtyNiNHM2AJ47H11WrUrZKR2Zzw3O4Yz9IVMf2YjgUjuD6acHpwHvesoBCPKZspxbgQMIDuKarCJ9iqH4LJA1XliPL2Qel20kSd04XW7FNYkFNm-5iQEwJ6VJ4VemcxACSmpzBWLZP437oY6TBQ2kBrSoLY1NUcC0_RwD44_NNbe7aBRVEOK_rCffyNh8Io5v0iIqu0Dh">
+            <img alt="Bluetooth Wireless Speaker" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXCsh8pZCAVBSBSJQZ8WCF4EPfZirc2wP1HcgeeKh3dOUUtyNiNHM2AJ47H11WrUrZKR2Zzw3O4Yz9IVMf2YjgUjuD6acHpwHvesoBCPKZspxbgQMIDuKarCJ9iqH4LJA1XliPL2Qel20kSd04XW7FNYkFNm-5iQEwJ6VJ4VemcxACSmpzBWLZP437oY6TBQ2kBrSoLY1NUcC0_RwD44_NNbe7aBRVEOK_rCffyNh8Io5v0iIqu0Dh">
           </div>
-          <div class="mt-4 flex-1 flex flex-col justify-between">
+          <div class="flex-1 flex flex-col justify-start text-left px-1">
             <div>
-              <h4 class="text-sm font-semibold text-neutral-800 line-clamp-2 leading-snug">Bass Dual EQ Bluetooth 5.0 Wireless Speaker</h4>
+                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
+                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Bass Dual EQ Bluetooth 5.0 Wireless Speaker</h4>
               <div class="mt-2 flex items-center gap-2">
                 <span class="text-xs text-neutral-400 line-through">$180.00</span>
-                <span class="text-base font-bold text-[#ff4d61]">$160.00</span>
+                <span class="text-base font-medium text-neutral-900">$160.00</span>
               </div>
             </div>
             <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Bass Dual EQ Bluetooth 5.0 Wireless Speaker" data-price="160.00">
@@ -799,17 +851,18 @@
         </div>
 
         <!-- ROW 2 ITEM 3 -->
-        <div class="border border-gray-100 rounded-2xl p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
-          <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-center h-52 relative">
+        <div class="flex flex-col group transition-all duration-300 w-full relative">
+          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
             <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-28%</span>
-            <img alt="Galaxy Watch" class="h-36 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtCnJiOwFnEs0D_JTecjwSEcA0NUr0a7OHqnoApvhJ8AowG8f1OPhlbotVoHCTo_dTDAB1OPICiinulhBXUcduZDDlskrFv717PhtFNp6gz6hfQQwDNsyKtxFi7fBd-vFpjFpNLKU2IHL5D4zFTN9bRl_2OSpJPamSt9LaYmI4C3KnuaMBRkiU6bDEwLJQFQZbr7JxAOlLXLdXXTXp5X5wYYlrsGU7W34gY8Sd1NB38ezcSMAep0x0">
+            <img alt="Galaxy Watch" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtCnJiOwFnEs0D_JTecjwSEcA0NUr0a7OHqnoApvhJ8AowG8f1OPhlbotVoHCTo_dTDAB1OPICiinulhBXUcduZDDlskrFv717PhtFNp6gz6hfQQwDNsyKtxFi7fBd-vFpjFpNLKU2IHL5D4zFTN9bRl_2OSpJPamSt9LaYmI4C3KnuaMBRkiU6bDEwLJQFQZbr7JxAOlLXLdXXTXp5X5wYYlrsGU7W34gY8Sd1NB38ezcSMAep0x0">
           </div>
-          <div class="mt-4 flex-1 flex flex-col justify-between">
+          <div class="flex-1 flex flex-col justify-start text-left px-1">
             <div>
-              <h4 class="text-sm font-semibold text-neutral-800 line-clamp-2 leading-snug">Galaxy Watch Active 2 Aluminum Smart Watch</h4>
+                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
+                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Galaxy Watch Active 2 Aluminum Smart Watch</h4>
               <div class="mt-2 flex items-center gap-2">
                 <span class="text-xs text-neutral-400 line-through">$489.00</span>
-                <span class="text-base font-bold text-[#ff4d61]">$350.00</span>
+                <span class="text-base font-medium text-neutral-900">$350.00</span>
               </div>
             </div>
             <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Galaxy Watch Active 2 Aluminum Smart Watch" data-price="350.00">
@@ -820,17 +873,18 @@
         </div>
 
         <!-- ROW 2 ITEM 4 -->
-        <div class="border border-gray-100 rounded-2xl p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
-          <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-center h-52 relative">
+        <div class="flex flex-col group transition-all duration-300 w-full relative">
+          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
             <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-19%</span>
-            <img alt="Beats Pro" class="h-36 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJcuy8i2M527QE3i2hjNRPWIySFoilyQG-8UdUlJmC6bJ7UUDXw0oea2UXqwxyLYVaCquXwJ3Ppaw9kxp0adQkRDgRxTyibQQsYuD_7tzzEuR7SlyxfU4M3cQIGiVPpNdlf2JHoxMK7PxNBJmoQL4nGA-ACwzKdz4nCk6OVJ9m0g_86qFPY8PLS9rRvJyf-BxhuiNXFEkQGuiQ01fm-YwrUXMw9iBHi9RTlzwxKqXnN773tfc1JoDp">
+            <img alt="Beats Pro" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJcuy8i2M527QE3i2hjNRPWIySFoilyQG-8UdUlJmC6bJ7UUDXw0oea2UXqwxyLYVaCquXwJ3Ppaw9kxp0adQkRDgRxTyibQQsYuD_7tzzEuR7SlyxfU4M3cQIGiVPpNdlf2JHoxMK7PxNBJmoQL4nGA-ACwzKdz4nCk6OVJ9m0g_86qFPY8PLS9rRvJyf-BxhuiNXFEkQGuiQ01fm-YwrUXMw9iBHi9RTlzwxKqXnN773tfc1JoDp">
           </div>
-          <div class="mt-4 flex-1 flex flex-col justify-between">
+          <div class="flex-1 flex flex-col justify-start text-left px-1">
             <div>
-              <h4 class="text-sm font-semibold text-neutral-800 line-clamp-2 leading-snug">Beats Pro Over-Ear Headphones - Black</h4>
+                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
+                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Beats Pro Over-Ear Headphones - Black</h4>
               <div class="mt-2 flex items-center gap-2">
                 <span class="text-xs text-neutral-400 line-through">$74.00</span>
-                <span class="text-base font-bold text-[#ff4d61]">$60.00</span>
+                <span class="text-base font-medium text-neutral-900">$60.00</span>
               </div>
             </div>
             <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Beats Pro Over-Ear Headphones - Black" data-price="60.00">
@@ -841,14 +895,15 @@
         </div>
 
         <!-- ROW 2 ITEM 5 -->
-        <div class="border border-gray-100 rounded-2xl p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
-          <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-center h-52 relative">
-            <img alt="Converse All Star" class="h-36 object-contain group-hover:scale-108 transition duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu03AZz0UBflDusu6H_9IXBdseQnDayOO6PvcI3eOqN5-50lLItSnqoK0JkH7Erhp_oAatY_xSKhR5CV7DmPX2espklRp5QfmymsqvvZfLs_12WnS6Uu-N5GSH5ZYKFd-QMXX0fAkFZxUSifSdlr7oJRrHwuLpFvWsz4dYcr-vurmrKEHR6GMrGa7w5aeReGMmMOOqnzoclQ6Jn8uor3FkKDDpjvlFj7xdybIydC-2Xo8ECGFHB61L">
+        <div class="flex flex-col group transition-all duration-300 w-full relative">
+          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
+            <img alt="Converse All Star" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu03AZz0UBflDusu6H_9IXBdseQnDayOO6PvcI3eOqN5-50lLItSnqoK0JkH7Erhp_oAatY_xSKhR5CV7DmPX2espklRp5QfmymsqvvZfLs_12WnS6Uu-N5GSH5ZYKFd-QMXX0fAkFZxUSifSdlr7oJRrHwuLpFvWsz4dYcr-vurmrKEHR6GMrGa7w5aeReGMmMOOqnzoclQ6Jn8uor3FkKDDpjvlFj7xdybIydC-2Xo8ECGFHB61L">
           </div>
-          <div class="mt-4 flex-1 flex flex-col justify-between">
+          <div class="flex-1 flex flex-col justify-start text-left px-1">
             <div>
-              <h4 class="text-sm font-semibold text-neutral-800 line-clamp-2 leading-snug">Cnvrs All Star Disrupt Cx Hi Field Surplus</h4>
-              <div class="mt-2 text-base font-bold text-[#ff4d61]">$59.00</div>
+                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
+                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Cnvrs All Star Disrupt Cx Hi Field Surplus</h4>
+              <div class="mt-2 text-base font-medium text-neutral-900">$59.00</div>
             </div>
             <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Cnvrs All Star Disrupt Cx Hi Field Surplus" data-price="59.00">
               <i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
@@ -961,30 +1016,30 @@
   <!-- END: FourPillarServiceGuarantee -->
 
   <!-- BEGIN: MainFooter (Full Width, Scaled for Wide Screens) -->
-  <footer class="w-full bg-white pt-16 pb-10 border-t border-gray-100 mt-auto" data-purpose="main-footer">
+  <footer class="w-full bg-neutral-950 pt-10 pb-6 border-t border-neutral-900 mt-auto text-gray-300" data-purpose="main-footer">
     <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
       <!-- 4 Columns Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-14 border-b border-gray-100">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 pb-10 border-b border-neutral-800">
         <!-- Col 1: About Present Panic -->
         <div class="lg:col-span-4 space-y-4">
           <div class="flex items-center gap-3">
-            <img src="/logo.png" alt="Present Panic" class="h-10 w-auto object-contain">
-            <span class="text-2xl lg:text-3xl font-black tracking-tight text-neutral-950 uppercase block">Present Panic</span>
+            <img src="/logo.png" alt="Present Panic" class="h-10 w-auto object-contain brightness-0 invert">
+            <span class="text-2xl lg:text-3xl font-black tracking-tight text-white uppercase block">Present Panic</span>
           </div>
-          <p class="text-xs sm:text-sm text-neutral-500 leading-relaxed pr-4 lg:pr-8">
+          <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed pr-4 lg:pr-8">
             Present Panic is your curated shopping haven for stylish lifestyle essentials, smart tech, and thoughtful gift recommendations with swift delivery.
           </p>
-          <div class="space-y-2.5 pt-2 text-xs sm:text-sm text-neutral-700">
+          <div class="space-y-2.5 pt-2 text-xs sm:text-sm text-gray-300">
             <div class="flex items-center gap-3">
-              <i class="w-4 h-4 text-neutral-600 flex-shrink-0" data-lucide="phone-call"></i>
+              <i class="w-4 h-4 text-neutral-400 flex-shrink-0" data-lucide="phone-call"></i>
               <span class="font-medium">+(805) 498-4719</span>
             </div>
             <div class="flex items-center gap-3">
-              <i class="w-4 h-4 text-neutral-600 flex-shrink-0" data-lucide="mail"></i>
+              <i class="w-4 h-4 text-neutral-400 flex-shrink-0" data-lucide="mail"></i>
               <span class="font-medium">support@presentpanic.com</span>
             </div>
             <div class="flex items-center gap-3">
-              <i class="w-4 h-4 text-neutral-600 flex-shrink-0" data-lucide="map-pin"></i>
+              <i class="w-4 h-4 text-neutral-400 flex-shrink-0" data-lucide="map-pin"></i>
               <span class="font-medium">3421 Lesser Dr Newbury Park, CA 91320</span>
             </div>
           </div>
@@ -992,8 +1047,8 @@
 
         <!-- Col 2: Departments -->
         <div class="lg:col-span-2 space-y-3">
-          <h4 class="text-base font-bold text-neutral-900">Explore</h4>
-          <ul class="space-y-2.5 text-xs sm:text-sm text-neutral-600 font-medium">
+          <h4 class="text-base font-bold text-white">Explore</h4>
+          <ul class="space-y-2.5 text-xs sm:text-sm text-neutral-400 font-medium">
             <li><a class="hover:text-[#ff4d61] transition" href="/shop.html">Shop All Products</a></li>
             <li><a class="hover:text-[#ff4d61] transition" href="/categories.html">Gift Collections</a></li>
             <li><a class="hover:text-[#ff4d61] transition" href="/about.html">About Us</a></li>
@@ -1004,9 +1059,9 @@
 
         <!-- Col 3: Customer Care & Policies -->
         <div class="lg:col-span-2 space-y-3">
-          <h4 class="text-base font-bold text-neutral-900">Customer Care</h4>
-          <ul class="space-y-2.5 text-xs sm:text-sm text-neutral-600 font-medium">
-            <li><button class="hover:text-[#ff4d61] transition text-left footer-quiz-link cursor-pointer font-bold text-[#ff4d61]">✨ Gift Finder Quiz</button></li>
+          <h4 class="text-base font-bold text-white">Customer Care</h4>
+          <ul class="space-y-2.5 text-xs sm:text-sm text-neutral-400 font-medium">
+            <li><button class="hover:text-[#ff4d61] transition text-left footer-quiz-link cursor-pointer font-medium text-neutral-900">✨ Gift Finder Quiz</button></li>
             <li><a class="hover:text-[#ff4d61] transition" href="/faq.html">FAQ &amp; Help</a></li>
             <li><a class="hover:text-[#ff4d61] transition" href="/shipping.html">Shipping &amp; Delivery</a></li>
             <li><a class="hover:text-[#ff4d61] transition" href="/returns.html">Returns &amp; Refunds</a></li>
@@ -1016,34 +1071,34 @@
 
         <!-- Col 4: Newsletter Subscription -->
         <div class="lg:col-span-4 space-y-3">
-          <h4 class="text-base font-bold text-neutral-900">Stay Connected</h4>
-          <p class="text-xs sm:text-sm text-neutral-500">Subscribe for gift inspiration, new product releases, and seasonal specials.</p>
+          <h4 class="text-base font-bold text-white">Stay Connected</h4>
+          <p class="text-xs sm:text-sm text-neutral-400">Subscribe for gift inspiration, new product releases, and seasonal specials.</p>
           <!-- Input + Pill Button -->
           <form id="newsletter-form" class="flex items-center gap-2 mt-4" onsubmit="event.preventDefault(); showToast('Thank you for subscribing to Present Panic updates!');">
-            <input class="flex-1 text-xs sm:text-sm border border-gray-300 rounded-full px-5 py-3 focus:outline-none focus:ring-1 focus:ring-rose-500 focus:border-rose-500" placeholder="your.email@example.com" type="email" required>
+            <input class="flex-1 text-xs sm:text-sm bg-neutral-900 border border-neutral-700 text-white rounded-full px-5 py-3 focus:outline-none focus:ring-1 focus:ring-rose-500 focus:border-rose-500" placeholder="your.email@example.com" type="email" required>
             <button class="bg-[#ff4d61] hover:bg-rose-600 text-white text-xs sm:text-sm font-semibold px-7 py-3 rounded-full transition shadow-sm cursor-pointer" type="submit">
               Subscribe
             </button>
           </form>
-          <p class="text-[11px] text-neutral-400 mt-2">
+          <p class="text-[11px] text-neutral-500 mt-2">
             No spam ever. Unsubscribe at any time with a single click.
           </p>
         </div>
       </div>
 
       <!-- Bottom Copyright Bar -->
-      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs sm:text-sm text-neutral-500 gap-4">
+      <div class="pt-5 flex flex-col sm:flex-row items-center justify-between text-xs sm:text-sm text-neutral-500 gap-4">
         <div>
           Copyright &copy; 2026 Present Panic. All rights reserved.
         </div>
         <div class="flex items-center space-x-4 text-neutral-400">
-          <a href="/privacy.html" class="hover:text-neutral-700 transition">Privacy Policy</a>
+          <a href="/privacy.html" class="hover:text-white transition">Privacy Policy</a>
           <span>&bull;</span>
-          <a href="/terms.html" class="hover:text-neutral-700 transition">Terms &amp; Conditions</a>
+          <a href="/terms.html" class="hover:text-white transition">Terms &amp; Conditions</a>
           <span>&bull;</span>
-          <a href="/shipping.html" class="hover:text-neutral-700 transition">Shipping Policy</a>
+          <a href="/shipping.html" class="hover:text-white transition">Shipping Policy</a>
           <span>&bull;</span>
-          <a href="/returns.html" class="hover:text-neutral-700 transition">Refunds</a>
+          <a href="/returns.html" class="hover:text-white transition">Refunds</a>
         </div>
       </div>
     </div>
@@ -1745,7 +1800,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
             ${topPicks.map(item => `
               <div class="border border-gray-100 rounded-2xl p-4 bg-white flex flex-col justify-between hover:shadow-xl transition-all duration-300">
-                <div class="relative bg-gray-50 rounded-xl p-4 flex items-center justify-center h-44 overflow-hidden">
+                <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
                   <span class="absolute top-2 left-2 bg-[#ff4d61] text-white text-[9px] font-extrabold px-2 py-0.5 rounded shadow-sm z-10">${item.badge}</span>
                   <img src="${item.img}" alt="${item.name}" class="h-32 object-contain hover:scale-108 transition duration-300">
                 </div>

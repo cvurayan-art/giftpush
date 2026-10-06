@@ -102,22 +102,21 @@ function createProductCardHTML(p: ShopifyProduct): string {
   const variantId = defaultVariant ? defaultVariant.id : '';
 
   return `
-    <div class="border border-gray-100 rounded-2xl p-4 sm:p-5 bg-white flex flex-col justify-between group hover:shadow-xl transition-all duration-300">
-      <a href="/product.html?handle=${p.handle}" class="relative bg-gray-50 rounded-xl p-4 flex items-center justify-center h-48 sm:h-56 block overflow-hidden">
-        ${hasCompare ? `<span class="absolute top-3 left-3 bg-[#ff4d61] text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">Sale</span>` : ''}
-        <img alt="${p.title}" class="h-36 sm:h-44 object-contain group-hover:scale-105 transition-transform duration-300 pointer-events-none" src="${img}" loading="lazy">
+    <div class="flex flex-col group transition-all duration-300 w-full relative">
+      <a href="/product.html?handle=${p.handle}" class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
+        ${hasCompare ? `<span class="absolute top-3 left-3 bg-[#ff4d61] text-white text-[10px] font-extrabold px-2 py-1 uppercase tracking-wider z-10">Sale</span>` : ''}
+        <img alt="${p.title}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="${img}" loading="lazy">
       </a>
-      <div class="mt-4 flex-1 flex flex-col justify-between">
-        <div>
-          <a href="/product.html?handle=${p.handle}" class="text-xs sm:text-sm font-bold text-neutral-900 line-clamp-2 leading-snug hover:text-[#ff4d61] transition block">
-            ${p.title}
-          </a>
-          <div class="mt-2 flex items-center gap-2 flex-wrap">
-            <span class="text-sm sm:text-base font-extrabold text-[#ff4d61]">${price}</span>
-            ${hasCompare ? `<span class="text-xs text-neutral-400 line-through">${comparePrice}</span>` : ''}
-          </div>
+      <div class="flex-1 flex flex-col justify-start text-left">
+        <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">${p.category || 'GIFTS'}</div>
+        <a href="/product.html?handle=${p.handle}" class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug hover:text-[#ff4d61] transition block mb-1">
+          ${p.title}
+        </a>
+        <div class="flex items-center gap-2 flex-wrap font-medium">
+          <span class="text-sm sm:text-base text-neutral-900">${price}</span>
+          ${hasCompare ? `<span class="text-xs text-neutral-400 line-through">${comparePrice}</span>` : ''}
         </div>
-        <div class="mt-4">
+        <div class="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button class="add-to-cart-action-btn w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-bold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-xs"
                   data-variant-id="${variantId}"
                   data-title="${p.title}"
