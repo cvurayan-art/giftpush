@@ -5,8 +5,8 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Present Panic | Style, Speed & Curated Gifts</title>
   <meta name="description" content="Present Panic - Discover the perfect gifts with style, performance, and speed. Take our interactive Gift Finder Quiz and explore curated flash deals.">
-  <link rel="icon" type="image/png" href="/favicon.png">
-  <link rel="apple-touch-icon" href="/favicon.png">
+  <link rel="icon" type="image/png" href="/images/FAvicon.png">
+  <link rel="apple-touch-icon" href="/images/FAvicon.png">
   
   <!-- Tailwind CSS CDN with forms & container queries -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -122,76 +122,53 @@
 </head>
 <body class="bg-white text-gray-800 antialiased selection:bg-rose-100 selection:text-rose-600 min-h-screen flex flex-col w-full overflow-x-hidden">
 
-  <!-- BEGIN: TopAnnouncementBar (Full Width) -->
-  <div class="w-full bg-neutral-900 text-neutral-300 text-xs py-2.5 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 border-b border-neutral-800" data-purpose="announcement-bar">
-    <div class="w-full flex flex-col sm:flex-row justify-between items-center gap-2">
-      <!-- Announcement message -->
-      <div class="flex items-center gap-2.5 flex-wrap justify-center sm:justify-start">
-        <span class="bg-[#ff4d61] text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">Free Gift Wrap</span>
-        <span class="font-medium text-neutral-200">Free Express Shipping on orders over $50</span>
-      </div>
-      <!-- Right Utility Links -->
-      <div class="flex items-center space-x-6 text-xs text-neutral-400">
-        <button id="top-bar-quiz-btn" class="text-rose-400 hover:text-white transition-colors flex items-center gap-1.5 font-bold cursor-pointer">
-          <i class="w-3.5 h-3.5" data-lucide="sparkles"></i>
-          <span>Take Gift Quiz</span>
-        </button>
-        <a class="hover:text-white transition-colors hidden md:inline" href="#track">Track Order</a>
-        <a class="hover:text-white transition-colors hidden md:inline" href="#help">Help &amp; FAQs</a>
-        <div class="flex items-center gap-1 cursor-pointer hover:text-white transition-colors">
-          <span>USD ($)</span>
-          <i class="w-3 h-3" data-lucide="chevron-down"></i>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- END: TopAnnouncementBar -->
+
 
   <!-- BEGIN: MainHeader (Full Width) -->
-  <header class="w-full bg-white border-b border-gray-100 sticky top-0 z-40" data-purpose="main-header">
-    <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 h-20 flex items-center justify-between">
+  <header class="w-full bg-[#0B2D19] border-b border-[#103B21] sticky top-0 z-40" data-purpose="main-header">
+    <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 h-14 sm:h-16 flex items-center justify-between">
       <!-- Left: Mobile Menu Button & Brand Name (No logo graphic, pure bold typography) -->
-      <div class="flex items-center gap-4 sm:gap-6 lg:gap-10 xl:gap-14">
+      <div class="flex items-center gap-3 sm:gap-6 lg:gap-10 xl:gap-14">
         <!-- Hamburger Menu Button (Mobile & Tablet) -->
-        <button id="btn-open-mobile-menu" aria-label="Open Navigation Menu" class="lg:hidden p-2 text-neutral-800 hover:text-[#ff4d61] hover:bg-neutral-50 rounded-lg transition cursor-pointer">
-          <i class="w-6 h-6 stroke-[2.2]" data-lucide="menu"></i>
+        <button id="btn-open-mobile-menu" aria-label="Open Navigation Menu" class="lg:hidden p-1.5 text-white hover:text-emerald-200 hover:bg-[#103B21] rounded-lg transition cursor-pointer">
+          <i class="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2]" data-lucide="menu"></i>
         </button>
 
         <!-- Brand Logo & Name -->
-        <a class="flex items-center gap-2.5 sm:gap-3 select-none transition-opacity hover:opacity-90" href="/">
-          <img src="/logo.png" alt="Present Panic Logo" class="h-10 sm:h-12 w-auto object-contain">
-          <span class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-neutral-950 uppercase whitespace-nowrap">
+        <a class="flex items-center gap-2 sm:gap-2.5 select-none transition-opacity hover:opacity-90" href="/">
+          <img src="/images/FAvicon.png" alt="Present Panic Logo" class="h-7 sm:h-9 w-auto object-contain">
+          <span class="text-lg sm:text-xl lg:text-2xl font-black tracking-tight text-white uppercase whitespace-nowrap">
             Present Panic
           </span>
         </a>
 
         <!-- Main Desktop Navigation Links -->
-        <nav class="hidden lg:flex items-center space-x-6 xl:space-x-8 text-sm font-semibold text-neutral-700">
-          <a class="text-[#ff4d61] font-bold hover:text-[#e63946] relative py-2" href="/">
+        <nav class="hidden lg:flex items-center space-x-6 xl:space-x-8 text-sm font-semibold text-emerald-50">
+          <a class="text-white font-bold hover:text-emerald-200 relative py-2" href="/">
             Home
-            <span class="absolute bottom-0 left-0 w-full h-[2px] bg-[#ff4d61] rounded-full"></span>
+            <span class="absolute bottom-0 left-0 w-full h-[2px] bg-white rounded-full"></span>
           </a>
-          <a class="hover:text-[#ff4d61] transition-colors py-2" href="/shop.html">Shop</a>
-          <a class="hover:text-[#ff4d61] transition-colors py-2" href="/categories.html">Categories</a>
-          <a class="hover:text-[#ff4d61] transition-colors py-2" href="/about.html">About Us</a>
-          <a class="hover:text-[#ff4d61] transition-colors py-2" href="/contact.html">Contact Us</a>
+          <a class="hover:text-emerald-200 transition-colors py-2" href="/shop.html">Shop</a>
+          <a class="hover:text-emerald-200 transition-colors py-2" href="/categories.html">Categories</a>
+          <a class="hover:text-emerald-200 transition-colors py-2" href="/about.html">About Us</a>
+          <a class="hover:text-emerald-200 transition-colors py-2" href="/contact.html">Contact Us</a>
         </nav>
       </div>
 
       <!-- Right Action Icons: Search, Support, Cart -->
-      <div class="flex items-center space-x-2 sm:space-x-4 lg:space-x-6 text-neutral-700">
+      <div class="flex items-center space-x-1 sm:space-x-3 lg:space-x-5 text-white">
         <!-- Search Button -->
-        <button id="btn-header-search" aria-label="Search" class="p-2.5 hover:text-[#ff4d61] hover:bg-neutral-50 rounded-full transition cursor-pointer">
-          <i class="w-5 h-5 stroke-[2.2]" data-lucide="search"></i>
+        <button id="btn-header-search" aria-label="Search" class="p-1.5 sm:p-2 hover:text-emerald-200 hover:bg-[#103B21] rounded-full transition cursor-pointer">
+          <i class="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" data-lucide="search"></i>
         </button>
         <!-- Guest Support & Help -->
-        <a href="/contact.html" aria-label="Customer Support" class="p-2.5 hover:text-[#ff4d61] hover:bg-neutral-50 rounded-full transition cursor-pointer hidden sm:block" title="Guest Support & Help">
-          <i class="w-5 h-5 stroke-[2.2]" data-lucide="help-circle"></i>
+        <a href="/contact.html" aria-label="Customer Support" class="p-1.5 sm:p-2 hover:text-emerald-200 hover:bg-[#103B21] rounded-full transition cursor-pointer hidden sm:block" title="Guest Support & Help">
+          <i class="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" data-lucide="help-circle"></i>
         </a>
         <!-- Cart Bag with badge count -->
-        <button id="btn-header-cart" aria-label="Shopping Cart" class="relative p-2.5 hover:text-[#ff4d61] hover:bg-neutral-50 rounded-full transition cursor-pointer">
-          <i class="w-5 h-5 stroke-[2.2]" data-lucide="shopping-bag"></i>
-          <span id="cart-badge" class="absolute top-0 right-0 bg-[#ff4d61] text-white text-[11px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">0</span>
+        <button id="btn-header-cart" aria-label="Shopping Cart" class="relative p-1.5 sm:p-2 hover:text-emerald-200 hover:bg-[#103B21] rounded-full transition cursor-pointer">
+          <i class="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" data-lucide="shopping-bag"></i>
+          <span id="cart-badge" class="absolute -top-1 -right-1 bg-[#ff4d61] text-white text-[9px] sm:text-[10px] font-extrabold w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full flex items-center justify-center shadow-sm border border-[#0B2D19]">0</span>
         </button>
       </div>
     </div>
@@ -207,7 +184,7 @@
       <div>
         <div class="flex items-center justify-between pb-6 border-b border-gray-100">
           <a href="/" class="flex items-center gap-2">
-            <img src="/logo.png" alt="Present Panic" class="h-8 w-auto object-contain">
+            <img src="/images/FAvicon.png" alt="Present Panic" class="h-8 w-auto object-contain">
             <span class="text-xl font-black uppercase tracking-tight text-neutral-950">Present Panic</span>
           </a>
           <button id="btn-close-mobile-menu" aria-label="Close Navigation Menu" class="p-2 text-neutral-500 hover:text-neutral-900 rounded-lg hover:bg-neutral-100">
@@ -241,19 +218,16 @@
   </div>
   <!-- END: Mobile Drawer Navigation -->
 
+  <!-- BEGIN: Hero Banner Image -->
+  <section class="w-full bg-[#0B2D19]">
+    <img src="/images/Luxury Christmas gifting with Santa (1).png" alt="Luxury Christmas Gifting with Santa" class="w-full h-auto object-cover max-h-[350px] sm:max-h-[450px] lg:max-h-[600px] object-[center_20%]">
+  </section>
+  <!-- END: Hero Banner Image -->
+
   <!-- BEGIN: StoryCategoryBar (Scrollable Category Carousel without Pink Glow) -->
   <section class="w-full py-7 bg-white border-b border-gray-100 relative group/cat" data-purpose="category-stories">
     <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 relative">
       
-      <!-- Left Arrow -->
-      <button id="cat-scroll-prev" aria-label="Scroll Categories Left" class="absolute -left-1 sm:left-2 lg:left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-gray-200 text-neutral-800 flex items-center justify-center shadow-lg hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all opacity-0 group-hover/cat:opacity-100 cursor-pointer">
-        <i class="w-5 h-5" data-lucide="chevron-left"></i>
-      </button>
-
-      <!-- Right Arrow -->
-      <button id="cat-scroll-next" aria-label="Scroll Categories Right" class="absolute -right-1 sm:right-2 lg:right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-gray-200 text-neutral-800 flex items-center justify-center shadow-lg hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all opacity-0 group-hover/cat:opacity-100 cursor-pointer">
-        <i class="w-5 h-5" data-lucide="chevron-right"></i>
-      </button>
 
       <!-- Categories Track (Populated Dynamically from Shopify Collections) -->
       <div id="category-stories-track" class="w-full flex items-center justify-evenly gap-6 sm:gap-8 lg:gap-10 overflow-x-auto no-scrollbar py-2 text-center scroll-smooth select-none cursor-grab active:cursor-grabbing">
@@ -293,7 +267,7 @@
           <!-- Slider Track -->
           <div id="hero-slider" class="w-full flex transition-transform duration-700 ease-in-out">
             <div class="w-full flex-shrink-0 relative">
-              <img src="/images/hero-1.jpg" class="w-full h-auto block" alt="Slide 1">
+              <img src="/images/Sleigh%20the%20Season%20Holiday%20Shopping%20Banner.png" class="w-full h-auto block" alt="Slide 1">
             </div>
             <div class="w-full flex-shrink-0 relative">
               <img src="/images/hero-2.jpg" class="w-full h-auto block" alt="Slide 2">
@@ -301,12 +275,6 @@
           </div>
           
           <!-- Controls -->
-          <button id="hero-prev" aria-label="Previous Slide" class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center text-gray-800 transition shadow-sm z-10 opacity-0 group-hover:opacity-100 cursor-pointer">
-            <i class="w-5 h-5" data-lucide="chevron-left"></i>
-          </button>
-          <button id="hero-next" aria-label="Next Slide" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center text-gray-800 transition shadow-sm z-10 opacity-0 group-hover:opacity-100 cursor-pointer">
-            <i class="w-5 h-5" data-lucide="chevron-right"></i>
-          </button>
 
           <!-- Dots -->
           <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
@@ -454,14 +422,6 @@
 
       <!-- Carousel Cards Container with Relative Arrow Nav Buttons -->
       <div class="relative pt-6">
-        <!-- Left Nav Arrow -->
-        <button id="flash-prev-btn" aria-label="Previous Deal" class="absolute -left-3 lg:-left-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-[#ff4d61] text-white flex items-center justify-center shadow-lg hover:bg-rose-600 transition cursor-pointer">
-          <i class="w-5 h-5" data-lucide="chevron-left"></i>
-        </button>
-        <!-- Right Nav Arrow -->
-        <button id="flash-next-btn" aria-label="Next Deal" class="absolute -right-3 lg:-right-5 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-[#ff4d61] text-white flex items-center justify-center shadow-lg hover:bg-rose-600 transition cursor-pointer">
-          <i class="w-5 h-5" data-lucide="chevron-right"></i>
-        </button>
 
         <!-- Cards Row (Grid spanning across 1 to 5 columns smoothly) -->
         <div id="flash-deals-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth">
@@ -583,11 +543,18 @@
   <!-- END: FlashDealsSection -->
 
 
+  
+
+
+
+  
+
+
   <!-- BEGIN: Testimonials Section -->
   <section class="w-full py-16 lg:py-24 bg-[#fafafa]" data-purpose="testimonials">
     <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
       <div class="text-center mb-10 lg:mb-14">
-        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-900 tracking-tight">Loved by Over 10,000 Gifters</h2>
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-900 tracking-tight">Loved by Over 250+ Gifters</h2>
         <p class="text-neutral-500 mt-4 max-w-2xl mx-auto text-sm sm:text-base">Don't just take our word for it. See what our community has to say about their stress-free gifting experience.</p>
       </div>
       
@@ -714,376 +681,83 @@
   </section>
   <!-- END: ValuePropositionTrustBar -->
 
-
-  <!-- BEGIN: CustomerMostLovedSection (Full Width, Scaled for Wide Screens) -->
-  <section id="customer-loved" class="w-full py-14 lg:py-18 bg-white" data-purpose="customer-most-loved">
-    <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
-      <!-- Header with Countdown and See All link -->
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-8 gap-4 border-b border-gray-100">
-        <div class="flex items-center gap-5 flex-wrap">
-          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-neutral-950 tracking-tight">Customer Most Loved</h2>
-          <!-- Countdown Badges -->
-          <div class="flex items-center gap-1.5 font-bold text-neutral-900" id="countdown-loved">
-            <span class="w-10 h-10 rounded-full bg-neutral-900 text-white text-xs flex flex-col items-center justify-center leading-none shadow-sm">
-              <span id="hours-loved" class="font-bold">13</span>
-              <span class="text-[7px] text-neutral-400 font-normal">Hours</span>
-            </span>
-            <span class="font-bold text-neutral-400">:</span>
-            <span class="w-10 h-10 rounded-full bg-neutral-900 text-white text-xs flex flex-col items-center justify-center leading-none shadow-sm">
-              <span id="minutes-loved" class="font-bold">07</span>
-              <span class="text-[7px] text-neutral-400 font-normal">Minutes</span>
-            </span>
-            <span class="font-bold text-neutral-400">:</span>
-            <span class="w-10 h-10 rounded-full bg-neutral-900 text-white text-xs flex flex-col items-center justify-center leading-none shadow-sm">
-              <span id="seconds-loved" class="font-bold">53</span>
-              <span class="text-[7px] text-neutral-400 font-normal">Seconds</span>
-            </span>
-          </div>
-        </div>
-        <a class="text-xs sm:text-sm font-bold text-neutral-900 hover:text-[#ff4d61] underline underline-offset-4 uppercase tracking-wider transition" href="#flash-deals">
-          See All Products &rarr;
-        </a>
-      </div>
-
-      <!-- 2 Rows Grid: 1 col on mobile, 2 on small tablet, 3 on tablet, 4 on desktop, 5 on wide screens -->
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6 pt-8">
-        
-        <!-- ROW 1 ITEM 1 -->
-        <div class="flex flex-col group transition-all duration-300 w-full relative">
-          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
-            <img alt="Pinkfong Baby Shark" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChZqt8g0E0iRraHXu2zqGkGpyYJf_OXmFPIY5kB2yvVmUW7bcAKRdI8njir8zIFzJ1PO3N8OEH7V79Do-WOvVpuu29qbM7VG8oQfwDwuYbqg3SfyTeKC2XYcLyh385hQjCC--8-DGMUap-glsethaAryqmzoIboH3kLiQ6Cf1tKzp-OjIQd4KOL1CWRruySOMwabnJKeUqw3tobRY8Xb6mhAIr3OPTsl8OmvUddS35FfUpTcg5AaeB">
-          </div>
-          <div class="flex-1 flex flex-col justify-start text-left px-1">
-            <div>
-                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
-                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Pinkfong Baby Shark Official Song Cube</h4>
-              <div class="mt-2 text-base font-medium text-neutral-900">$15.00</div>
-            </div>
-            <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Pinkfong Baby Shark Official Song Cube" data-price="15.00">
-              <i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
-              <span>Add to Cart</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- ROW 1 ITEM 2 -->
-        <div class="flex flex-col group transition-all duration-300 w-full relative">
-          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
-            <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-15%</span>
-            <img alt="Keyboard Folio" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEPh0BbAy4w7LSFTDy66OHg51NMfZ0tCv5TSl3P0gFmhrfFYciNtG8FhjQGAPcQy_o2z0OyfSABtqHaqFxz3xgsoMPk1tJIJIuEG8bVQ5EX6KqBMv28fD3QoEf4WJBQ-TPfdvFhELz95jhQSBS2r4XAnUONOnbTZkFk-ZopcwbT1E5fgQyPn9dpPcboJOy8IxZx4HC46zkzNywMHE2WZZJCFWaGb-6g7ZeidgMA49Et5bSuAXa-mfr">
-          </div>
-          <div class="flex-1 flex flex-col justify-start text-left px-1">
-            <div>
-                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
-                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Smart Keyboard Folio for 12.9 (English)</h4>
-              <div class="mt-2 flex items-center gap-2">
-                <span class="text-xs text-neutral-400 line-through">$1,299.00</span>
-                <span class="text-base font-medium text-neutral-900">$1,099.00</span>
-              </div>
-            </div>
-            <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Smart Keyboard Folio for 12.9 (English)" data-price="1099.00">
-              <i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
-              <span>Add to Cart</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- ROW 1 ITEM 3 (With floating quick-action pill) -->
-        <div class="flex flex-col group transition-all duration-300 w-full relative">
-          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
-            <img alt="Coffee Maker" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLVUFKvNMnyGAn3s-BRkpXsob_ZHTJW2D-s_tDLDitoVBlyAplpaojPtLsnDrxndlRqrwT-P6h0dQZ480-YsT5qD39ZCbDSWgQIXL1SMWnerEmc_UjOZRg2tZMKywbWWbcOerUed9wy6Sv8sGcbRBlkfs6tThhrqaVs7WxRgnhesl-S0Jq4A549qyod9sQLeRHeOfcgen6Jsga14nuwZok0EHnKE3_eGZW5lhlHQ0r0zIhHa2JC94A">
-          </div>
-          <div class="flex-1 flex flex-col justify-start text-left px-1">
-            <div>
-                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
-                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Retro Style Coffee Maker Machine</h4>
-              <div class="mt-2 text-base font-medium text-neutral-900">$229.00</div>
-            </div>
-            <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Retro Style Coffee Maker Machine" data-price="229.00">
-              <i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
-              <span>Add to Cart</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- ROW 1 ITEM 4 -->
-        <div class="flex flex-col group transition-all duration-300 w-full relative">
-          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
-            <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-4%</span>
-            <img alt="Apple Watch" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBglVrzVg1vW9Vl_J1g_2bavnFaKWHTYI0IEiyixzXAZXqW3WeJgOt_SNCeWp4EWuGWvF5k_Y0s_M-TUO26TR34DYe9t6b0epLTvbyxxa3k8HtgNGH1buDywD2sNj82SVr0ScGInBh3aEIfahpPQNLvLA5CquzJKUhC8qokZkLj6C75cVtO9cGeFyGw9p5zZo8g1lZxhV9RCfuB9Ped1KvWdH82bCISJBJHjyeWKc-eSq8hPehiL6q7">
-          </div>
-          <div class="flex-1 flex flex-col justify-start text-left px-1">
-            <div>
-                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
-                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Apple Watch Series 5 GPS, 40mm Gold</h4>
-              <div class="mt-2 flex items-center gap-2">
-                <span class="text-xs text-neutral-400 line-through">$520.00</span>
-                <span class="text-base font-medium text-neutral-900">$499.00</span>
-              </div>
-            </div>
-            <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Apple Watch Series 5 GPS, 40mm Gold" data-price="499.00">
-              <i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
-              <span>Add to Cart</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- ROW 1 ITEM 5 -->
-        <div class="flex flex-col group transition-all duration-300 w-full relative">
-          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
-            <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-30%</span>
-            <img alt="Nike AF1 Sneaker" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZUDL2sFx0nK699vcFbJQp9Cadk6y1bmImZmjsog-HmAWkUxKRbS-EHEY8dC5Yky7ywKeJD8xcDTdYZ3R8ozGbQLnu3BVqVj_bKq4-O7QOL7C5xsNM2GxnSslfc6nuOxiXwZj9WkSoBc0KlH1jnhUlK59O7zGMQECd0cxiI1oXlAeNPq-xv3S21cPFq-JXh8bpQGqA5RQlQY6ZTHB9jrEuriGyQTMC5b5cFqSOr2QeamRfoFR1ndm3">
-          </div>
-          <div class="flex-1 flex flex-col justify-start text-left px-1">
-            <div>
-                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
-                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">AF 1 Shadow Women's Sneaker (Cream Color)</h4>
-              <div class="mt-2 flex items-center gap-2">
-                <span class="text-xs text-neutral-400 line-through">$999.00</span>
-                <span class="text-base font-medium text-neutral-900">$699.00</span>
-              </div>
-            </div>
-            <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="AF 1 Shadow Women's Sneaker (Cream Color)" data-price="699.00">
-              <i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
-              <span>Add to Cart</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- ROW 2 ITEM 1 -->
-        <div class="flex flex-col group transition-all duration-300 w-full relative">
-          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
-            <img alt="Apple MacBook Air" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSy7J_76YjgBnmjBbJPUUaOa3_YAlDu5dLBfmTJOh9OgL1o2MoWrP1nJPlOwps5Ocbzqd_sT4Q7fOMmWK__cf-nDOQjz2b2B0KYlaZyE5WeFA4ojEPEyghsAR4qZ5rZvIUnHm4DEPcB6vwTFuOEwTdZhyTenogHbtZfiq_Vvalk8mzDcVVbsePMv4JD7rxL7gNq2FHLocMol6tT1JI1Xaqtg1cDzMJ3YBjnaD68ruugFPJrMc0jJnV">
-          </div>
-          <div class="flex-1 flex flex-col justify-start text-left px-1">
-            <div>
-                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
-                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Apple MacBook Air MGNA3HN/A 13.3 inch</h4>
-              <div class="mt-2 text-base font-medium text-neutral-900">$1,199.00</div>
-            </div>
-            <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Apple MacBook Air MGNA3HN/A 13.3 inch" data-price="1199.00">
-              <i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
-              <span>Add to Cart</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- ROW 2 ITEM 2 -->
-        <div class="flex flex-col group transition-all duration-300 w-full relative">
-          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
-            <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-11%</span>
-            <img alt="Bluetooth Wireless Speaker" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXCsh8pZCAVBSBSJQZ8WCF4EPfZirc2wP1HcgeeKh3dOUUtyNiNHM2AJ47H11WrUrZKR2Zzw3O4Yz9IVMf2YjgUjuD6acHpwHvesoBCPKZspxbgQMIDuKarCJ9iqH4LJA1XliPL2Qel20kSd04XW7FNYkFNm-5iQEwJ6VJ4VemcxACSmpzBWLZP437oY6TBQ2kBrSoLY1NUcC0_RwD44_NNbe7aBRVEOK_rCffyNh8Io5v0iIqu0Dh">
-          </div>
-          <div class="flex-1 flex flex-col justify-start text-left px-1">
-            <div>
-                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
-                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Bass Dual EQ Bluetooth 5.0 Wireless Speaker</h4>
-              <div class="mt-2 flex items-center gap-2">
-                <span class="text-xs text-neutral-400 line-through">$180.00</span>
-                <span class="text-base font-medium text-neutral-900">$160.00</span>
-              </div>
-            </div>
-            <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Bass Dual EQ Bluetooth 5.0 Wireless Speaker" data-price="160.00">
-              <i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
-              <span>Add to Cart</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- ROW 2 ITEM 3 -->
-        <div class="flex flex-col group transition-all duration-300 w-full relative">
-          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
-            <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-28%</span>
-            <img alt="Galaxy Watch" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtCnJiOwFnEs0D_JTecjwSEcA0NUr0a7OHqnoApvhJ8AowG8f1OPhlbotVoHCTo_dTDAB1OPICiinulhBXUcduZDDlskrFv717PhtFNp6gz6hfQQwDNsyKtxFi7fBd-vFpjFpNLKU2IHL5D4zFTN9bRl_2OSpJPamSt9LaYmI4C3KnuaMBRkiU6bDEwLJQFQZbr7JxAOlLXLdXXTXp5X5wYYlrsGU7W34gY8Sd1NB38ezcSMAep0x0">
-          </div>
-          <div class="flex-1 flex flex-col justify-start text-left px-1">
-            <div>
-                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
-                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Galaxy Watch Active 2 Aluminum Smart Watch</h4>
-              <div class="mt-2 flex items-center gap-2">
-                <span class="text-xs text-neutral-400 line-through">$489.00</span>
-                <span class="text-base font-medium text-neutral-900">$350.00</span>
-              </div>
-            </div>
-            <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Galaxy Watch Active 2 Aluminum Smart Watch" data-price="350.00">
-              <i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
-              <span>Add to Cart</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- ROW 2 ITEM 4 -->
-        <div class="flex flex-col group transition-all duration-300 w-full relative">
-          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
-            <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-19%</span>
-            <img alt="Beats Pro" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJcuy8i2M527QE3i2hjNRPWIySFoilyQG-8UdUlJmC6bJ7UUDXw0oea2UXqwxyLYVaCquXwJ3Ppaw9kxp0adQkRDgRxTyibQQsYuD_7tzzEuR7SlyxfU4M3cQIGiVPpNdlf2JHoxMK7PxNBJmoQL4nGA-ACwzKdz4nCk6OVJ9m0g_86qFPY8PLS9rRvJyf-BxhuiNXFEkQGuiQ01fm-YwrUXMw9iBHi9RTlzwxKqXnN773tfc1JoDp">
-          </div>
-          <div class="flex-1 flex flex-col justify-start text-left px-1">
-            <div>
-                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
-                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Beats Pro Over-Ear Headphones - Black</h4>
-              <div class="mt-2 flex items-center gap-2">
-                <span class="text-xs text-neutral-400 line-through">$74.00</span>
-                <span class="text-base font-medium text-neutral-900">$60.00</span>
-              </div>
-            </div>
-            <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Beats Pro Over-Ear Headphones - Black" data-price="60.00">
-              <i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
-              <span>Add to Cart</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- ROW 2 ITEM 5 -->
-        <div class="flex flex-col group transition-all duration-300 w-full relative">
-          <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
-            <img alt="Converse All Star" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu03AZz0UBflDusu6H_9IXBdseQnDayOO6PvcI3eOqN5-50lLItSnqoK0JkH7Erhp_oAatY_xSKhR5CV7DmPX2espklRp5QfmymsqvvZfLs_12WnS6Uu-N5GSH5ZYKFd-QMXX0fAkFZxUSifSdlr7oJRrHwuLpFvWsz4dYcr-vurmrKEHR6GMrGa7w5aeReGMmMOOqnzoclQ6Jn8uor3FkKDDpjvlFj7xdybIydC-2Xo8ECGFHB61L">
-          </div>
-          <div class="flex-1 flex flex-col justify-start text-left px-1">
-            <div>
-                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
-                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Cnvrs All Star Disrupt Cx Hi Field Surplus</h4>
-              <div class="mt-2 text-base font-medium text-neutral-900">$59.00</div>
-            </div>
-            <button class="add-to-cart-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Cnvrs All Star Disrupt Cx Hi Field Surplus" data-price="59.00">
-              <i class="w-3.5 h-3.5" data-lucide="shopping-cart"></i>
-              <span>Add to Cart</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- END: CustomerMostLovedSection -->
-
-
-
-  <!-- BEGIN: FourPillarServiceGuarantee (Full Width, Scaled for Wide Screens) -->
-  <section class="w-full py-12 lg:py-16 bg-white border-b border-gray-100" data-purpose="service-guarantees">
-    <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
-        <!-- Pillar 1 -->
-        <div class="flex items-start gap-5">
-          <div class="p-3 bg-neutral-50 rounded-2xl text-neutral-900 flex-shrink-0">
-            <i class="w-8 h-8 stroke-[1.4]" data-lucide="globe"></i>
-          </div>
-          <div>
-            <h4 class="text-base font-bold text-neutral-900 leading-tight">Worldwide Delivery</h4>
-            <p class="text-xs text-neutral-500 mt-1.5 leading-snug">Fast track shipping to 200+ countries worldwide.</p>
-          </div>
-        </div>
-        <!-- Pillar 2 -->
-        <div class="flex items-start gap-5">
-          <div class="p-3 bg-neutral-50 rounded-2xl text-neutral-900 flex-shrink-0">
-            <i class="w-8 h-8 stroke-[1.4]" data-lucide="credit-card"></i>
-          </div>
-          <div>
-            <h4 class="text-base font-bold text-neutral-900 leading-tight">Secure Payment</h4>
-            <p class="text-xs text-neutral-500 mt-1.5 leading-snug">Pay with Stripe, Apple Pay, PayPal and more.</p>
-          </div>
-        </div>
-        <!-- Pillar 3 -->
-        <div class="flex items-start gap-5">
-          <div class="p-3 bg-neutral-50 rounded-2xl text-neutral-900 flex-shrink-0">
-            <i class="w-8 h-8 stroke-[1.4]" data-lucide="rotate-ccw"></i>
-          </div>
-          <div>
-            <h4 class="text-base font-bold text-neutral-900 leading-tight">60-day Return Policy</h4>
-            <p class="text-xs text-neutral-500 mt-1.5 leading-snug">Hassle-free 100% money back within 60 days.</p>
-          </div>
-        </div>
-        <!-- Pillar 4 -->
-        <div class="flex items-start gap-5">
-          <div class="p-3 bg-neutral-50 rounded-2xl text-neutral-900 flex-shrink-0">
-            <i class="w-8 h-8 stroke-[1.4]" data-lucide="headphones"></i>
-          </div>
-          <div>
-            <h4 class="text-base font-bold text-neutral-900 leading-tight">24/7 Help Center</h4>
-            <p class="text-xs text-neutral-500 mt-1.5 leading-snug">Expert customer care team available around the clock.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- END: FourPillarServiceGuarantee -->
-
   <!-- BEGIN: MainFooter (Full Width, Scaled for Wide Screens) -->
-  <footer class="w-full bg-neutral-950 pt-10 pb-6 border-t border-neutral-900 mt-auto text-gray-300" data-purpose="main-footer">
+  <footer class="w-full bg-[#0B2D19] pt-6 pb-4 border-t border-[#103B21] mt-auto text-emerald-50" data-purpose="main-footer">
     <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
       <!-- 4 Columns Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 pb-10 border-b border-neutral-800">
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-x-4 gap-y-6 pb-6 border-b border-[#103B21]">
         <!-- Col 1: About Present Panic -->
-        <div class="lg:col-span-4 space-y-4">
-          <div class="flex items-center gap-3">
-            <img src="/logo.png" alt="Present Panic" class="h-10 w-auto object-contain brightness-0 invert">
-            <span class="text-2xl lg:text-3xl font-black tracking-tight text-white uppercase block">Present Panic</span>
+        <div class="col-span-2 md:col-span-4 lg:col-span-4 space-y-3">
+          <div class="flex items-center gap-2.5">
+            <img src="/images/FAvicon.png" alt="Present Panic" class="h-8 w-auto object-contain">
+            <span class="text-xl lg:text-2xl font-black tracking-tight text-white uppercase block">Present Panic</span>
           </div>
-          <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed pr-4 lg:pr-8">
+          <p class="text-xs sm:text-sm text-emerald-100/70 leading-relaxed pr-4 lg:pr-8">
             Present Panic is your curated shopping haven for stylish lifestyle essentials, smart tech, and thoughtful gift recommendations with swift delivery.
           </p>
-          <div class="space-y-2.5 pt-2 text-xs sm:text-sm text-gray-300">
+          <div class="space-y-2 pt-1 text-xs sm:text-sm text-emerald-100">
             <div class="flex items-center gap-3">
-              <i class="w-4 h-4 text-neutral-400 flex-shrink-0" data-lucide="phone-call"></i>
+              <i class="w-4 h-4 text-emerald-400 flex-shrink-0" data-lucide="phone-call"></i>
               <span class="font-medium">+(805) 498-4719</span>
             </div>
             <div class="flex items-center gap-3">
-              <i class="w-4 h-4 text-neutral-400 flex-shrink-0" data-lucide="mail"></i>
+              <i class="w-4 h-4 text-emerald-400 flex-shrink-0" data-lucide="mail"></i>
               <span class="font-medium">support@presentpanic.com</span>
             </div>
             <div class="flex items-center gap-3">
-              <i class="w-4 h-4 text-neutral-400 flex-shrink-0" data-lucide="map-pin"></i>
+              <i class="w-4 h-4 text-emerald-400 flex-shrink-0" data-lucide="map-pin"></i>
               <span class="font-medium">3421 Lesser Dr Newbury Park, CA 91320</span>
             </div>
           </div>
         </div>
 
         <!-- Col 2: Departments -->
-        <div class="lg:col-span-2 space-y-3">
-          <h4 class="text-base font-bold text-white">Explore</h4>
-          <ul class="space-y-2.5 text-xs sm:text-sm text-neutral-400 font-medium">
-            <li><a class="hover:text-[#ff4d61] transition" href="/shop.html">Shop All Products</a></li>
-            <li><a class="hover:text-[#ff4d61] transition" href="/categories.html">Gift Collections</a></li>
-            <li><a class="hover:text-[#ff4d61] transition" href="/about.html">About Us</a></li>
-            <li><a class="hover:text-[#ff4d61] transition" href="/contact.html">Contact Customer Care</a></li>
-            <li><a class="hover:text-[#ff4d61] transition" href="/cart.html">Shopping Cart</a></li>
+        <div class="col-span-1 md:col-span-2 lg:col-span-2 space-y-2.5">
+          <h4 class="text-sm sm:text-base font-bold text-white">Explore</h4>
+          <ul class="space-y-2 text-xs sm:text-sm text-emerald-100/70 font-medium">
+            <li><a class="hover:text-emerald-300 transition" href="/shop.html">Shop All Products</a></li>
+            <li><a class="hover:text-emerald-300 transition" href="/categories.html">Gift Collections</a></li>
+            <li><a class="hover:text-emerald-300 transition" href="/about.html">About Us</a></li>
+            <li><a class="hover:text-emerald-300 transition" href="/contact.html">Contact Customer Care</a></li>
+            <li><a class="hover:text-emerald-300 transition" href="/cart.html">Shopping Cart</a></li>
           </ul>
         </div>
 
         <!-- Col 3: Customer Care & Policies -->
-        <div class="lg:col-span-2 space-y-3">
-          <h4 class="text-base font-bold text-white">Customer Care</h4>
-          <ul class="space-y-2.5 text-xs sm:text-sm text-neutral-400 font-medium">
-            <li><button class="hover:text-[#ff4d61] transition text-left footer-quiz-link cursor-pointer font-medium text-neutral-900">✨ Gift Finder Quiz</button></li>
-            <li><a class="hover:text-[#ff4d61] transition" href="/faq.html">FAQ &amp; Help</a></li>
-            <li><a class="hover:text-[#ff4d61] transition" href="/shipping.html">Shipping &amp; Delivery</a></li>
-            <li><a class="hover:text-[#ff4d61] transition" href="/returns.html">Returns &amp; Refunds</a></li>
-            <li><a class="hover:text-[#ff4d61] transition" href="/contact.html">Order Support</a></li>
+        <div class="col-span-1 md:col-span-2 lg:col-span-2 space-y-2.5">
+          <h4 class="text-sm sm:text-base font-bold text-white">Customer Care</h4>
+          <ul class="space-y-2 text-xs sm:text-sm text-emerald-100/70 font-medium">
+            <li><button class="hover:text-emerald-300 transition text-left footer-quiz-link cursor-pointer font-bold text-emerald-200">✨ Gift Finder Quiz</button></li>
+            <li><a class="hover:text-emerald-300 transition" href="/faq.html">FAQ &amp; Help</a></li>
+            <li><a class="hover:text-emerald-300 transition" href="/shipping.html">Shipping &amp; Delivery</a></li>
+            <li><a class="hover:text-emerald-300 transition" href="/returns.html">Returns &amp; Refunds</a></li>
+            <li><a class="hover:text-emerald-300 transition" href="/contact.html">Order Support</a></li>
           </ul>
         </div>
 
         <!-- Col 4: Newsletter Subscription -->
-        <div class="lg:col-span-4 space-y-3">
-          <h4 class="text-base font-bold text-white">Stay Connected</h4>
-          <p class="text-xs sm:text-sm text-neutral-400">Subscribe for gift inspiration, new product releases, and seasonal specials.</p>
+        <div class="col-span-2 md:col-span-4 lg:col-span-4 space-y-2.5">
+          <h4 class="text-sm sm:text-base font-bold text-white">Stay Connected</h4>
+          <p class="text-xs sm:text-sm text-emerald-100/70">Subscribe for gift inspiration, new product releases, and seasonal specials.</p>
           <!-- Input + Pill Button -->
-          <form id="newsletter-form" class="flex items-center gap-2 mt-4" onsubmit="event.preventDefault(); showToast('Thank you for subscribing to Present Panic updates!');">
-            <input class="flex-1 text-xs sm:text-sm bg-neutral-900 border border-neutral-700 text-white rounded-full px-5 py-3 focus:outline-none focus:ring-1 focus:ring-rose-500 focus:border-rose-500" placeholder="your.email@example.com" type="email" required>
-            <button class="bg-[#ff4d61] hover:bg-rose-600 text-white text-xs sm:text-sm font-semibold px-7 py-3 rounded-full transition shadow-sm cursor-pointer" type="submit">
+          <form id="newsletter-form" class="flex items-center gap-2 mt-3" onsubmit="event.preventDefault(); showToast('Thank you for subscribing to Present Panic updates!');">
+            <input class="flex-1 text-xs sm:text-sm bg-[#103B21] border border-[#047857] text-white placeholder-emerald-200/70 rounded-full px-4 py-2 sm:px-5 sm:py-2.5 focus:outline-none focus:ring-1 focus:ring-emerald-400 focus:border-emerald-400" placeholder="your.email@example.com" type="email" required>
+            <button class="bg-[#ff4d61] hover:bg-rose-600 text-white text-xs sm:text-sm font-semibold px-5 py-2 sm:px-6 sm:py-2.5 rounded-full transition shadow-sm cursor-pointer" type="submit">
               Subscribe
             </button>
           </form>
-          <p class="text-[11px] text-neutral-500 mt-2">
+          <p class="text-[10px] sm:text-[11px] text-emerald-100/50 mt-1.5">
             No spam ever. Unsubscribe at any time with a single click.
           </p>
         </div>
       </div>
 
       <!-- Bottom Copyright Bar -->
-      <div class="pt-5 flex flex-col sm:flex-row items-center justify-between text-xs sm:text-sm text-neutral-500 gap-4">
+      <div class="pt-4 flex flex-col sm:flex-row items-center justify-between text-[10px] sm:text-xs text-emerald-100/60 gap-3 text-center sm:text-left">
         <div>
           Copyright &copy; 2026 Present Panic. All rights reserved.
         </div>
-        <div class="flex items-center space-x-4 text-neutral-400">
+        <div class="flex flex-wrap items-center justify-center space-x-3 sm:space-x-4">
           <a href="/privacy.html" class="hover:text-white transition">Privacy Policy</a>
           <span>&bull;</span>
           <a href="/terms.html" class="hover:text-white transition">Terms &amp; Conditions</a>
@@ -1219,41 +893,34 @@
   <!-- ========================================== -->
   <!-- 4. LIVE INTERACTIVE SEARCH MODAL           -->
   <!-- ========================================== -->
-  <div id="search-modal-overlay" class="fixed inset-0 z-[130] bg-neutral-950/70 backdrop-blur-sm hidden items-start justify-center p-4 pt-16 sm:pt-24" role="dialog" aria-modal="true" aria-label="Search Gift Catalog">
-    <div class="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl p-6 sm:p-7 border border-neutral-100 transition-all duration-300 max-h-[85vh] flex flex-col">
-      <button id="btn-close-search-modal" aria-label="Close search modal" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition cursor-pointer">
-        <i class="w-4 h-4" data-lucide="x"></i>
+  <div id="search-modal-overlay" class="fixed inset-0 z-[130] bg-neutral-900/60 backdrop-blur-md hidden items-start justify-center pt-0" role="dialog" aria-modal="true" aria-label="Search Gift Catalog">
+    <div class="relative w-full max-w-5xl bg-white shadow-2xl p-6 sm:p-12 border-b border-neutral-100 transition-all duration-500 max-h-[85vh] flex flex-col rounded-b-[2rem] transform-gpu origin-top animate-in slide-in-from-top-4 fade-in">
+      <button id="btn-close-search-modal" aria-label="Close search modal" class="absolute top-6 right-6 sm:top-8 sm:right-8 w-10 h-10 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition cursor-pointer">
+        <i class="w-5 h-5" data-lucide="x"></i>
       </button>
 
-      <div class="flex items-center gap-3 mb-4 pr-10">
-        <div class="w-9 h-9 rounded-xl bg-rose-50 text-[#ff4d61] flex items-center justify-center font-bold">
-          <i class="w-4 h-4" data-lucide="search"></i>
-        </div>
-        <div>
-          <h3 class="font-extrabold text-neutral-950 text-lg tracking-tight">Search Gift Collection</h3>
-          <p class="text-xs text-neutral-400">Type a keyword or select a trending holiday idea</p>
-        </div>
+      <div class="flex flex-col items-center justify-center mb-8 w-full max-w-3xl mx-auto text-center">
+        <h3 class="font-extrabold text-neutral-950 text-2xl sm:text-3xl tracking-tight mb-2">What are you looking for?</h3>
+        <p class="text-sm text-neutral-500">Discover premium gifts, trendy gadgets, and keepsakes.</p>
       </div>
 
       <!-- Search Input Box -->
-      <div class="relative mb-4">
-        <i class="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" data-lucide="search"></i>
-        <input type="text" id="live-search-input" placeholder="Search products, brands, or categories (e.g. Shark, Watch, Coffee, Sneaker)..." class="w-full text-xs sm:text-sm bg-gray-50 border border-gray-200 rounded-2xl py-3 pl-10 pr-10 focus:outline-none focus:border-[#ff4d61] focus:bg-white transition font-medium" autocomplete="off">
-        <button id="btn-clear-search" type="button" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 text-base font-bold cursor-pointer">&times;</button>
+      <div class="relative w-full max-w-3xl mx-auto mb-6">
+        <i class="w-6 h-6 text-neutral-400 absolute left-5 top-1/2 -translate-y-1/2" data-lucide="search"></i>
+        <input type="text" id="live-search-input" placeholder="Type a product name or category..." class="w-full text-base sm:text-lg bg-gray-50 border-2 border-transparent focus:border-[#0B2D19] rounded-2xl py-4 pl-14 pr-12 outline-none transition-all duration-300 font-medium" autocomplete="off">
+        <button id="btn-clear-search" type="button" class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 text-xl font-bold cursor-pointer">&times;</button>
       </div>
 
       <!-- Popular Suggestion Chips -->
-      <div class="flex items-center gap-1.5 flex-wrap mb-4 pb-3 border-b border-gray-100 text-xs">
-        <span class="text-neutral-400 font-semibold text-[11px] mr-1">Trending:</span>
-        <button class="search-tag-chip bg-rose-50 text-[#ff4d61] hover:bg-rose-100 px-3 py-1 rounded-full font-semibold transition text-[11px] cursor-pointer" data-tag="Shark">Baby Shark</button>
-        <button class="search-tag-chip bg-gray-100 text-neutral-700 hover:bg-gray-200 px-3 py-1 rounded-full font-semibold transition text-[11px] cursor-pointer" data-tag="Watch">Apple Watch</button>
-        <button class="search-tag-chip bg-gray-100 text-neutral-700 hover:bg-gray-200 px-3 py-1 rounded-full font-semibold transition text-[11px] cursor-pointer" data-tag="Coffee">Coffee Maker</button>
-        <button class="search-tag-chip bg-gray-100 text-neutral-700 hover:bg-gray-200 px-3 py-1 rounded-full font-semibold transition text-[11px] cursor-pointer" data-tag="Sneaker">Sneakers</button>
-        <button class="search-tag-chip bg-gray-100 text-neutral-700 hover:bg-gray-200 px-3 py-1 rounded-full font-semibold transition text-[11px] cursor-pointer" data-tag="Headphones">Headphones</button>
+      <div class="flex items-center justify-center gap-2 flex-wrap mb-6 pb-6 border-b border-gray-100 text-sm w-full max-w-3xl mx-auto">
+        <span class="text-neutral-400 font-semibold mr-2">Trending:</span>
+        <button class="search-tag-chip bg-rose-50 text-[#ff4d61] hover:bg-rose-100 px-4 py-1.5 rounded-full font-bold transition cursor-pointer" data-tag="Shark">Baby Shark</button>
+        <button class="search-tag-chip bg-gray-100 text-neutral-700 hover:bg-gray-200 px-4 py-1.5 rounded-full font-bold transition cursor-pointer" data-tag="Watch">Apple Watch</button>
+        <button class="search-tag-chip bg-gray-100 text-neutral-700 hover:bg-gray-200 px-4 py-1.5 rounded-full font-bold transition cursor-pointer" data-tag="Coffee">Coffee Maker</button>
       </div>
 
       <!-- Search Results Area -->
-      <div id="live-search-results" class="flex-1 overflow-y-auto space-y-2.5 no-scrollbar max-h-72">
+      <div id="live-search-results" class="flex-1 overflow-y-auto space-y-3 no-scrollbar max-h-80 w-full max-w-3xl mx-auto">
         <!-- Results rendered here -->
       </div>
     </div>

@@ -103,9 +103,9 @@ function createProductCardHTML(p: ShopifyProduct): string {
 
   return `
     <div class="flex flex-col group transition-all duration-300 w-full relative">
-      <a href="/product.html?handle=${p.handle}" class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
+      <a href="/product.html?handle=${p.handle}" class="relative w-full aspect-square overflow-hidden mb-4">
         ${hasCompare ? `<span class="absolute top-3 left-3 bg-[#ff4d61] text-white text-[10px] font-extrabold px-2 py-1 uppercase tracking-wider z-10">Sale</span>` : ''}
-        <img alt="${p.title}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="${img}" loading="lazy">
+        <img alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="${img}" loading="lazy">
       </a>
       <div class="flex-1 flex flex-col justify-start text-left">
         <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">${p.category || 'GIFTS'}</div>
@@ -1022,8 +1022,8 @@ async function initProductPageCommerce() {
     if (thumbsContainer && product.images.nodes.length > 0) {
       thumbsContainer.innerHTML = product.images.nodes
         .map((img, idx) => `
-          <button class="thumb-btn w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border ${idx === 0 ? 'border-[#ff4d61]' : 'border-gray-200'} p-1.5 flex items-center justify-center flex-shrink-0 cursor-pointer overflow-hidden transition" data-img="${img.url}">
-            <img src="${img.url}" alt="${img.altText || product.title}" class="w-full h-full object-contain">
+          <button class="thumb-btn w-16 h-16 sm:w-20 sm:h-20 bg-transparent border-2 ${idx === 0 ? 'border-[#ff4d61]' : 'border-transparent'} p-0 flex items-center justify-center flex-shrink-0 cursor-pointer overflow-hidden transition aspect-square" data-img="${img.url}">
+            <img src="${img.url}" alt="${img.altText || product.title}" class="w-full h-full object-cover">
           </button>
         `)
         .join('');
@@ -1032,10 +1032,10 @@ async function initProductPageCommerce() {
         btn.addEventListener('click', () => {
           thumbsContainer.querySelectorAll('.thumb-btn').forEach(b => {
             b.classList.remove('border-[#ff4d61]');
-            b.classList.add('border-gray-200');
+            b.classList.add('border-transparent');
           });
           btn.classList.add('border-[#ff4d61]');
-          btn.classList.remove('border-gray-200');
+          btn.classList.remove('border-transparent');
           const newSrc = btn.getAttribute('data-img');
           if (activeImg && newSrc) activeImg.src = newSrc;
         });
