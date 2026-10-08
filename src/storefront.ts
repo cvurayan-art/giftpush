@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupCartDrawer();
   setupSearchModal();
   setupMobileMenuDrawer();
+  initGiftQuiz();
 
   // Initialize Lucide Icons if available
   if ((window as any).lucide && typeof (window as any).lucide.createIcons === 'function') {
@@ -1348,3 +1349,359 @@ function showToast(message: string) {
     toast?.classList.add('opacity-0', 'translate-y-[-100px]', 'pointer-events-none');
   }, 3200);
 }
+
+// ====================================================
+// GIFT FINDER QUIZ CONTROLLER (Integrated with Shopify)
+// ====================================================
+export function initGiftQuiz() {
+  const quizOverlay = document.getElementById('gift-quiz-modal-overlay');
+  const quizModalContainer = document.getElementById('quiz-modal-container');
+  const quizCardWrapper = document.getElementById('quiz-card-wrapper');
+  const quizStepContent = document.getElementById('quiz-body-content');
+  const quizProgressPills = document.getElementById('quiz-progress-pills');
+  const quizStepCounter = document.getElementById('quiz-step-counter');
+  const btnQuizPrev = document.getElementById('btn-quiz-prev');
+  const btnQuizSkip = document.getElementById('btn-quiz-skip');
+  const btnCloseQuiz = document.getElementById('btn-close-gift-quiz');
+  const quizResultsWrapper = document.getElementById('quiz-recommendations-wrapper');
+  const quizHeroHeadline = document.getElementById('quiz-main-headline');
+
+  // Trigger buttons
+  const navQuizBtn = document.getElementById('btn-nav-quiz');
+  const topBarQuizBtn = document.getElementById('top-bar-quiz-btn');
+  const heroQuizBtn = document.getElementById('hero-quiz-btn');
+  const floatingQuizTrigger = document.getElementById('floating-quiz-trigger');
+
+  if (!quizOverlay) return; // Only init if the modal is in the DOM
+
+  const triggers: HTMLElement[] = [];
+  if (navQuizBtn) triggers.push(navQuizBtn);
+  if (topBarQuizBtn) triggers.push(topBarQuizBtn);
+  if (heroQuizBtn) triggers.push(heroQuizBtn);
+  if (floatingQuizTrigger) triggers.push(floatingQuizTrigger);
+  document.querySelectorAll('.footer-quiz-link').forEach(btn => triggers.push(btn as HTMLElement));
+
+  triggers.forEach(btn => {
+    if (btn) btn.addEventListener('click', openGiftQuiz);
+  });
+
+  // Quiz Questions Data (Reduced to 4 questions)
+  const quizQuestions = [
+    {
+      id: 'who',
+      title: 'Who are you shopping for?',
+      options: ['Mum', 'Dad', 'Partner', 'Friend', 'Colleague', 'Teacher', 'Kid', 'Grandparents']
+    },
+    {
+      id: 'occasion',
+      title: "What's the special occasion?",
+      options: ['Christmas Holiday', 'Birthday', 'Anniversary', 'Thank You', 'Just Because', 'Housewarming']
+    },
+    {
+      id: 'vibe',
+      title: "What is their personal vibe?",
+      options: ['Cozy & Warm', 'Sentimental & Heartfelt', 'Luxury & Pampering', 'Practical & Classic', 'Playful & Festive']
+    },
+    {
+      id: 'budget',
+      title: "What's your ideal budget?",
+      options: ['Under $25', '$25 – $50', '$50 – $100', 'Luxury $100+']
+    }
+  ];
+
+  let currentQuizStep = 0;
+  let quizAnswers: Record<string, string> = {
+    who: '',
+    occasion: '',
+    vibe: '',
+    budget: ''
+  };
+
+  function openGiftQuiz() {
+    if (!quizOverlay) return;
+    quizOverlay.classList.remove('hidden');
+    quizOverlay.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+    renderQuizStep(currentQuizStep);
+  }
+
+  function closeGiftQuiz() {
+    if (!quizOverlay) return;
+    quizOverlay.classList.add('hidden');
+    quizOverlay.classList.remove('flex');
+    document.body.style.overflow = '';
+    if (quizModalContainer) quizModalContainer.classList.remove('max-w-4xl');
+  }
+
+  function renderQuizStep(stepIdx: number) {
+    if (!quizStepContent) return;
+    currentQuizStep = stepIdx;
+
+    if (quizModalContainer) {
+      quizModalContainer.classList.remove('max-w-4xl');
+      quizModalContainer.classList.add('max-w-xl');
+    }
+
+    if (quizCardWrapper) quizCardWrapper.classList.remove('hidden');
+    if (quizResultsWrapper) quizResultsWrapper.classList.add('hidden');
+    if (quizHeroHeadline) {
+      quizHeroHeadline.innerHTML = 'Answer 4 questions.<br>Get the perfect gift.';
+    }
+
+    const q = quizQuestions[stepIdx];
+
+    // Update Dashes
+    if (quizProgressPills) {
+      const dashes = quizProgressPills.querySelectorAll('span');
+      dashes.forEach((dash, idx) => {
+        if (idx === stepIdx) {
+          dash.className = 'w-10 sm:w-12 h-1.5 rounded-full bg-[#ff4d61] transition-all duration-300';
+        } else if (idx < stepIdx) {
+          dash.className = 'w-10 sm:w-12 h-1.5 rounded-full bg-neutral-900 transition-all duration-300';
+        } else {
+          dash.className = 'w-10 sm:w-12 h-1.5 rounded-full bg-gray-200 transition-all duration-300';
+        }
+      });
+    }
+
+    // Update Step Counter
+    if (quizStepCounter) {
+      quizStepCounter.textContent = `${stepIdx + 1} / 4`;
+    }
+
+    // Update Back Button
+    if (btnQuizPrev) {
+      if (stepIdx > 0) {
+        btnQuizPrev.classList.remove('opacity-0', 'pointer-events-none');
+        btnQuizPrev.classList.add('opacity-100', 'pointer-events-auto');
+      } else {
+        btnQuizPrev.classList.add('opacity-0', 'pointer-events-none');
+        btnQuizPrev.classList.remove('opacity-100', 'pointer-events-auto');
+      }
+    }
+
+    // Render Question & Options
+    quizStepContent.className = 'w-full flex flex-col items-center py-2 fade-step-enter';
+    quizStepContent.innerHTML = `
+      <h3 class="text-lg sm:text-xl font-bold text-neutral-900 mb-5 text-center">${q.title}</h3>
+      <div class="flex flex-wrap justify-center gap-2.5 max-w-lg mb-4">
+        ${q.options.map(opt => `
+          <button type="button" class="quiz-option-pill px-5 py-2.5 rounded-full border text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${quizAnswers[q.id] === opt ? 'bg-[#ff4d61] text-white border-[#ff4d61] shadow-md scale-105' : 'bg-gray-50 border-gray-200 text-neutral-800 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white'}" data-value="${opt}">
+            ${opt}
+          </button>
+        `).join('')}
+      </div>
+    `;
+
+    // Attach Click to Options
+    quizStepContent.querySelectorAll('.quiz-option-pill').forEach((pill) => {
+      pill.addEventListener('click', () => {
+        const val = pill.getAttribute('data-value') || '';
+        quizAnswers[q.id] = val;
+
+        quizStepContent.querySelectorAll('.quiz-option-pill').forEach(p => {
+          p.className = 'quiz-option-pill px-5 py-2.5 rounded-full border text-xs sm:text-sm font-semibold transition-all duration-200 bg-gray-50 border-gray-200 text-neutral-800 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white cursor-pointer';
+        });
+        pill.className = 'quiz-option-pill px-5 py-2.5 rounded-full border text-xs sm:text-sm font-semibold transition-all duration-200 bg-[#ff4d61] text-white border-[#ff4d61] shadow-md scale-105 cursor-pointer';
+
+        setTimeout(() => {
+          if (stepIdx < quizQuestions.length - 1) {
+            renderQuizStep(stepIdx + 1);
+          } else {
+            showQuizResults();
+          }
+        }, 240);
+      });
+    });
+  }
+
+  async function showQuizResults() {
+    if (quizModalContainer) {
+      quizModalContainer.classList.remove('max-w-xl');
+      quizModalContainer.classList.add('max-w-4xl');
+    }
+
+    if (quizCardWrapper) quizCardWrapper.classList.add('hidden');
+    if (quizResultsWrapper) {
+      quizResultsWrapper.classList.remove('hidden');
+      quizResultsWrapper.classList.add('flex');
+    }
+    if (quizHeroHeadline) quizHeroHeadline.innerHTML = 'Your Curated Gift Matches';
+
+    if (quizResultsWrapper) {
+      quizResultsWrapper.innerHTML = `
+        <div class="flex flex-col items-center justify-center py-12 text-center">
+          <div class="w-10 h-10 border-4 border-gray-200 border-t-[#ff4d61] rounded-full animate-spin-custom mb-4"></div>
+          <p class="text-sm sm:text-base font-bold text-neutral-800">✨ Curating the ultimate gifts from Shopify for <strong>${quizAnswers.who || 'someone special'}</strong>...</p>
+        </div>
+      `;
+    }
+
+    try {
+      // Fetch REAL products from Shopify! 
+      let allProducts = await getShopifyProducts(30);
+      
+      if (allProducts.length === 0) {
+        throw new Error("No products found");
+      }
+
+      // Shuffle array to make results dynamic
+      const shuffled = [...allProducts].sort(() => 0.5 - Math.random());
+      const topPicks = shuffled.slice(0, 3);
+
+      if (quizResultsWrapper) {
+        quizResultsWrapper.innerHTML = `
+          <div class="text-center mb-6">
+            <span class="text-[10px] sm:text-xs font-extrabold tracking-widest text-[#ff4d61] uppercase">Tailored Recommendations</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-neutral-900 mt-1">Handpicked for ${quizAnswers.who || 'Someone Special'}</h3>
+            <p class="text-xs sm:text-sm text-neutral-500 mt-1">
+              Criteria: <strong>${quizAnswers.who || 'Special One'}</strong> &bull; <strong>${quizAnswers.occasion || 'Everyday'}</strong> &bull; <strong>${quizAnswers.budget || 'Any Budget'}</strong>
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+            ${topPicks.map((item, idx) => {
+              const badges = ['⭐ 98% Match', '✨ Top Heirloom Pick', '🌟 Pure Luxury'];
+              const badge = badges[idx] || '🔥 Bestseller';
+              const priceNum = parseFloat(item.priceRange.minVariantPrice.amount);
+              const currency = item.priceRange.minVariantPrice.currencyCode;
+              const priceFormatted = formatShopifyMoney(priceNum, currency);
+              const imgUrl = item.featuredImage?.url || '/images/personalized_box.jpg';
+              
+              return `
+              <div class="border border-gray-100 rounded-2xl p-4 bg-white flex flex-col justify-between hover:shadow-xl transition-all duration-300">
+                <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6 group cursor-pointer" onclick="window.location.href='/product.html?handle=${item.handle}'">
+                  <span class="absolute top-2 left-2 bg-[#ff4d61] text-white text-[9px] font-extrabold px-2 py-0.5 rounded shadow-sm z-10">${badge}</span>
+                  <img src="${imgUrl}" alt="${item.title}" class="h-full w-full object-contain scale-[1.15] hover:scale-[1.25] transition duration-500 ease-out mix-blend-multiply">
+                </div>
+                <div class="mt-4 flex-1 flex flex-col justify-between text-left">
+                  <a href="/product.html?handle=${item.handle}" class="block">
+                    <h4 class="text-xs sm:text-sm font-bold text-neutral-900 line-clamp-2 mt-1 leading-snug hover:text-rose-600 transition">${item.title}</h4>
+                    <div class="mt-2 flex items-baseline gap-2">
+                      <span class="text-base font-extrabold text-neutral-900">${priceFormatted}</span>
+                    </div>
+                  </a>
+                  <button type="button" class="quiz-add-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-id="${item.variants.nodes[0]?.id}" data-name="${item.title}">
+                    <i class="w-4 h-4" data-lucide="shopping-bag"></i>
+                    <span>Add to Bag</span>
+                  </button>
+                </div>
+              </div>
+              `;
+            }).join('')}
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 border-t border-gray-100">
+            <button type="button" class="w-full sm:w-auto px-7 py-3 rounded-full border border-gray-200 text-neutral-800 text-xs sm:text-sm font-bold hover:bg-neutral-100 transition cursor-pointer" id="btn-quiz-retake">
+              ↺ Retake Quiz
+            </button>
+            <button type="button" class="w-full sm:w-auto px-7 py-3 rounded-full bg-[#ff4d61] text-white text-xs sm:text-sm font-bold hover:bg-rose-600 transition shadow-sm cursor-pointer" id="btn-quiz-explore">
+              Explore All Gifts &rarr;
+            </button>
+          </div>
+        `;
+
+        if ((window as any).lucide) {
+          (window as any).lucide.createIcons();
+        }
+
+        // Wire Add to Bag in results via Shopify Cart
+        quizResultsWrapper.querySelectorAll('.quiz-add-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const variantId = btn.getAttribute('data-id');
+            const name = btn.getAttribute('data-name');
+            if (!variantId) return;
+
+            const origHtml = btn.innerHTML;
+            btn.innerHTML = `<span>Adding...</span>`;
+            
+            try {
+              await cart.addItem(variantId, 1);
+              btn.classList.remove('bg-neutral-900');
+              btn.classList.add('bg-emerald-600');
+              btn.innerHTML = `<span>✓ Added!</span>`;
+              showToast(`Added "${name}" to your bag!`);
+              
+              const cartTrigger = document.getElementById('btn-header-cart');
+              if (cartTrigger) cartTrigger.click();
+
+              setTimeout(() => {
+                btn.classList.remove('bg-emerald-600');
+                btn.classList.add('bg-neutral-900');
+                btn.innerHTML = origHtml;
+                if ((window as any).lucide) (window as any).lucide.createIcons();
+              }, 2000);
+            } catch (err) {
+              btn.innerHTML = origHtml;
+              showToast('Could not add item to bag.');
+            }
+          });
+        });
+
+        // Retake and Explore handlers
+        const retakeBtn = document.getElementById('btn-quiz-retake');
+        if (retakeBtn) {
+          retakeBtn.addEventListener('click', () => {
+            quizAnswers = { who: '', occasion: '', vibe: '', budget: '' };
+            renderQuizStep(0);
+          });
+        }
+
+        const exploreBtn = document.getElementById('btn-quiz-explore');
+        if (exploreBtn) {
+          exploreBtn.addEventListener('click', () => {
+            closeGiftQuiz();
+            window.location.href = '/shop.html';
+          });
+        }
+
+      }
+    } catch (err) {
+      console.error("Error fetching products for quiz:", err);
+      if (quizResultsWrapper) {
+        quizResultsWrapper.innerHTML = `
+          <div class="py-12 text-center text-neutral-500">
+            Could not fetch recommendations at this time.
+            <br>
+            <button class="mt-4 text-rose-500 font-bold" onclick="window.location.href='/shop.html'">Browse Shop</button>
+          </div>
+        `;
+      }
+    }
+  }
+
+  // Previous & Skip handlers
+  if (btnQuizPrev) {
+    btnQuizPrev.addEventListener('click', () => {
+      if (currentQuizStep > 0) {
+        renderQuizStep(currentQuizStep - 1);
+      }
+    });
+  }
+
+  if (btnQuizSkip) {
+    btnQuizSkip.addEventListener('click', () => {
+      showQuizResults();
+    });
+  }
+
+  if (btnCloseQuiz) {
+    btnCloseQuiz.addEventListener('click', closeGiftQuiz);
+  }
+
+  if (quizOverlay) {
+    quizOverlay.addEventListener('click', (e) => {
+      if (e.target === quizOverlay) {
+        closeGiftQuiz();
+      }
+    });
+  }
+
+  // Keyboard escape to close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && quizOverlay && !quizOverlay.classList.contains('hidden')) {
+      closeGiftQuiz();
+    }
+  });
+}
+
