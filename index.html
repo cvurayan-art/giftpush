@@ -157,8 +157,20 @@
 
       <!-- Right Action Icons: Search, Support, Cart -->
       <div class="flex items-center space-x-1 sm:space-x-3 lg:space-x-5 text-white">
-        <!-- Search Button -->
-        <button id="btn-header-search" aria-label="Search" class="p-1.5 sm:p-2 hover:text-emerald-200 hover:bg-[#103B21] rounded-full transition cursor-pointer">
+        <!-- Inline Search Bar -->
+        <div class="hidden md:flex relative items-center w-64 lg:w-80 h-9 sm:h-10 mr-1 lg:mr-3">
+          <input type="text" id="header-search-input" placeholder="What are you looking for?" class="w-full h-full bg-gray-100 border-none rounded-full pl-5 pr-10 text-sm font-medium text-neutral-800 placeholder-[#7990ab] outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all">
+          <button id="btn-header-search-submit" aria-label="Search" class="absolute right-0 top-0 h-full w-10 flex items-center justify-center text-neutral-600 hover:text-neutral-900 transition-colors cursor-pointer rounded-r-full">
+            <i class="w-4 h-4 stroke-[2.5]" data-lucide="search"></i>
+          </button>
+          
+          <!-- Inline Search Results Dropdown -->
+          <div id="header-search-results" class="absolute top-full right-0 mt-2 w-full lg:w-96 bg-white rounded-xl shadow-2xl overflow-hidden hidden max-h-96 overflow-y-auto no-scrollbar border border-neutral-100 p-2 z-[100]">
+          </div>
+        </div>
+
+        <!-- Mobile Search Button -->
+        <button id="btn-header-search" aria-label="Search" class="md:hidden p-1.5 sm:p-2 hover:text-emerald-200 hover:bg-[#103B21] rounded-full transition cursor-pointer">
           <i class="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" data-lucide="search"></i>
         </button>
         <!-- Guest Support & Help -->
@@ -212,7 +224,7 @@
       <div class="pt-6 border-t border-gray-100 space-y-2 text-xs text-neutral-500">
         <p class="font-medium text-neutral-800">Need help shopping?</p>
         <p>Email: support@presentpanic.com</p>
-        <p>Call: +(805) 498-4719</p>
+        <p>Call: +1 (805) 498-4719</p>
       </div>
     </div>
   </div>
@@ -220,40 +232,57 @@
 
   <!-- BEGIN: Hero Banner Image -->
   <section class="w-full bg-[#0B2D19]">
-    <img src="/images/Luxury Christmas gifting with Santa (1).png" alt="Luxury Christmas Gifting with Santa" class="w-full h-auto object-cover max-h-[350px] sm:max-h-[450px] lg:max-h-[600px] object-[center_20%]">
+    <img src="/images/Luxury Christmas gifting with Santa (1).png" alt="Luxury Christmas Gifting with Santa" class="w-full h-auto object-contain">
   </section>
   <!-- END: Hero Banner Image -->
 
   <!-- BEGIN: StoryCategoryBar (Scrollable Category Carousel without Pink Glow) -->
   <section class="w-full py-7 bg-white border-b border-gray-100 relative group/cat" data-purpose="category-stories">
-    <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 relative">
-      
+    <!-- Category Section Header -->
+    <div class="relative w-full mb-8 pt-6 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
+      <!-- Center Content -->
+      <div class="max-w-2xl mx-auto text-center">
+        <!-- Decorative Line with Gift Icon -->
+        <div class="flex items-center justify-center gap-4 text-amber-500 mb-4">
+          <div class="h-[1px] w-12 sm:w-16 bg-amber-200"></div>
+          <i class="w-5 h-5 stroke-[1.5]" data-lucide="gift"></i>
+          <div class="h-[1px] w-12 sm:w-16 bg-amber-200"></div>
+        </div>
+        <!-- Heading (Elegant Serif) -->
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-[#0B2D19] mb-3" style="font-family: Georgia, serif; letter-spacing: -0.02em;">Shop by Category</h2>
+        <!-- Subtitle -->
+        <p class="text-neutral-500 text-sm sm:text-base font-medium">Explore our handpicked gifts for every occasion and every special person.</p>
+      </div>
 
-      <!-- Categories Track (Populated Dynamically from Shopify Collections) -->
-      <div id="category-stories-track" class="w-full flex items-center justify-evenly gap-6 sm:gap-8 lg:gap-10 overflow-x-auto no-scrollbar py-2 text-center scroll-smooth select-none cursor-grab active:cursor-grabbing">
-        <!-- Skeletons shown until Shopify collections load -->
-        <div class="flex flex-col items-center flex-shrink-0 animate-pulse">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full bg-neutral-200"></div>
-          <div class="h-3 w-16 bg-neutral-200 rounded mt-2.5"></div>
+
+    </div>
+
+
+    <!-- Categories Track (Populated Dynamically from Shopify Collections) -->
+    <div id="category-stories-track" class="w-full flex items-center justify-start lg:justify-center gap-4 sm:gap-6 overflow-x-auto no-scrollbar py-4 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 snap-x snap-mandatory scroll-smooth select-none cursor-grab active:cursor-grabbing">
+      <div class="flex flex-col items-center flex-shrink-0 animate-pulse snap-center w-28 sm:w-36 lg:w-44">
+          <div class="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full bg-[#ffe1e8]"></div>
+          <div class="h-2.5 w-16 bg-neutral-200 rounded mt-3 sm:mt-4"></div>
         </div>
-        <div class="flex flex-col items-center flex-shrink-0 animate-pulse">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full bg-neutral-200"></div>
-          <div class="h-3 w-16 bg-neutral-200 rounded mt-2.5"></div>
+        <div class="flex flex-col items-center flex-shrink-0 animate-pulse snap-center w-28 sm:w-36 lg:w-44">
+          <div class="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full bg-[#e6f5ea]"></div>
+          <div class="h-2.5 w-16 bg-neutral-200 rounded mt-3 sm:mt-4"></div>
         </div>
-        <div class="flex flex-col items-center flex-shrink-0 animate-pulse">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full bg-neutral-200"></div>
-          <div class="h-3 w-16 bg-neutral-200 rounded mt-2.5"></div>
+        <div class="flex flex-col items-center flex-shrink-0 animate-pulse snap-center w-28 sm:w-36 lg:w-44">
+          <div class="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full bg-[#fdf0df]"></div>
+          <div class="h-2.5 w-16 bg-neutral-200 rounded mt-3 sm:mt-4"></div>
         </div>
-        <div class="flex flex-col items-center flex-shrink-0 animate-pulse">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full bg-neutral-200"></div>
-          <div class="h-3 w-16 bg-neutral-200 rounded mt-2.5"></div>
+        <div class="flex flex-col items-center flex-shrink-0 animate-pulse snap-center w-28 sm:w-36 lg:w-44">
+          <div class="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full bg-[#e9e2fb]"></div>
+          <div class="h-2.5 w-16 bg-neutral-200 rounded mt-3 sm:mt-4"></div>
         </div>
-        <div class="flex flex-col items-center flex-shrink-0 animate-pulse">
-          <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full bg-neutral-200"></div>
-          <div class="h-3 w-16 bg-neutral-200 rounded mt-2.5"></div>
+        <div class="flex flex-col items-center flex-shrink-0 animate-pulse snap-center w-28 sm:w-36 lg:w-44">
+          <div class="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full bg-[#fceee5]"></div>
+          <div class="h-2.5 w-16 bg-neutral-200 rounded mt-3 sm:mt-4"></div>
         </div>
       </div>
-    </div>
+
+
   </section>
   <!-- END: StoryCategoryBar -->
 
@@ -330,58 +359,79 @@
 
         <!-- Right 2x2 Bento Grid (Wide-Screen Optimized) -->
         <div class="lg:col-span-5 xl:col-span-5 grid grid-cols-2 gap-3 sm:gap-4 lg:gap-5">
-          <!-- 1. Top-Left: High Classic Watch -->
+          <!-- 1. Top-Left: Featured Gift -->
           <div class="bg-[#ebf9f3] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px]">
             <div>
-              <span class="inline-block bg-emerald-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Hot</span>
-              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">High Classic<br>Watch!</h3>
+              <div class="flex items-center gap-1.5">
+                <span class="inline-block bg-emerald-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Hot</span>
+                <span class="text-[9px] sm:text-xs font-semibold text-neutral-600">30% OFF</span>
+              </div>
+              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">Featured<br>Gift</h3>
               <p class="text-[10px] sm:text-xs text-neutral-500 mt-1">Weekly Offers</p>
-              <p class="text-lg sm:text-xl font-extrabold text-neutral-900 mt-1">$59</p>
+              <div class="flex items-center gap-1.5 mt-1">
+                <p class="text-lg sm:text-xl font-extrabold text-rose-600">£34.99</p>
+                <p class="text-xs sm:text-sm font-medium text-neutral-400 line-through">£45.49</p>
+              </div>
             </div>
             <div class="absolute bottom-0 right-0 w-20 h-20 sm:w-28 sm:h-28 lg:w-36 lg:h-36 flex items-end justify-end pointer-events-none">
-              <img alt="Watch" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/sub-banner1.png">
+              <img alt="Featured Gift" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/cd3aa075-d7dd-4448-803e-a42d97b1182e.png">
             </div>
           </div>
 
-          <!-- 2. Top-Right: Sunglasses -->
+          <!-- 2. Top-Right: Special Gift -->
           <div class="bg-[#f2eefa] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px]">
             <div>
               <div class="flex items-center gap-1.5">
                 <span class="inline-block bg-indigo-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">New</span>
-                <span class="text-[9px] sm:text-xs font-semibold text-neutral-600">25% OFF</span>
+                <span class="text-[9px] sm:text-xs font-semibold text-neutral-600">30% OFF</span>
               </div>
-              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">Polarized<br>Sunglasses</h3>
+              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">Special<br>Gift</h3>
               <p class="text-[10px] sm:text-xs text-neutral-500 mt-1">Special Offers</p>
-              <p class="text-lg sm:text-xl font-extrabold text-neutral-900 mt-1">$19</p>
+              <div class="flex items-center gap-1.5 mt-1">
+                <p class="text-lg sm:text-xl font-extrabold text-rose-600">£17.99</p>
+                <p class="text-xs sm:text-sm font-medium text-neutral-400 line-through">£23.39</p>
+              </div>
             </div>
             <div class="absolute bottom-0 right-0 w-20 h-20 sm:w-32 sm:h-32 lg:w-40 lg:h-40 flex items-end justify-end pointer-events-none">
-              <img alt="Sunglasses" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/sub-banner2.png">
+              <img alt="Special Gift" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/Untitled-1%20adasg3.png">
             </div>
           </div>
 
-          <!-- 3. Bottom-Left: Video Games -->
+          <!-- 3. Bottom-Left: Handpicked Gift -->
           <div class="bg-[#ebf4fc] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px]">
             <div>
-              <span class="inline-block bg-sky-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Top Deal</span>
-              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">Video Games<br>Offers!</h3>
+              <div class="flex items-center gap-1.5">
+                <span class="inline-block bg-sky-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Top Deal</span>
+                <span class="text-[9px] sm:text-xs font-semibold text-neutral-600">30% OFF</span>
+              </div>
+              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">Handpicked<br>Gift</h3>
               <p class="text-[10px] sm:text-xs text-neutral-500 mt-1">Top Deals</p>
-              <p class="text-lg sm:text-xl font-extrabold text-neutral-900 mt-1">$89</p>
+              <div class="flex items-center gap-1.5 mt-1">
+                <p class="text-lg sm:text-xl font-extrabold text-rose-600">£79.99</p>
+                <p class="text-xs sm:text-sm font-medium text-neutral-400 line-through">£103.99</p>
+              </div>
             </div>
             <div class="absolute bottom-0 right-0 w-20 h-20 sm:w-28 sm:h-28 lg:w-36 lg:h-36 flex items-end justify-end pointer-events-none">
-              <img alt="Game Controller" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/sub-banner03.png">
+              <img alt="Handpicked Gift" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/94aaf74e-64d4-430f-aef0-7f40770e3242fsd.png">
             </div>
           </div>
 
-          <!-- 4. Bottom-Right: Top Brands Shoes -->
+          <!-- 4. Bottom-Right: Best Seller Gift -->
           <div class="bg-[#fdf2eb] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px]">
             <div>
-              <span class="inline-block bg-orange-500 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Best Seller</span>
-              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">Top Brands<br>Shoes</h3>
+              <div class="flex items-center gap-1.5">
+                <span class="inline-block bg-orange-500 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Best Seller</span>
+                <span class="text-[9px] sm:text-xs font-semibold text-neutral-600">30% OFF</span>
+              </div>
+              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">Best Seller<br>Gift</h3>
               <p class="text-[10px] sm:text-xs text-neutral-500 mt-1">Weekly Offers</p>
-              <p class="text-lg sm:text-xl font-extrabold text-neutral-900 mt-1">$129</p>
+              <div class="flex items-center gap-1.5 mt-1">
+                <p class="text-lg sm:text-xl font-extrabold text-rose-600">£58.99</p>
+                <p class="text-xs sm:text-sm font-medium text-neutral-400 line-through">£76.69</p>
+              </div>
             </div>
             <div class="absolute bottom-0 right-0 w-20 h-20 sm:w-28 sm:h-28 lg:w-36 lg:h-36 flex items-end justify-end pointer-events-none">
-              <img alt="Sneakers" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/sub-banner4.png">
+              <img alt="Best Seller Gift" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/IlluminatedTiffanyButterflyRoseLampcopy.png">
             </div>
           </div>
         </div>
@@ -698,7 +748,7 @@
           <div class="space-y-2 pt-1 text-xs sm:text-sm text-emerald-100">
             <div class="flex items-center gap-3">
               <i class="w-4 h-4 text-emerald-400 flex-shrink-0" data-lucide="phone-call"></i>
-              <span class="font-medium">+(805) 498-4719</span>
+              <span class="font-medium">+1 (805) 498-4719</span>
             </div>
             <div class="flex items-center gap-3">
               <i class="w-4 h-4 text-emerald-400 flex-shrink-0" data-lucide="mail"></i>
@@ -893,34 +943,21 @@
   <!-- ========================================== -->
   <!-- 4. LIVE INTERACTIVE SEARCH MODAL           -->
   <!-- ========================================== -->
-  <div id="search-modal-overlay" class="fixed inset-0 z-[130] bg-neutral-900/60 backdrop-blur-md hidden items-start justify-center pt-0" role="dialog" aria-modal="true" aria-label="Search Gift Catalog">
-    <div class="relative w-full max-w-5xl bg-white shadow-2xl p-6 sm:p-12 border-b border-neutral-100 transition-all duration-500 max-h-[85vh] flex flex-col rounded-b-[2rem] transform-gpu origin-top animate-in slide-in-from-top-4 fade-in">
-      <button id="btn-close-search-modal" aria-label="Close search modal" class="absolute top-6 right-6 sm:top-8 sm:right-8 w-10 h-10 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition cursor-pointer">
-        <i class="w-5 h-5" data-lucide="x"></i>
+  <div id="search-modal-overlay" class="fixed inset-0 z-[130] bg-neutral-900/60 backdrop-blur-md hidden items-start justify-center pt-24 sm:pt-32" role="dialog" aria-modal="true" aria-label="Search Gift Catalog">
+    <div class="relative w-[90%] max-w-2xl transition-all duration-500 animate-in slide-in-from-top-4 fade-in">
+      <button id="btn-close-search-modal" aria-label="Close search modal" class="absolute -top-12 right-0 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition cursor-pointer">
+        <i class="w-4 h-4" data-lucide="x"></i>
       </button>
 
-      <div class="flex flex-col items-center justify-center mb-8 w-full max-w-3xl mx-auto text-center">
-        <h3 class="font-extrabold text-neutral-950 text-2xl sm:text-3xl tracking-tight mb-2">What are you looking for?</h3>
-        <p class="text-sm text-neutral-500">Discover premium gifts, trendy gadgets, and keepsakes.</p>
-      </div>
-
       <!-- Search Input Box -->
-      <div class="relative w-full max-w-3xl mx-auto mb-6">
-        <i class="w-6 h-6 text-neutral-400 absolute left-5 top-1/2 -translate-y-1/2" data-lucide="search"></i>
-        <input type="text" id="live-search-input" placeholder="Type a product name or category..." class="w-full text-base sm:text-lg bg-gray-50 border-2 border-transparent focus:border-[#0B2D19] rounded-2xl py-4 pl-14 pr-12 outline-none transition-all duration-300 font-medium" autocomplete="off">
-        <button id="btn-clear-search" type="button" class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 text-xl font-bold cursor-pointer">&times;</button>
-      </div>
-
-      <!-- Popular Suggestion Chips -->
-      <div class="flex items-center justify-center gap-2 flex-wrap mb-6 pb-6 border-b border-gray-100 text-sm w-full max-w-3xl mx-auto">
-        <span class="text-neutral-400 font-semibold mr-2">Trending:</span>
-        <button class="search-tag-chip bg-rose-50 text-[#ff4d61] hover:bg-rose-100 px-4 py-1.5 rounded-full font-bold transition cursor-pointer" data-tag="Shark">Baby Shark</button>
-        <button class="search-tag-chip bg-gray-100 text-neutral-700 hover:bg-gray-200 px-4 py-1.5 rounded-full font-bold transition cursor-pointer" data-tag="Watch">Apple Watch</button>
-        <button class="search-tag-chip bg-gray-100 text-neutral-700 hover:bg-gray-200 px-4 py-1.5 rounded-full font-bold transition cursor-pointer" data-tag="Coffee">Coffee Maker</button>
+      <div class="relative w-full shadow-2xl rounded-full overflow-hidden bg-gray-100">
+        <input type="text" id="live-search-input" placeholder="What are you looking for?" class="w-full text-base sm:text-lg bg-transparent border-none py-4 pl-6 pr-14 outline-none font-medium text-neutral-800 placeholder-[#6c829e]" autocomplete="off">
+        <i class="w-6 h-6 text-neutral-900 absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none" data-lucide="search"></i>
+        <button id="btn-clear-search" type="button" class="hidden absolute right-14 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 text-xl font-bold cursor-pointer">&times;</button>
       </div>
 
       <!-- Search Results Area -->
-      <div id="live-search-results" class="flex-1 overflow-y-auto space-y-3 no-scrollbar max-h-80 w-full max-w-3xl mx-auto">
+      <div id="live-search-results" class="mt-4 overflow-y-auto no-scrollbar max-h-[60vh] w-full p-2 bg-white rounded-2xl shadow-xl hidden">
         <!-- Results rendered here -->
       </div>
     </div>

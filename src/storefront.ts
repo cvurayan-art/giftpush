@@ -310,10 +310,10 @@ function setupSearchModal() {
   const searchOverlay = document.getElementById('search-modal-overlay');
   const closeSearchBtn = document.getElementById('btn-close-search-modal') || document.getElementById('btn-close-search');
   const searchInput = (document.getElementById('live-search-input') ||
-                       document.getElementById('search-modal-input') ||
-                       document.getElementById('search-input')) as HTMLInputElement | null;
+    document.getElementById('search-modal-input') ||
+    document.getElementById('search-input')) as HTMLInputElement | null;
   const resultsContainer = document.getElementById('live-search-results') ||
-                           document.getElementById('search-results-container');
+    document.getElementById('search-results-container');
   const clearBtn = document.getElementById('btn-clear-search');
 
   function openSearch() {
@@ -428,18 +428,20 @@ async function initHomepageCommerce() {
       const collections = await getShopifyCollections(25);
       if (collections.length > 0) {
         track.innerHTML = collections
-          .map((col) => {
+          .map((col, idx) => {
+            const bgClass = ['bg-[#ffe1e8]', 'bg-[#e6f5ea]', 'bg-[#fdf0df]', 'bg-[#e9e2fb]', 'bg-[#fceee5]'][idx % 5];
             const imgUrl = col.image?.url;
             const imgHtml = imgUrl
-              ? `<img alt="${col.title}" class="w-full h-full object-cover pointer-events-none" src="${imgUrl}">`
-              : `<div class="w-full h-full bg-rose-50 text-[#ff4d61] flex items-center justify-center font-bold text-xl">${col.title.charAt(0)}</div>`;
+              ? `<img alt="${col.title}" class="w-full h-full object-contain scale-[1.15] group-hover:scale-[1.25] transition-transform duration-500 ease-out mix-blend-multiply" src="${imgUrl}">`
+              : `<div class="w-full h-full text-[#ff4d61] flex items-center justify-center font-bold text-3xl">${col.title.charAt(0)}</div>`;
 
             return `
-              <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none" href="/collection.html?handle=${col.handle}">
-                <div class="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 transition-transform duration-200 group-hover:scale-105 border border-gray-100 shadow-xs">
+              <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none w-28 sm:w-36 lg:w-44 snap-center cursor-pointer" 
+                 href="/collection.html?handle=${col.handle}">
+                <div class="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full ${bgClass} flex items-center justify-center transition-all duration-300 group-hover:-translate-y-1.5 shadow-sm group-hover:shadow-md overflow-hidden">
                   ${imgHtml}
                 </div>
-                <span class="mt-2 text-xs sm:text-sm font-semibold text-neutral-700 group-hover:text-[#ff4d61] transition whitespace-nowrap">${col.title}</span>
+                <span class="mt-3 sm:mt-4 text-xs sm:text-sm font-bold text-neutral-800 text-center group-hover:text-[#ff4d61] transition-colors">${col.title}</span>
               </a>
             `;
           })
@@ -1068,22 +1070,21 @@ async function initProductPageCommerce() {
                 </label>
                 <div class="flex items-center gap-2 flex-wrap" data-option-name="${option.name}">
                   ${option.values
-                    .map((val) => {
-                      const isSelected = selectedOptionsState[option.name] === val;
-                      return `
+                .map((val) => {
+                  const isSelected = selectedOptionsState[option.name] === val;
+                  return `
                         <button type="button" 
-                                class="pdp-option-pill text-xs font-semibold px-4 py-2 rounded-xl border transition cursor-pointer ${
-                                  isSelected
-                                    ? 'bg-neutral-900 text-white border-neutral-900 shadow-xs'
-                                    : 'bg-white text-neutral-700 border-gray-200 hover:border-neutral-400'
-                                }"
+                                class="pdp-option-pill text-xs font-semibold px-4 py-2 rounded-xl border transition cursor-pointer ${isSelected
+                      ? 'bg-neutral-900 text-white border-neutral-900 shadow-xs'
+                      : 'bg-white text-neutral-700 border-gray-200 hover:border-neutral-400'
+                    }"
                                 data-option="${option.name}"
                                 data-value="${val}">
                           ${val}
                         </button>
                       `;
-                    })
-                    .join('')}
+                })
+                .join('')}
                 </div>
               </div>
             `;

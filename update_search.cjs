@@ -73,7 +73,7 @@ for (const file of files) {
 
   // Fix Javascript to use new search modal ID if needed.
   // The JS in storefront.ts or index.html handles the search open.
-  
+
   fs.writeFileSync(path.join(dir, file), content);
   console.log(`Updated search modal in ${file}`);
 }
