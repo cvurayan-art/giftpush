@@ -618,6 +618,24 @@
           </span>
         </div>
       </div>
+
+      <!-- Cart Items Body -->
+      <div class="cart-drawer-body flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
+        <!-- Cart Items will be injected here by JS -->
+      </div>
+      
+      <!-- Footer -->
+      <div class="cart-drawer-footer p-5 sm:p-6 border-t border-gray-100 bg-gray-50/50">
+        <div class="flex items-center justify-between font-bold text-neutral-900 mb-4 text-lg">
+          <span>Subtotal</span>
+          <span class="subtotal-amount">$0.00</span>
+        </div>
+        <p class="text-xs text-neutral-500 text-center mb-4">Taxes and shipping calculated at checkout.</p>
+        <button class="w-full bg-[#ff4d61] hover:bg-[#e63e50] text-white py-3.5 sm:py-4 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:shadow-xl hover:shadow-rose-500/20 active:scale-[0.98] flex items-center justify-center gap-2" onclick="window.location.href='/cart.html'">
+          <span>Secure Checkout</span>
+          <i class="w-5 h-5" data-lucide="arrow-right"></i>
+        </button>
+      </div>
   </div>
 
   <!-- LIVE SEARCH MODAL -->

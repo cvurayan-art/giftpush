@@ -1420,15 +1420,20 @@ export function initGiftQuiz() {
   function openGiftQuiz() {
     if (!quizOverlay) return;
     quizOverlay.classList.remove('hidden');
-    quizOverlay.classList.add('flex');
+    setTimeout(() => {
+      quizOverlay.classList.add('flex', 'active');
+    }, 10);
     document.body.style.overflow = 'hidden';
     renderQuizStep(currentQuizStep);
   }
 
   function closeGiftQuiz() {
     if (!quizOverlay) return;
-    quizOverlay.classList.add('hidden');
-    quizOverlay.classList.remove('flex');
+    quizOverlay.classList.remove('active');
+    setTimeout(() => {
+      quizOverlay.classList.add('hidden');
+      quizOverlay.classList.remove('flex');
+    }, 300);
     document.body.style.overflow = '';
     if (quizModalContainer) quizModalContainer.classList.remove('max-w-4xl');
   }

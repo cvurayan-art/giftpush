@@ -94,30 +94,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // 4. SEARCH MODAL
-  const searchTrigger = document.getElementById('btn-search-trigger');
+  const searchTriggers = [document.getElementById('btn-header-search'), document.getElementById('header-search-input')].filter(Boolean);
   const searchOverlay = document.getElementById('search-modal-overlay');
-  const closeSearchBtn = document.getElementById('btn-close-search');
-  const searchInput = document.getElementById('search-input');
+  const closeSearchBtn = document.getElementById('btn-close-search-modal');
+  const searchInput = document.getElementById('live-search-input');
 
-  if (searchTrigger && searchOverlay) {
-    searchTrigger.addEventListener('click', () => {
-      searchOverlay.classList.add('active');
-      setTimeout(() => {
-        if (searchInput) searchInput.focus();
-      }, 100);
+  searchTriggers.forEach(trigger => {
+    trigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (searchOverlay) {
+        searchOverlay.classList.remove('hidden');
+        searchOverlay.classList.add('flex');
+        setTimeout(() => {
+          if (searchInput) searchInput.focus();
+        }, 100);
+      }
     });
-  }
+  });
 
   if (closeSearchBtn && searchOverlay) {
     closeSearchBtn.addEventListener('click', () => {
-      searchOverlay.classList.remove('active');
+      searchOverlay.classList.add('hidden');
+      searchOverlay.classList.remove('flex');
     });
   }
 
   if (searchOverlay) {
     searchOverlay.addEventListener('click', (e) => {
       if (e.target === searchOverlay) {
-        searchOverlay.classList.remove('active');
+        searchOverlay.classList.add('hidden');
+        searchOverlay.classList.remove('flex');
       }
     });
   }
@@ -403,22 +409,16 @@ document.addEventListener('DOMContentLoaded', () => {
     { name: 'Handcrafted Festive Candle', category: 'Stocking Stuffers', price: '$22.00', img: 'images/cinnamon_candle.jpg', link: '#budget' }
   ];
 
-  const searchBox = document.querySelector('.search-modal-box .modal-body');
-  if (searchInput && searchBox) {
-    let resultsContainer = document.getElementById('search-results-list');
-    if (!resultsContainer) {
-      resultsContainer = document.createElement('div');
-      resultsContainer.id = 'search-results-list';
-      resultsContainer.className = 'search-results-list';
-      searchBox.appendChild(resultsContainer);
-    }
-
+  let resultsContainer = document.getElementById('live-search-results');
+  if (searchInput && resultsContainer) {
     function executeSearch(query) {
       const q = query.trim().toLowerCase();
       if (!q) {
         resultsContainer.innerHTML = '';
+        resultsContainer.classList.add('hidden');
         return;
       }
+      resultsContainer.classList.remove('hidden');
 
       const matches = productsCatalog.filter(p => 
         p.name.toLowerCase().includes(q) || 
@@ -427,7 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (matches.length > 0) {
         resultsContainer.innerHTML = matches.map(p => `
-          <a href="${p.link}" class="search-result-item" onclick="document.getElementById('search-modal-overlay').classList.remove('active')">
+          <a href="${p.link}" class="search-result-item" onclick="document.getElementById('search-modal-overlay').classList.add('hidden'); document.getElementById('search-modal-overlay').classList.remove('flex');">
             <img src="${p.img}" alt="${p.name}" class="search-result-thumb">
             <div class="search-result-info">
               <h5>${p.name}</h5>
@@ -499,9 +499,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const quizHeroHeadline = document.getElementById('quiz-main-headline');
 
   // Trigger elements
-  const btnHeaderQuiz = document.getElementById('btn-quiz-trigger');
-  const btnMobileQuiz = document.getElementById('btn-mobile-quiz');
-  const floatingQuizTrigger = document.getElementById('floating-quiz-trigger');
+  // We use querySelectorAll because there are multiple ways to open the quiz
+  const quizTriggers = document.querySelectorAll('.footer-quiz-link, #mobile-drawer-quiz-btn, .quiz-trigger');
 
   // Questions definition
   const quizQuestions = [
@@ -690,7 +689,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function openGiftQuiz() {
     if (!quizOverlay) return;
-    quizOverlay.classList.add('active');
+    quizOverlay.classList.remove('hidden');
+    // small delay to let display:block apply before setting opacity
+    setTimeout(() => quizOverlay.classList.add('active'), 10);
     document.body.style.overflow = 'hidden';
     if (quizCardWrapper && quizCardWrapper.style.display === 'none') {
       renderQuizStep(currentQuizStep);
@@ -700,6 +701,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeGiftQuiz() {
     if (!quizOverlay) return;
     quizOverlay.classList.remove('active');
+    setTimeout(() => quizOverlay.classList.add('hidden'), 300);
     document.body.style.overflow = '';
     sessionStorage.setItem('gift_quiz_welcomed', 'true');
     const modalContainer = quizOverlay.querySelector('.quiz-modal-container');
@@ -945,25 +947,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Re-open Triggers
-  if (btnHeaderQuiz) {
-    btnHeaderQuiz.addEventListener('click', () => {
-      openGiftQuiz();
-    });
-  }
-
-  if (btnMobileQuiz) {
-    btnMobileQuiz.addEventListener('click', () => {
-      if (mobileDrawer) mobileDrawer.classList.remove('open');
-      openGiftQuiz();
-    });
-  }
-
-  if (floatingQuizTrigger) {
-    floatingQuizTrigger.addEventListener('click', () => {
-      openGiftQuiz();
-    });
-  }
+  // Re-open Triggers handled at the top
 
   // Initialize Quiz
   renderQuizStep(0);
