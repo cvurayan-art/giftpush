@@ -472,41 +472,68 @@ export async function getShopifyCollectionByHandle(
  * Search products
  */
 export async function searchShopifyProducts(searchQuery: string, first = 10): Promise<ShopifyProduct[]> {
-  if (!searchQuery.trim()) return [];
+  const cleanQ = searchQuery.trim();
+  if (!cleanQ) return [];
 
-  if (!isShopifyConfigured()) {
-    const q = searchQuery.toLowerCase();
-    return getFallbackProducts().filter(p =>
-      p.title.toLowerCase().includes(q) ||
-      p.description.toLowerCase().includes(q) ||
-      p.productType.toLowerCase().includes(q)
-    ).slice(0, first);
-  }
-
-  const query = `
-    query SearchProducts($query: String!, $first: Int!) {
-      products(first: $first, query: $query) {
-        nodes {
-          ${PRODUCT_FRAGMENT}
+  if (isShopifyConfigured()) {
+    const query = `
+      query SearchProducts($query: String!, $first: Int!) {
+        products(first: $first, query: $query) {
+          nodes {
+            ${PRODUCT_FRAGMENT}
+          }
         }
       }
-    }
-  `;
+    `;
 
-  try {
-    const data = await shopifyFetch<{ products: { nodes: ShopifyProduct[] } }>({
-      query,
-      variables: { query: searchQuery, first },
-    });
-    return data.products.nodes;
-  } catch (err) {
-    console.warn('[Shopify] Error searching products, fallback search:', err);
-    const q = searchQuery.toLowerCase();
-    return getFallbackProducts().filter(p =>
-      p.title.toLowerCase().includes(q) ||
-      p.description.toLowerCase().includes(q)
-    ).slice(0, first);
+    try {
+      const data = await shopifyFetch<{ products: { nodes: ShopifyProduct[] } }>({
+        query,
+        variables: { query: cleanQ, first },
+      });
+      if (data?.products?.nodes && data.products.nodes.length > 0) {
+        return data.products.nodes;
+      }
+
+      // If exact query gave 0 results and no wildcard was present, try wildcard
+      if (!cleanQ.includes('*')) {
+        try {
+          const wildcardData = await shopifyFetch<{ products: { nodes: ShopifyProduct[] } }>({
+            query,
+            variables: { query: `${cleanQ}*`, first },
+          });
+          if (wildcardData?.products?.nodes && wildcardData.products.nodes.length > 0) {
+            return wildcardData.products.nodes;
+          }
+        } catch (_) {}
+      }
+    } catch (err) {
+      console.warn('[Shopify] Error searching products, trying catalog fallback:', err);
+    }
   }
+
+  // Fallback to catalog filtering across all products
+  try {
+    const all = await getShopifyProducts({ first: 100 });
+    const q = cleanQ.toLowerCase();
+    const filtered = all.filter(p =>
+      p.title.toLowerCase().includes(q) ||
+      (p.description && p.description.toLowerCase().includes(q)) ||
+      (p.productType && p.productType.toLowerCase().includes(q)) ||
+      (p.tags && p.tags.some(t => t.toLowerCase().includes(q)))
+    );
+    if (filtered.length > 0) {
+      return filtered.slice(0, first);
+    }
+  } catch (err) {
+    console.warn('[Shopify] Catalog fallback error:', err);
+  }
+
+  const q = cleanQ.toLowerCase();
+  return getFallbackProducts().filter(p =>
+    p.title.toLowerCase().includes(q) ||
+    p.description.toLowerCase().includes(q)
+  ).slice(0, first);
 }
 
 /**

@@ -153,7 +153,7 @@
         </a>
 
         <!-- Main Desktop Navigation Links -->
-        <nav class="hidden lg:flex items-center space-x-6 xl:space-x-8 text-sm font-semibold text-emerald-50">
+        <nav class="hidden lg:flex items-center space-x-5 xl:space-x-7 text-sm font-semibold text-emerald-50">
           <a class="text-white font-bold hover:text-emerald-200 relative py-2" href="/">
             Home
             <span class="absolute bottom-0 left-0 w-full h-[2px] bg-white rounded-full"></span>
@@ -162,6 +162,10 @@
           <a class="hover:text-emerald-200 transition-colors py-2" href="/categories.html">Categories</a>
           <a class="hover:text-emerald-200 transition-colors py-2" href="/about.html">About Us</a>
           <a class="hover:text-emerald-200 transition-colors py-2" href="/contact.html">Contact Us</a>
+          <button id="btn-nav-quiz" type="button" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-rose-500 to-[#ff4d61] text-white text-xs font-bold shadow-md hover:brightness-110 transition cursor-pointer">
+            <i class="w-3.5 h-3.5" data-lucide="sparkles"></i>
+            <span>Gift Finder</span>
+          </button>
         </nav>
       </div>
 
@@ -305,12 +309,12 @@
         <div class="lg:col-span-7 xl:col-span-7 rounded-3xl overflow-hidden relative shadow-sm w-full group bg-[#fcf8f3]">
           <!-- Slider Track -->
           <div id="hero-slider" class="w-full flex transition-transform duration-700 ease-in-out">
-            <div class="w-full flex-shrink-0 relative">
+            <a href="/shop.html" class="w-full flex-shrink-0 relative block cursor-pointer" aria-label="Shop Holiday Deals">
               <img src="/images/Sleigh%20the%20Season%20Holiday%20Shopping%20Banner.png" class="w-full h-auto block" alt="Slide 1">
-            </div>
-            <div class="w-full flex-shrink-0 relative">
-              <img src="/images/hero-2.jpg" class="w-full h-auto block" alt="Slide 2">
-            </div>
+            </a>
+            <a href="/product.html?handle=miniature-flower-table-lamp-night-light" class="w-full flex-shrink-0 relative block cursor-pointer" aria-label="Miniature Flower Table Lamp Night Light">
+              <img src="/images/hero-2.jpg" class="w-full h-auto block" alt="Bloom Your Space - Miniature Flower Table Lamp Night Light">
+            </a>
           </div>
           
           <!-- Controls -->
@@ -370,13 +374,13 @@
         <!-- Right 2x2 Bento Grid (Wide-Screen Optimized) -->
         <div class="lg:col-span-5 xl:col-span-5 grid grid-cols-2 gap-3 sm:gap-4 lg:gap-5">
           <!-- 1. Top-Left: Featured Gift -->
-          <div class="bg-[#ebf9f3] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px]">
+          <a href="/product.html?handle=christmas-snowman-moon-night-light" class="bg-[#ebf9f3] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px] cursor-pointer block">
             <div>
               <div class="flex items-center gap-1.5">
                 <span class="inline-block bg-emerald-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Hot</span>
                 <span class="text-[9px] sm:text-xs font-semibold text-neutral-600">30% OFF</span>
               </div>
-              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">Featured<br>Gift</h3>
+              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight group-hover:text-emerald-700 transition-colors">Featured<br>Gift</h3>
               <p class="text-[10px] sm:text-xs text-neutral-500 mt-1">Weekly Offers</p>
               <div class="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-1.5 mt-1 sm:mt-1.5">
                 <p class="text-lg sm:text-xl font-extrabold text-rose-600 leading-none sm:leading-normal">£34.99</p>
@@ -386,16 +390,16 @@
             <div class="absolute bottom-0 right-0 w-20 h-20 sm:w-28 sm:h-28 lg:w-36 lg:h-36 flex items-end justify-end pointer-events-none">
               <img alt="Featured Gift" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/cd3aa075-d7dd-4448-803e-a42d97b1182e.png">
             </div>
-          </div>
+          </a>
 
           <!-- 2. Top-Right: Special Gift -->
-          <div class="bg-[#f2eefa] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px]">
+          <a href="/product.html?handle=handwoven-straw-fan-wall-decor" class="bg-[#f2eefa] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px] cursor-pointer block">
             <div>
               <div class="flex items-center gap-1.5">
                 <span class="inline-block bg-indigo-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">New</span>
                 <span class="text-[9px] sm:text-xs font-semibold text-neutral-600">30% OFF</span>
               </div>
-              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">Special<br>Gift</h3>
+              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight group-hover:text-indigo-700 transition-colors">Special<br>Gift</h3>
               <p class="text-[10px] sm:text-xs text-neutral-500 mt-1">Special Offers</p>
               <div class="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-1.5 mt-1 sm:mt-1.5">
                 <p class="text-lg sm:text-xl font-extrabold text-rose-600 leading-none sm:leading-normal">£17.99</p>
@@ -405,16 +409,16 @@
             <div class="absolute bottom-0 right-0 w-20 h-20 sm:w-32 sm:h-32 lg:w-40 lg:h-40 flex items-end justify-end pointer-events-none">
               <img alt="Special Gift" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/Untitled-1%20adasg3.png">
             </div>
-          </div>
+          </a>
 
           <!-- 3. Bottom-Left: Handpicked Gift -->
-          <div class="bg-[#ebf4fc] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px]">
+          <a href="/product.html?handle=house-night-light-with-wireless-charger-white-noise-machine" class="bg-[#ebf4fc] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px] cursor-pointer block">
             <div>
               <div class="flex items-center gap-1.5">
                 <span class="inline-block bg-sky-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Top Deal</span>
                 <span class="text-[9px] sm:text-xs font-semibold text-neutral-600">30% OFF</span>
               </div>
-              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">Handpicked<br>Gift</h3>
+              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight group-hover:text-sky-700 transition-colors">Handpicked<br>Gift</h3>
               <p class="text-[10px] sm:text-xs text-neutral-500 mt-1">Top Deals</p>
               <div class="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-1.5 mt-1 sm:mt-1.5">
                 <p class="text-lg sm:text-xl font-extrabold text-rose-600 leading-none sm:leading-normal">£79.99</p>
@@ -424,16 +428,16 @@
             <div class="absolute bottom-0 right-0 w-20 h-20 sm:w-28 sm:h-28 lg:w-36 lg:h-36 flex items-end justify-end pointer-events-none">
               <img alt="Handpicked Gift" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/94aaf74e-64d4-430f-aef0-7f40770e3242fsd.png">
             </div>
-          </div>
+          </a>
 
           <!-- 4. Bottom-Right: Best Seller Gift -->
-          <div class="bg-[#fdf2eb] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px]">
+          <a href="/product.html?handle=vintage-butterfly-stained-glass-led-table-lamp" class="bg-[#fdf2eb] rounded-3xl p-3 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 min-h-[140px] sm:min-h-[170px] lg:min-h-[190px] cursor-pointer block">
             <div>
               <div class="flex items-center gap-1.5">
                 <span class="inline-block bg-orange-500 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Best Seller</span>
                 <span class="text-[9px] sm:text-xs font-semibold text-neutral-600">30% OFF</span>
               </div>
-              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight">Best Seller<br>Gift</h3>
+              <h3 class="text-base sm:text-lg lg:text-xl font-bold text-neutral-900 mt-1 sm:mt-2 leading-tight group-hover:text-orange-700 transition-colors">Best Seller<br>Gift</h3>
               <p class="text-[10px] sm:text-xs text-neutral-500 mt-1">Weekly Offers</p>
               <div class="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-1.5 mt-1 sm:mt-1.5">
                 <p class="text-lg sm:text-xl font-extrabold text-rose-600 leading-none sm:leading-normal">£58.99</p>
@@ -443,7 +447,7 @@
             <div class="absolute bottom-0 right-0 w-20 h-20 sm:w-28 sm:h-28 lg:w-36 lg:h-36 flex items-end justify-end pointer-events-none">
               <img alt="Best Seller Gift" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="/images/IlluminatedTiffanyButterflyRoseLampcopy.png">
             </div>
-          </div>
+          </a>
         </div>
       </div>
     </div>
@@ -610,84 +614,545 @@
   
 
 
-  <!-- BEGIN: Testimonials Section -->
-  <section class="w-full py-16 lg:py-24 bg-[#fafafa]" data-purpose="testimonials">
-    <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
-      <div class="text-center mb-10 lg:mb-14">
-        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-900 tracking-tight">Loved by Over 250+ Gifters</h2>
-        <p class="text-neutral-500 mt-4 max-w-2xl mx-auto text-sm sm:text-base">Don't just take our word for it. See what our community has to say about their stress-free gifting experience.</p>
-      </div>
+  <!-- BEGIN: Testimonials Section (Luxury Festive Social Proof Showcase) -->
+  <section class="w-full py-16 lg:py-24 bg-gradient-to-b from-[#FCF9F5] via-[#FFFDFB] to-[#F8F3EC] border-y border-[#e8ded1]/60 relative overflow-hidden" data-purpose="testimonials">
+    <!-- Subtle festive atmospheric glow decor -->
+    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-b from-rose-100/40 via-amber-100/20 to-transparent blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+    <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 relative z-10">
       
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto">
-        <!-- Review 1 -->
-        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
-          <div>
-            <div class="flex gap-1 text-[#ff4d61] mb-5">
-              <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-current"></i>
-              <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-current"></i>
-              <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-current"></i>
-              <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-current"></i>
-              <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-current"></i>
+      <!-- Section Header with Trust Badges -->
+      <div class="text-center max-w-3xl mx-auto mb-10 lg:mb-12">
+        <!-- Eyebrow Badge -->
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-50 border border-rose-200/70 text-[#ff4d61] text-xs font-bold uppercase tracking-wider mb-4 shadow-2xs">
+          <i class="w-3.5 h-3.5" data-lucide="sparkles"></i>
+          <span>Real Stories &bull; Real Reactions</span>
+        </div>
+
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-900 tracking-tight leading-tight">
+          From Gifting Panic to <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-[#ff4d61] to-amber-600">Pure Magic.</span>
+        </h2>
+        
+        <p class="text-neutral-600 mt-3.5 text-sm sm:text-base leading-relaxed">
+          See what happens when the pressure is on and our curated gifts arrive. Over 3,400+ verified gifters trusted us this season.
+        </p>
+
+        <!-- Social Proof Stats Pill -->
+        <div class="mt-6 inline-flex flex-wrap items-center justify-center gap-4 sm:gap-8 bg-white/90 backdrop-blur-md px-6 py-3 rounded-2xl border border-neutral-200/80 shadow-xs">
+          <div class="flex items-center gap-2">
+            <div class="flex text-amber-400">
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
             </div>
-            <p class="text-neutral-800 text-base sm:text-lg leading-relaxed font-medium">"I completely forgot our anniversary, but the Gift Finder saved me. The crystal ball arrived the very next day and my wife loved it!"</p>
+            <span class="text-xs sm:text-sm font-extrabold text-neutral-900">4.9 / 5.0</span>
+            <span class="text-xs text-neutral-400">(3,420+ Reviews)</span>
           </div>
-          <div class="mt-8 flex items-center gap-4">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-[#ff4d61]/10 rounded-full flex items-center justify-center font-bold text-[#ff4d61]">MJ</div>
-            <div>
-              <p class="font-bold text-neutral-900 text-sm sm:text-base">Michael J.</p>
-              <p class="text-[10px] sm:text-xs text-neutral-500 flex items-center gap-1">
-                <i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500"></i> Verified Buyer
-              </p>
-            </div>
+
+          <div class="hidden sm:block h-4 w-px bg-neutral-200"></div>
+
+          <div class="flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+            <span>100% Verified Shopify Buyers</span>
+          </div>
+
+          <div class="hidden sm:block h-4 w-px bg-neutral-200"></div>
+
+          <div class="flex items-center gap-1.5 text-xs font-bold text-neutral-700">
+            <i data-lucide="truck" class="w-3.5 h-3.5 text-[#ff4d61]"></i>
+            <span>99.4% On-Time Arrival</span>
           </div>
         </div>
-        
-        <!-- Review 2 -->
-        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+      </div>
+
+      <!-- Interactive Occasion Filter Tabs & Carousel Nav -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+        <!-- Filter Tabs -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar max-w-full pb-1" id="review-filter-tabs">
+          <button type="button" class="review-tab-btn active whitespace-nowrap flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer bg-neutral-900 text-white shadow-xs" data-category="all">
+            All Reviews (8)
+          </button>
+          <button type="button" class="review-tab-btn whitespace-nowrap flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200" data-category="christmas">
+            🎄 Christmas Saves
+          </button>
+          <button type="button" class="review-tab-btn whitespace-nowrap flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200" data-category="anniversary">
+            💍 Anniversary & Romance
+          </button>
+          <button type="button" class="review-tab-btn whitespace-nowrap flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200" data-category="him">
+            👨 For Him & Dads
+          </button>
+          <button type="button" class="review-tab-btn whitespace-nowrap flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200" data-category="cozy">
+            ✨ Home & Sentimental
+          </button>
+        </div>
+
+        <!-- Carousel Navigation Controls -->
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <button type="button" id="reviews-scroll-prev" class="w-9 h-9 rounded-full bg-white border border-neutral-200 hover:bg-neutral-100 text-neutral-700 flex items-center justify-center transition shadow-2xs cursor-pointer active:scale-95" aria-label="Previous Reviews">
+            <i class="w-4 h-4 pointer-events-none" data-lucide="chevron-left"></i>
+          </button>
+          <button type="button" id="reviews-scroll-next" class="w-9 h-9 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white flex items-center justify-center transition shadow-xs cursor-pointer active:scale-95" aria-label="Next Reviews">
+            <i class="w-4 h-4 pointer-events-none" data-lucide="chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Reviews Carousel Track (Flex Snap Slider) -->
+      <div id="reviews-carousel-track" class="flex items-stretch gap-5 lg:gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory py-2 pb-6 scroll-smooth select-none">
+
+        <!-- Review Card 1 (Christmas Morning - Emily R.) -->
+        <div class="review-card w-[88%] sm:w-[48%] lg:w-[calc(33.333%-16px)] flex-shrink-0 bg-white rounded-3xl p-6 sm:p-7 border border-neutral-100/90 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between snap-start" data-category="christmas cozy">
           <div>
-            <div class="flex gap-1 text-[#ff4d61] mb-5">
-              <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-current"></i>
-              <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-current"></i>
-              <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-current"></i>
-              <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-current"></i>
-              <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-current"></i>
+            <!-- Author Header -->
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="flex items-center gap-3">
+                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80" alt="Emily Richardson" class="w-12 h-12 rounded-full object-cover ring-2 ring-rose-100 shadow-2xs">
+                <div>
+                  <h4 class="font-extrabold text-neutral-900 text-sm sm:text-base leading-tight">Emily Richardson</h4>
+                  <div class="flex items-center gap-1.5 mt-0.5">
+                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                      <i class="w-3 h-3 text-emerald-600" data-lucide="check-circle-2"></i> Verified Buyer
+                    </span>
+                    <span class="text-[11px] text-neutral-400">&bull; London, UK</span>
+                  </div>
+                </div>
+              </div>
+              <span class="text-[10px] font-extrabold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full uppercase tracking-wider flex-shrink-0">
+                🎄 Christmas
+              </span>
             </div>
-            <p class="text-neutral-800 text-base sm:text-lg leading-relaxed font-medium">"The packaging is so premium. It literally looks like I spent hours putting this together. Thank you Present Panic for making me look like a pro!"</p>
+
+            <!-- Stars & Date -->
+            <div class="flex items-center gap-2 mb-3">
+              <div class="flex text-amber-400">
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              </div>
+              <span class="text-xs text-neutral-400 font-medium">Yesterday</span>
+            </div>
+
+            <!-- Review Title & Body -->
+            <h5 class="font-bold text-neutral-900 text-base mb-2 leading-snug">
+              &ldquo;She was in tears of joy on Christmas morning!&rdquo;
+            </h5>
+            <p class="text-neutral-600 text-xs sm:text-sm leading-relaxed">
+              I left my holiday shopping until the final 48 hours and panicked. The Gift Finder recommended the Flower Table Lamp. It arrived beautifully boxed the next morning, and the warm glow in person is sensational.
+            </p>
           </div>
-          <div class="mt-8 flex items-center gap-4">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-sky-100 rounded-full flex items-center justify-center font-bold text-sky-600">ST</div>
-            <div>
-              <p class="font-bold text-neutral-900 text-sm sm:text-base">Sarah T.</p>
-              <p class="text-[10px] sm:text-xs text-neutral-500 flex items-center gap-1">
-                <i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500"></i> Verified Buyer
-              </p>
+
+          <!-- Verified Purchased Item Card -->
+          <div class="mt-5 pt-4 border-t border-neutral-100 flex items-center justify-between gap-3 bg-neutral-50/80 p-3 rounded-2xl">
+            <div class="flex items-center gap-3 overflow-hidden">
+              <img src="https://cdn.shopify.com/s/files/1/1078/7828/5393/files/67b69f54-4503-45e7-9115-9f366eaddf1e.png?v=1791367035" alt="Miniature Flower Lamp" class="w-11 h-11 rounded-xl object-contain bg-white flex-shrink-0 border border-neutral-200/60 p-1">
+              <div class="overflow-hidden">
+                <p class="text-[10px] uppercase font-bold text-neutral-400 tracking-wider">Gift Purchased</p>
+                <p class="text-xs font-bold text-neutral-900 truncate">Miniature Flower Lamp Night Light</p>
+              </div>
             </div>
+            <a href="/product.html?handle=miniature-flower-table-lamp-night-light" class="text-xs font-extrabold text-[#ff4d61] hover:underline flex-shrink-0 whitespace-nowrap">
+              View &rarr;
+            </a>
           </div>
         </div>
 
-        <!-- Review 3 -->
-        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+        <!-- Review Card 2 (Anniversary - Michael J.) -->
+        <div class="review-card w-[88%] sm:w-[48%] lg:w-[calc(33.333%-16px)] flex-shrink-0 bg-white rounded-3xl p-6 sm:p-7 border border-neutral-100/90 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between snap-start" data-category="anniversary cozy">
           <div>
-            <div class="flex gap-1 text-[#ff4d61] mb-5">
-              <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-current"></i>
-              <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-current"></i>
-              <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-current"></i>
-              <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-current"></i>
-              <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5 fill-current"></i>
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="flex items-center gap-3">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Michael Jenkins" class="w-12 h-12 rounded-full object-cover ring-2 ring-rose-100 shadow-2xs">
+                <div>
+                  <h4 class="font-extrabold text-neutral-900 text-sm sm:text-base leading-tight">Michael Jenkins</h4>
+                  <div class="flex items-center gap-1.5 mt-0.5">
+                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                      <i class="w-3 h-3 text-emerald-600" data-lucide="check-circle-2"></i> Verified Buyer
+                    </span>
+                    <span class="text-[11px] text-neutral-400">&bull; Manchester, UK</span>
+                  </div>
+                </div>
+              </div>
+              <span class="text-[10px] font-extrabold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full uppercase tracking-wider flex-shrink-0">
+                💍 Anniversary
+              </span>
             </div>
-            <p class="text-neutral-800 text-base sm:text-lg leading-relaxed font-medium">"I'm usually terrible at picking gifts, but their collections are spot on. Bought a smartwatch for my dad and he hasn't taken it off since."</p>
+
+            <div class="flex items-center gap-2 mb-3">
+              <div class="flex text-amber-400">
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              </div>
+              <span class="text-xs text-neutral-400 font-medium">3 days ago</span>
+            </div>
+
+            <h5 class="font-bold text-neutral-900 text-base mb-2 leading-snug">
+              &ldquo;Saved our 5th anniversary. Best customer service ever.&rdquo;
+            </h5>
+            <p class="text-neutral-600 text-xs sm:text-sm leading-relaxed">
+              I completely forgot our 5th anniversary until 2 days before. The expedited dispatch got it here with 8 hours to spare. The crystal butterfly lamp made me look like the most thoughtful husband on earth.
+            </p>
           </div>
-          <div class="mt-8 flex items-center gap-4">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-100 rounded-full flex items-center justify-center font-bold text-emerald-600">DL</div>
-            <div>
-              <p class="font-bold text-neutral-900 text-sm sm:text-base">David L.</p>
-              <p class="text-[10px] sm:text-xs text-neutral-500 flex items-center gap-1">
-                <i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500"></i> Verified Buyer
-              </p>
+
+          <div class="mt-5 pt-4 border-t border-neutral-100 flex items-center justify-between gap-3 bg-neutral-50/80 p-3 rounded-2xl">
+            <div class="flex items-center gap-3 overflow-hidden">
+              <img src="https://cdn.shopify.com/s/files/1/1078/7828/5393/files/IlluminatedTiffanyButterflyRoseLampcopy.png?v=1791367325" alt="Tiffany Lamp" class="w-11 h-11 rounded-xl object-contain bg-white flex-shrink-0 border border-neutral-200/60 p-1">
+              <div class="overflow-hidden">
+                <p class="text-[10px] uppercase font-bold text-neutral-400 tracking-wider">Gift Purchased</p>
+                <p class="text-xs font-bold text-neutral-900 truncate">Vintage Butterfly LED Table Lamp</p>
+              </div>
             </div>
+            <a href="/product.html?handle=vintage-butterfly-stained-glass-led-table-lamp" class="text-xs font-extrabold text-[#ff4d61] hover:underline flex-shrink-0 whitespace-nowrap">
+              View &rarr;
+            </a>
           </div>
         </div>
+
+        <!-- Review Card 3 (For Him / Dad - David L.) -->
+        <div class="review-card w-[88%] sm:w-[48%] lg:w-[calc(33.333%-16px)] flex-shrink-0 bg-white rounded-3xl p-6 sm:p-7 border border-neutral-100/90 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between snap-start" data-category="him christmas">
+          <div>
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="flex items-center gap-3">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80" alt="David Lloyd" class="w-12 h-12 rounded-full object-cover ring-2 ring-rose-100 shadow-2xs">
+                <div>
+                  <h4 class="font-extrabold text-neutral-900 text-sm sm:text-base leading-tight">David Lloyd</h4>
+                  <div class="flex items-center gap-1.5 mt-0.5">
+                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                      <i class="w-3 h-3 text-emerald-600" data-lucide="check-circle-2"></i> Verified Buyer
+                    </span>
+                    <span class="text-[11px] text-neutral-400">&bull; Bristol, UK</span>
+                  </div>
+                </div>
+              </div>
+              <span class="text-[10px] font-extrabold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-full uppercase tracking-wider flex-shrink-0">
+                👨 For Dad
+              </span>
+            </div>
+
+            <div class="flex items-center gap-2 mb-3">
+              <div class="flex text-amber-400">
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              </div>
+              <span class="text-xs text-neutral-400 font-medium">5 days ago</span>
+            </div>
+
+            <h5 class="font-bold text-neutral-900 text-base mb-2 leading-snug">
+              &ldquo;My dad already has everything, but he loves this!&rdquo;
+            </h5>
+            <p class="text-neutral-600 text-xs sm:text-sm leading-relaxed">
+              Shopping for my dad is usually a nightmare. Got him the solid wood house night light with built-in phone charger. The natural wood finish and warm glowing windows look incredible on his nightstand. First time he hasn't returned a gift!
+            </p>
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-neutral-100 flex items-center justify-between gap-3 bg-neutral-50/80 p-3 rounded-2xl">
+            <div class="flex items-center gap-3 overflow-hidden">
+              <img src="https://cdn.shopify.com/s/files/1/1078/7828/5393/files/94aaf74e-64d4-430f-aef0-7f40770e3242.png?v=1791365670" alt="House Night Light with Charger" class="w-11 h-11 rounded-xl object-contain bg-white flex-shrink-0 border border-neutral-200/60 p-0.5">
+              <div class="overflow-hidden">
+                <p class="text-[10px] uppercase font-bold text-neutral-400 tracking-wider">Gift Purchased</p>
+                <p class="text-xs font-bold text-neutral-900 truncate">House Night Light with Charger</p>
+              </div>
+            </div>
+            <a href="/product.html?handle=house-night-light-with-wireless-charger-white-noise-machine" class="text-xs font-extrabold text-[#ff4d61] hover:underline flex-shrink-0 whitespace-nowrap">
+              View &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Review Card 4 (Nostalgic Keepsake - Sophia C.) -->
+        <div class="review-card w-[88%] sm:w-[48%] lg:w-[calc(33.333%-16px)] flex-shrink-0 bg-white rounded-3xl p-6 sm:p-7 border border-neutral-100/90 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between snap-start" data-category="christmas cozy">
+          <div>
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="flex items-center gap-3">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80" alt="Sophia Campbell" class="w-12 h-12 rounded-full object-cover ring-2 ring-rose-100 shadow-2xs">
+                <div>
+                  <h4 class="font-extrabold text-neutral-900 text-sm sm:text-base leading-tight">Sophia Campbell</h4>
+                  <div class="flex items-center gap-1.5 mt-0.5">
+                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                      <i class="w-3 h-3 text-emerald-600" data-lucide="check-circle-2"></i> Verified Buyer
+                    </span>
+                    <span class="text-[11px] text-neutral-400">&bull; Edinburgh, UK</span>
+                  </div>
+                </div>
+              </div>
+              <span class="text-[10px] font-extrabold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full uppercase tracking-wider flex-shrink-0">
+                🎄 Christmas
+              </span>
+            </div>
+
+            <div class="flex items-center gap-2 mb-3">
+              <div class="flex text-amber-400">
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              </div>
+              <span class="text-xs text-neutral-400 font-medium">1 week ago</span>
+            </div>
+
+            <h5 class="font-bold text-neutral-900 text-base mb-2 leading-snug">
+              &ldquo;The handmade holiday tree ornaments took our breath away.&rdquo;
+            </h5>
+            <p class="text-neutral-600 text-xs sm:text-sm leading-relaxed">
+              Bought the artisan crochet holiday ornaments for our family Christmas tree. The delicate stitching, festive colors, and heirloom feel are astounding. It arrived wrapped in holiday ribbon ready to gift!
+            </p>
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-neutral-100 flex items-center justify-between gap-3 bg-neutral-50/80 p-3 rounded-2xl">
+            <div class="flex items-center gap-3 overflow-hidden">
+              <img src="https://cdn.shopify.com/s/files/1/1078/7828/5393/files/Untitled-1_adasg2.png?v=1791453230" alt="Crochet Ornaments" class="w-11 h-11 rounded-xl object-contain bg-white flex-shrink-0 border border-neutral-200/60 p-1">
+              <div class="overflow-hidden">
+                <p class="text-[10px] uppercase font-bold text-neutral-400 tracking-wider">Gift Purchased</p>
+                <p class="text-xs font-bold text-neutral-900 truncate">Handmade Holiday Crochet Ornaments</p>
+              </div>
+            </div>
+            <a href="/product.html?handle=handmade-crochet-christmas-hanging-ornaments" class="text-xs font-extrabold text-[#ff4d61] hover:underline flex-shrink-0 whitespace-nowrap">
+              View &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Review Card 5 (Mum's Keepsake - Charlotte W.) -->
+        <div class="review-card w-[88%] sm:w-[48%] lg:w-[calc(33.333%-16px)] flex-shrink-0 bg-white rounded-3xl p-6 sm:p-7 border border-neutral-100/90 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between snap-start" data-category="anniversary cozy">
+          <div>
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="flex items-center gap-3">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Charlotte Ward" class="w-12 h-12 rounded-full object-cover ring-2 ring-rose-100 shadow-2xs">
+                <div>
+                  <h4 class="font-extrabold text-neutral-900 text-sm sm:text-base leading-tight">Charlotte Ward</h4>
+                  <div class="flex items-center gap-1.5 mt-0.5">
+                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                      <i class="w-3 h-3 text-emerald-600" data-lucide="check-circle-2"></i> Verified Buyer
+                    </span>
+                    <span class="text-[11px] text-neutral-400">&bull; Surrey, UK</span>
+                  </div>
+                </div>
+              </div>
+              <span class="text-[10px] font-extrabold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full uppercase tracking-wider flex-shrink-0">
+                🌸 For Mum
+              </span>
+            </div>
+
+            <div class="flex items-center gap-2 mb-3">
+              <div class="flex text-amber-400">
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              </div>
+              <span class="text-xs text-neutral-400 font-medium">1 week ago</span>
+            </div>
+
+            <h5 class="font-bold text-neutral-900 text-base mb-2 leading-snug">
+              &ldquo;Mum keeps it illuminated every night by her bedside.&rdquo;
+            </h5>
+            <p class="text-neutral-600 text-xs sm:text-sm leading-relaxed">
+              The Rechargeable Bird Touch Lamp was even more stunning in person. Soft ambient wood glow, smooth oak craftsmanship, and pristine presentation. Definitely ordering our Christmas gifts here next!
+            </p>
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-neutral-100 flex items-center justify-between gap-3 bg-neutral-50/80 p-3 rounded-2xl">
+            <div class="flex items-center gap-3 overflow-hidden">
+              <img src="https://cdn.shopify.com/s/files/1/1078/7828/5393/files/GlowingOakBirdTableLamp.png?v=1791365163" alt="Bird Touch Lamp" class="w-11 h-11 rounded-xl object-contain bg-white flex-shrink-0 border border-neutral-200/60 p-1">
+              <div class="overflow-hidden">
+                <p class="text-[10px] uppercase font-bold text-neutral-400 tracking-wider">Gift Purchased</p>
+                <p class="text-xs font-bold text-neutral-900 truncate">Rechargeable LED Bird Touch Lamp</p>
+              </div>
+            </div>
+            <a href="/product.html?handle=rechargeable-led-bird-touch-lamp" class="text-xs font-extrabold text-[#ff4d61] hover:underline flex-shrink-0 whitespace-nowrap">
+              View &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Review Card 6 (Sentimental Decor - Liam P.) -->
+        <div class="review-card w-[88%] sm:w-[48%] lg:w-[calc(33.333%-16px)] flex-shrink-0 bg-white rounded-3xl p-6 sm:p-7 border border-neutral-100/90 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between snap-start" data-category="cozy christmas">
+          <div>
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="flex items-center gap-3">
+                <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=120&q=80" alt="Liam Patterson" class="w-12 h-12 rounded-full object-cover ring-2 ring-rose-100 shadow-2xs">
+                <div>
+                  <h4 class="font-extrabold text-neutral-900 text-sm sm:text-base leading-tight">Liam Patterson</h4>
+                  <div class="flex items-center gap-1.5 mt-0.5">
+                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                      <i class="w-3 h-3 text-emerald-600" data-lucide="check-circle-2"></i> Verified Buyer
+                    </span>
+                    <span class="text-[11px] text-neutral-400">&bull; Leeds, UK</span>
+                  </div>
+                </div>
+              </div>
+              <span class="text-[10px] font-extrabold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full uppercase tracking-wider flex-shrink-0">
+                ✨ Sentimental
+              </span>
+            </div>
+
+            <div class="flex items-center gap-2 mb-3">
+              <div class="flex text-amber-400">
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              </div>
+              <span class="text-xs text-neutral-400 font-medium">2 weeks ago</span>
+            </div>
+
+            <h5 class="font-bold text-neutral-900 text-base mb-2 leading-snug">
+              &ldquo;The craftsmanship and warmth made her room feel magical.&rdquo;
+            </h5>
+            <p class="text-neutral-600 text-xs sm:text-sm leading-relaxed">
+              Ordered the artisan Boho Feather Wall Hanging for my sister’s new home. The delicate woven beads, natural feathers, and serene aesthetic are breathtaking. Arrived beautifully boxed and ready to hang immediately!
+            </p>
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-neutral-100 flex items-center justify-between gap-3 bg-neutral-50/80 p-3 rounded-2xl">
+            <div class="flex items-center gap-3 overflow-hidden">
+              <img src="https://cdn.shopify.com/s/files/1/1078/7828/5393/files/BohemianDreamcatcherwithLayeredFeathers.png?v=1791358935" alt="Bohemian Dream Catcher" class="w-11 h-11 rounded-xl object-contain bg-white flex-shrink-0 border border-neutral-200/60 p-1">
+              <div class="overflow-hidden">
+                <p class="text-[10px] uppercase font-bold text-neutral-400 tracking-wider">Gift Purchased</p>
+                <p class="text-xs font-bold text-neutral-900 truncate">Artisan Feather Dream Catcher</p>
+              </div>
+            </div>
+            <a href="/product.html?handle=handmade-feather-dream-catcher-wall-hanging" class="text-xs font-extrabold text-[#ff4d61] hover:underline flex-shrink-0 whitespace-nowrap">
+              View &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Review Card 7 (Anniversary / Keepsake - Daniel M.) -->
+        <div class="review-card w-[88%] sm:w-[48%] lg:w-[calc(33.333%-16px)] flex-shrink-0 bg-white rounded-3xl p-6 sm:p-7 border border-neutral-100/90 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between snap-start" data-category="anniversary him">
+          <div>
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="flex items-center gap-3">
+                <img src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=120&q=80" alt="Daniel Miller" class="w-12 h-12 rounded-full object-cover ring-2 ring-rose-100 shadow-2xs">
+                <div>
+                  <h4 class="font-extrabold text-neutral-900 text-sm sm:text-base leading-tight">Daniel Miller</h4>
+                  <div class="flex items-center gap-1.5 mt-0.5">
+                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                      <i class="w-3 h-3 text-emerald-600" data-lucide="check-circle-2"></i> Verified Buyer
+                    </span>
+                    <span class="text-[11px] text-neutral-400">&bull; Oxford, UK</span>
+                  </div>
+                </div>
+              </div>
+              <span class="text-[10px] font-extrabold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full uppercase tracking-wider flex-shrink-0">
+                💍 Anniversary
+              </span>
+            </div>
+
+            <div class="flex items-center gap-2 mb-3">
+              <div class="flex text-amber-400">
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              </div>
+              <span class="text-xs text-neutral-400 font-medium">4 days ago</span>
+            </div>
+
+            <h5 class="font-bold text-neutral-900 text-base mb-2 leading-snug">
+              &ldquo;Custom engraved perfection. She was speechlessly happy!&rdquo;
+            </h5>
+            <p class="text-neutral-600 text-xs sm:text-sm leading-relaxed">
+              Ordered the personalized engraved name necklace for our anniversary. The laser engraving is razor sharp and the stainless steel has a gorgeous polished mirror shine. She teared up when she opened the velvet pouch.
+            </p>
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-neutral-100 flex items-center justify-between gap-3 bg-neutral-50/80 p-3 rounded-2xl">
+            <div class="flex items-center gap-3 overflow-hidden">
+              <img src="https://cdn.shopify.com/s/files/1/1078/7828/5393/files/6e949429-dd5b-4969-ba6d-7df7805de5de.png?v=1791369364" alt="Custom Name Necklace" class="w-11 h-11 rounded-xl object-contain bg-white flex-shrink-0 border border-neutral-200/60 p-1">
+              <div class="overflow-hidden">
+                <p class="text-[10px] uppercase font-bold text-neutral-400 tracking-wider">Gift Purchased</p>
+                <p class="text-xs font-bold text-neutral-900 truncate">Personalized Engraved Name Necklace</p>
+              </div>
+            </div>
+            <a href="/product.html?handle=personalized-engraved-name-necklace-custom-stainless-steel-pendant" class="text-xs font-extrabold text-[#ff4d61] hover:underline flex-shrink-0 whitespace-nowrap">
+              View &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Review Card 8 (Christmas / Pet - Chloe A.) -->
+        <div class="review-card w-[88%] sm:w-[48%] lg:w-[calc(33.333%-16px)] flex-shrink-0 bg-white rounded-3xl p-6 sm:p-7 border border-neutral-100/90 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between snap-start" data-category="christmas cozy">
+          <div>
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="flex items-center gap-3">
+                <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80" alt="Chloe Adams" class="w-12 h-12 rounded-full object-cover ring-2 ring-rose-100 shadow-2xs">
+                <div>
+                  <h4 class="font-extrabold text-neutral-900 text-sm sm:text-base leading-tight">Chloe Adams</h4>
+                  <div class="flex items-center gap-1.5 mt-0.5">
+                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                      <i class="w-3 h-3 text-emerald-600" data-lucide="check-circle-2"></i> Verified Buyer
+                    </span>
+                    <span class="text-[11px] text-neutral-400">&bull; York, UK</span>
+                  </div>
+                </div>
+              </div>
+              <span class="text-[10px] font-extrabold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full uppercase tracking-wider flex-shrink-0">
+                🎄 Christmas
+              </span>
+            </div>
+
+            <div class="flex items-center gap-2 mb-3">
+              <div class="flex text-amber-400">
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              </div>
+              <span class="text-xs text-neutral-400 font-medium">6 days ago</span>
+            </div>
+
+            <h5 class="font-bold text-neutral-900 text-base mb-2 leading-snug">
+              &ldquo;Kitten curled up inside before we even finished setting it up!&rdquo;
+            </h5>
+            <p class="text-neutral-600 text-xs sm:text-sm leading-relaxed">
+              Got this DIY Crochet Cat Bed for my sister and her rescue kitten for Christmas. The chunky wool is ultra soft and the little guy made himself right at home instantly. Highest quality holiday gift experience!
+            </p>
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-neutral-100 flex items-center justify-between gap-3 bg-neutral-50/80 p-3 rounded-2xl">
+            <div class="flex items-center gap-3 overflow-hidden">
+              <img src="https://cdn.shopify.com/s/files/1/1078/7828/5393/files/CozyGrayCatCavewithKitten.png?v=1791363758" alt="Cat Bed Kit" class="w-11 h-11 rounded-xl object-contain bg-white flex-shrink-0 border border-neutral-200/60 p-1">
+              <div class="overflow-hidden">
+                <p class="text-[10px] uppercase font-bold text-neutral-400 tracking-wider">Gift Purchased</p>
+                <p class="text-xs font-bold text-neutral-900 truncate">DIY Cozy Crochet Cat Bed Kit</p>
+              </div>
+            </div>
+            <a href="/product.html?handle=diy-crochet-cat-bed-kit" class="text-xs font-extrabold text-[#ff4d61] hover:underline flex-shrink-0 whitespace-nowrap">
+              View &rarr;
+            </a>
+          </div>
+        </div>
+
       </div>
+
+      <!-- Trust Footer Banner inside Reviews -->
+      <div class="mt-8 pt-8 border-t border-[#ede3d5]/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
+        <div class="flex items-center gap-2">
+          <i class="w-4 h-4 text-emerald-600" data-lucide="badge-check"></i>
+          <span>All reviews collected automatically from verified orders via Shopify Checkout.</span>
+        </div>
+        <div class="flex items-center gap-4 font-bold text-neutral-800">
+          <span class="flex items-center gap-1.5"><i class="w-3.5 h-3.5 text-amber-500" data-lucide="star"></i> Rated 4.9 by Verified Gifters</span>
+          <span class="text-neutral-300">&bull;</span>
+          <span class="text-emerald-700">✓ Guaranteed Christmas Delivery</span>
+        </div>
+      </div>
+
     </div>
   </section>
   <!-- END: Testimonials Section -->
@@ -915,6 +1380,7 @@
           <span id="cart-checkout-btn-total">$0.00</span>
         </button>
       </div>
+    </div>
   </div>
   <!-- END: Shopping Cart Slide-out Drawer -->
 
@@ -928,7 +1394,7 @@
   <div id="search-modal-overlay" class="fixed inset-0 z-[130] bg-neutral-900/60 backdrop-blur-md hidden items-start justify-center pt-24 sm:pt-32" role="dialog" aria-modal="true" aria-label="Search Gift Catalog">
     <div class="relative w-[90%] max-w-2xl transition-all duration-500 animate-in slide-in-from-top-4 fade-in">
       <button id="btn-close-search-modal" aria-label="Close search modal" class="absolute -top-12 right-0 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition cursor-pointer">
-        <i class="w-4 h-4" data-lucide="x"></i>
+        <i class="w-4 h-4 pointer-events-none" data-lucide="x"></i>
       </button>
 
       <!-- Search Input Box -->
@@ -944,10 +1410,14 @@
       </div>
     </div>
   </div>
-  <!-- END: Live Search Modal -->
+  <!-- Floating Gift Finder Trigger Button (Fixed Bottom-Right) -->
+  <button id="floating-quiz-trigger" type="button" class="fixed bottom-6 right-6 z-40 flex items-center gap-2 bg-[#ff4d61] text-white px-4 py-3 rounded-full shadow-2xl hover:bg-rose-600 hover:scale-105 transition-all duration-300 font-bold text-xs sm:text-sm cursor-pointer group" aria-label="Take Gift Finder Quiz">
+    <i class="w-4 h-4 group-hover:rotate-12 transition-transform stroke-[2.5]" data-lucide="sparkles"></i>
+    <span>Gift Finder Quiz</span>
+  </button>
 
   <!-- BEGIN: GIFT FINDER QUIZ MODAL (Fully Responsive for All Screen Sizes) -->
-  <div class="fixed inset-0 bg-neutral-950/85 backdrop-blur-md z-[100] hidden items-center justify-center p-3 sm:p-6 overflow-y-auto gift-quiz-overlay" id="gift-quiz-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="quiz-main-headline">
+  <div class="fixed inset-0 bg-neutral-950/85 backdrop-blur-md z-[250] hidden items-center justify-center p-3 sm:p-6 overflow-y-auto pointer-events-auto gift-quiz-overlay" id="gift-quiz-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="quiz-main-headline">
     <!-- Starfield Backdrop Decor -->
     <div class="quiz-backdrop-stars pointer-events-none absolute inset-0" aria-hidden="true">
       <span class="star-dot s1"></span>
@@ -960,10 +1430,10 @@
     </div>
 
     <!-- Modal Box Container -->
-    <div class="relative w-full max-w-xl lg:max-w-2xl bg-white rounded-3xl shadow-2xl p-6 sm:p-10 my-auto border border-neutral-100 z-10 transition-all duration-300 max-h-[92vh] overflow-y-auto no-scrollbar" id="quiz-modal-container">
+    <div class="relative w-full max-w-xl lg:max-w-2xl bg-white rounded-3xl shadow-2xl p-6 sm:p-10 my-auto border border-neutral-100 z-10 transition-all duration-300 max-h-[92vh] overflow-y-auto no-scrollbar pointer-events-auto" id="quiz-modal-container">
       <!-- Close Button -->
-      <button class="absolute top-5 right-5 w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition cursor-pointer" id="btn-close-gift-quiz" aria-label="Close gift quiz">
-        <i class="w-4 h-4" data-lucide="x"></i>
+      <button class="absolute top-5 right-5 w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition cursor-pointer z-20" id="btn-close-gift-quiz" aria-label="Close gift quiz" onclick="window.closeGiftQuiz ? window.closeGiftQuiz() : null">
+        <i class="w-4 h-4 pointer-events-none" data-lucide="x"></i>
       </button>
 
       <!-- Headline -->
@@ -994,13 +1464,13 @@
         <!-- Card Navigation Buttons -->
         <div class="flex items-center justify-between border-t border-gray-100 pt-5 mt-4 text-xs font-semibold text-neutral-500" id="quiz-card-nav">
           <button type="button" class="inline-flex items-center gap-1.5 text-neutral-600 hover:text-neutral-950 transition opacity-0 pointer-events-none cursor-pointer" id="btn-quiz-prev">
-            <i class="w-3.5 h-3.5" data-lucide="arrow-left"></i>
+            <i class="w-3.5 h-3.5 pointer-events-none" data-lucide="arrow-left"></i>
             <span>Back</span>
           </button>
           
           <span class="text-neutral-400 font-bold tracking-wider" id="quiz-step-counter">1 / 4</span>
 
-          <button type="button" class="text-neutral-500 hover:text-rose-500 transition cursor-pointer" id="btn-quiz-skip">
+          <button type="button" class="text-neutral-500 hover:text-rose-500 transition cursor-pointer" id="btn-quiz-skip" onclick="window.showQuizResults ? window.showQuizResults() : null">
             Skip quiz &rarr;
           </button>
         </div>
@@ -1075,7 +1545,9 @@
     if (mobileDrawerQuizBtn) {
       mobileDrawerQuizBtn.addEventListener('click', () => {
         closeMobileMenu();
-        openGiftQuiz();
+        if (typeof window.openGiftQuiz === 'function') {
+          window.openGiftQuiz();
+        }
       });
     }
 
@@ -1159,26 +1631,117 @@
       });
     }
 
-    // 6. Dynamic Countdown Timers
-    function startCountdown(hId, mId, sId, initialHours, initialMins, initialSecs) {
-      let totalSeconds = initialHours * 3600 + initialMins * 60 + initialSecs;
-      setInterval(() => {
-        if (totalSeconds > 0) totalSeconds--;
-        const h = Math.floor(totalSeconds / 3600);
-        const m = Math.floor((totalSeconds % 3600) / 60);
-        const s = totalSeconds % 60;
-        const hEl = document.getElementById(hId);
-        const mEl = document.getElementById(mId);
-        const sEl = document.getElementById(sId);
-        if (hEl) hEl.textContent = String(h).padStart(2, '0');
-        if (mEl) mEl.textContent = String(m).padStart(2, '0');
-        if (sEl) sEl.textContent = String(s).padStart(2, '0');
-      }, 1000);
+    // 6. Interactive Reviews Carousel & Occasion Tabs
+    const reviewsTrack = document.getElementById('reviews-carousel-track');
+    const reviewsPrevBtn = document.getElementById('reviews-scroll-prev');
+    const reviewsNextBtn = document.getElementById('reviews-scroll-next');
+    const reviewTabBtns = document.querySelectorAll('.review-tab-btn');
+    const reviewCards = document.querySelectorAll('.review-card');
+
+    function updateReviewNavButtons() {
+      if (!reviewsTrack || !reviewsPrevBtn || !reviewsNextBtn) return;
+      const atStart = reviewsTrack.scrollLeft <= 5;
+      const atEnd = Math.ceil(reviewsTrack.scrollLeft + reviewsTrack.clientWidth) >= (reviewsTrack.scrollWidth - 10);
+      
+      reviewsPrevBtn.style.opacity = atStart ? '0.35' : '1';
+      reviewsPrevBtn.style.pointerEvents = atStart ? 'none' : 'auto';
+
+      reviewsNextBtn.style.opacity = atEnd ? '0.35' : '1';
+      reviewsNextBtn.style.pointerEvents = atEnd ? 'none' : 'auto';
     }
-    startCountdown('hours-flash', 'minutes-flash', 'seconds-flash', 9, 36, 44);
-    startCountdown('hours-loved', 'minutes-loved', 'seconds-loved', 13, 7, 53);
 
+    function scrollReviewCards(direction) {
+      if (!reviewsTrack) return;
+      const visibleCard = Array.from(reviewCards).find(c => c.style.display !== 'none');
+      const cardWidth = visibleCard ? visibleCard.getBoundingClientRect().width : 360;
+      const gap = 20;
+      const step = cardWidth + gap;
 
+      reviewsTrack.scrollBy({
+        left: direction === 'next' ? step : -step,
+        behavior: 'smooth'
+      });
+      setTimeout(updateReviewNavButtons, 350);
+    }
+
+    if (reviewsPrevBtn) {
+      reviewsPrevBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        scrollReviewCards('prev');
+      });
+    }
+    if (reviewsNextBtn) {
+      reviewsNextBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        scrollReviewCards('next');
+      });
+    }
+    if (reviewsTrack) {
+      reviewsTrack.addEventListener('scroll', updateReviewNavButtons, { passive: true });
+      window.addEventListener('resize', updateReviewNavButtons);
+      setTimeout(updateReviewNavButtons, 200);
+    }
+
+    // Occasion Tabs Filtering
+    if (reviewTabBtns.length > 0 && reviewCards.length > 0) {
+      reviewTabBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetCat = btn.getAttribute('data-category') || 'all';
+          
+          // Toggle active tab styling
+          reviewTabBtns.forEach(b => {
+            b.className = 'review-tab-btn whitespace-nowrap flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200';
+          });
+          btn.className = 'review-tab-btn active whitespace-nowrap flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer bg-neutral-900 text-white shadow-xs';
+
+          // Filter review cards smoothly
+          reviewCards.forEach(card => {
+            const cardCats = (card.getAttribute('data-category') || '').split(' ');
+            if (targetCat === 'all' || cardCats.includes(targetCat)) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+
+          // Reset carousel scroll to first item on filter change
+          if (reviewsTrack) {
+            reviewsTrack.scrollTo({ left: 0, behavior: 'smooth' });
+            setTimeout(updateReviewNavButtons, 300);
+          }
+        });
+      });
+    }
+
+    // Touch/drag scroll for reviews track
+    if (reviewsTrack) {
+      let isReviewDown = false;
+      let reviewStartX = 0;
+      let reviewScrollLeft = 0;
+
+      reviewsTrack.addEventListener('mousedown', (e) => {
+        isReviewDown = true;
+        reviewsTrack.classList.add('cursor-grabbing');
+        reviewStartX = e.pageX - reviewsTrack.offsetLeft;
+        reviewScrollLeft = reviewsTrack.scrollLeft;
+      });
+      reviewsTrack.addEventListener('mouseleave', () => {
+        isReviewDown = false;
+        reviewsTrack.classList.remove('cursor-grabbing');
+      });
+      reviewsTrack.addEventListener('mouseup', () => {
+        isReviewDown = false;
+        reviewsTrack.classList.remove('cursor-grabbing');
+      });
+      reviewsTrack.addEventListener('mousemove', (e) => {
+        if (!isReviewDown) return;
+        e.preventDefault();
+        const x = e.pageX - reviewsTrack.offsetLeft;
+        const walk = (x - reviewStartX) * 1.5;
+        reviewsTrack.scrollLeft = reviewScrollLeft - walk;
+      });
+    }
 
   </script>
   <!-- Shopify Storefront & Cart Module -->

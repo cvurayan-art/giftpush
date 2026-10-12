@@ -33,7 +33,7 @@ import { cart } from '../lib/cart';
 
 (window as any).showToast = showToast;
 
-document.addEventListener('DOMContentLoaded', async () => {
+async function initStorefront() {
   // Initialize Shopify Cart
   try {
     await cart.init();
@@ -81,7 +81,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (document.getElementById('pdp-skeleton') || document.getElementById('pdp-title')) {
     initProductPageCommerce();
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initStorefront);
+} else {
+  initStorefront();
+}
 
 // ====================================================
 // SHARED PRODUCT CARD COMPONENT BUILDER
@@ -303,26 +309,37 @@ function setupMobileMenuDrawer() {
   });
 }
 
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 // ====================================================
-// 3. SEARCH MODAL CONTROLLER
+// 3. SEARCH CONTROLLER (Header Search Bar & Search Modal)
 // ====================================================
 function setupSearchModal() {
+  // 1. Mobile Search Modal Elements
   const searchTrigger = document.getElementById('btn-header-search') || document.getElementById('btn-search-trigger');
   const searchOverlay = document.getElementById('search-modal-overlay');
   const closeSearchBtn = document.getElementById('btn-close-search-modal') || document.getElementById('btn-close-search');
-  const searchInput = (document.getElementById('live-search-input') ||
+  const modalSearchInput = (document.getElementById('live-search-input') ||
     document.getElementById('search-modal-input') ||
     document.getElementById('search-input')) as HTMLInputElement | null;
-  const resultsContainer = document.getElementById('live-search-results') ||
+  const modalResultsContainer = document.getElementById('live-search-results') ||
     document.getElementById('search-results-container');
   const clearBtn = document.getElementById('btn-clear-search');
 
+  // 2. Desktop Header Search Bar Elements
+  const headerSearchInput = document.getElementById('header-search-input') as HTMLInputElement | null;
+  const headerSearchSubmit = document.getElementById('btn-header-search-submit');
+  const headerSearchResults = document.getElementById('header-search-results');
+
+  // --- Modal Search Logic ---
   function openSearch() {
     if (!searchOverlay) return;
     searchOverlay.classList.remove('hidden');
     searchOverlay.classList.add('flex', 'active');
-    if (searchInput) {
-      setTimeout(() => searchInput.focus(), 150);
+    if (modalSearchInput) {
+      setTimeout(() => modalSearchInput.focus(), 150);
     }
   }
 
@@ -340,33 +357,55 @@ function setupSearchModal() {
     });
   }
 
-  if (clearBtn && searchInput) {
+  if (clearBtn && modalSearchInput) {
     clearBtn.addEventListener('click', () => {
-      searchInput.value = '';
+      modalSearchInput.value = '';
       clearBtn.classList.add('hidden');
-      triggerSearch('');
+      triggerModalSearch('');
     });
   }
 
-  let debounceTimer: any = null;
-  if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
+  let modalDebounceTimer: any = null;
+  if (modalSearchInput) {
+    modalSearchInput.addEventListener('input', (e) => {
       const q = (e.target as HTMLInputElement).value;
       if (clearBtn) {
         if (q.trim()) clearBtn.classList.remove('hidden');
         else clearBtn.classList.add('hidden');
       }
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        triggerSearch(q);
-      }, 250);
+      clearTimeout(modalDebounceTimer);
+      modalDebounceTimer = setTimeout(() => {
+        triggerModalSearch(q);
+      }, 200);
+    });
+
+    modalSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const q = modalSearchInput.value.trim();
+        if (q) {
+          window.location.href = `/shop.html?q=${encodeURIComponent(q)}`;
+        }
+      }
     });
   }
 
-  async function triggerSearch(q: string) {
-    if (!resultsContainer) return;
+  // Handle trending tag chips inside modal
+  document.querySelectorAll('.search-tag-chip, [data-tag]').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const tag = chip.getAttribute('data-tag') || chip.textContent?.trim() || '';
+      if (tag && modalSearchInput) {
+        modalSearchInput.value = tag;
+        if (clearBtn) clearBtn.classList.remove('hidden');
+        triggerModalSearch(tag);
+        modalSearchInput.focus();
+      }
+    });
+  });
+
+  async function triggerModalSearch(q: string) {
+    if (!modalResultsContainer) return;
     if (!q.trim()) {
-      resultsContainer.innerHTML = `
+      modalResultsContainer.innerHTML = `
         <div class="text-center py-8 text-neutral-400 text-xs">
           Type to search gifts by title, category, or recipient...
         </div>
@@ -374,47 +413,163 @@ function setupSearchModal() {
       return;
     }
 
-    resultsContainer.innerHTML = `
+    modalResultsContainer.innerHTML = `
       <div class="flex items-center justify-center py-8 text-neutral-500 text-xs gap-2">
-        <div class="w-4 h-4 border-2 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
+        <div class="w-4 h-4 border-2 border-[#ff4d61] border-t-transparent rounded-full animate-spin"></div>
         <span>Searching gifts...</span>
       </div>
     `;
 
     try {
-      const products = await searchShopifyProducts(q, 8);
+      const products = await searchShopifyProducts(q, 10);
       if (products.length === 0) {
-        resultsContainer.innerHTML = `
+        modalResultsContainer.innerHTML = `
           <div class="text-center py-8">
-            <p class="text-xs font-bold text-neutral-800">No gifts found matching "${q}"</p>
-            <p class="text-[11px] text-neutral-400 mt-1">Try another search term like "Crystal", "Lamp", "Gifts", or "Personalized".</p>
+            <p class="text-xs font-bold text-neutral-800">No gifts found matching "${escapeHtml(q)}"</p>
+            <p class="text-[11px] text-neutral-400 mt-1">Try another search term like "Crystal", "Lamp", "Gifts", or "Decor".</p>
+            <a href="/shop.html?q=${encodeURIComponent(q)}" class="inline-block mt-3 px-4 py-2 text-xs font-bold bg-neutral-900 text-white rounded-xl hover:bg-neutral-800 transition">
+              Explore All in Shop
+            </a>
           </div>
         `;
         return;
       }
 
-      resultsContainer.innerHTML = products
-        .map((p) => {
-          const img = p.featuredImage?.url || '/images/personalized_box.jpg';
-          const cur = p.priceRange.minVariantPrice.currencyCode || 'GBP';
-          const price = formatShopifyMoney(p.priceRange.minVariantPrice.amount, cur);
-          return `
-            <a href="/product.html?handle=${p.handle}" class="flex items-center gap-3 p-3 rounded-2xl hover:bg-neutral-50 transition border border-transparent hover:border-gray-100 group">
-              <img src="${img}" alt="${p.title}" class="w-12 h-12 object-contain rounded-xl bg-gray-50 flex-shrink-0">
-              <div class="flex-1 min-w-0">
-                <h4 class="text-xs font-bold text-neutral-900 group-hover:text-[#ff4d61] transition line-clamp-1">${p.title}</h4>
-                <p class="text-[11px] text-neutral-400">${p.productType || 'Gift Item'}</p>
-              </div>
-              <span class="text-xs font-black text-neutral-900">${price}</span>
-            </a>
-          `;
-        })
-        .join('');
+      modalResultsContainer.innerHTML = `
+        <div class="space-y-2">
+          ${products.map((p) => {
+            const img = p.featuredImage?.url || '/images/personalized_box.jpg';
+            const cur = p.priceRange.minVariantPrice.currencyCode || 'GBP';
+            const price = formatShopifyMoney(p.priceRange.minVariantPrice.amount, cur);
+            return `
+              <a href="/product.html?handle=${p.handle}" class="flex items-center gap-3 p-3 rounded-2xl hover:bg-neutral-50 transition border border-transparent hover:border-gray-100 group">
+                <img src="${img}" alt="${escapeHtml(p.title)}" class="w-12 h-12 object-contain rounded-xl bg-gray-50 flex-shrink-0">
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-xs font-bold text-neutral-900 group-hover:text-[#ff4d61] transition line-clamp-1">${escapeHtml(p.title)}</h4>
+                  <p class="text-[11px] text-neutral-400">${escapeHtml(p.productType || 'Gift Item')}</p>
+                </div>
+                <span class="text-xs font-black text-neutral-900">${price}</span>
+              </a>
+            `;
+          }).join('')}
+          <a href="/shop.html?q=${encodeURIComponent(q)}" class="block text-center py-3 mt-3 border-t border-gray-100 text-xs font-bold text-[#ff4d61] hover:text-[#e03a4e] transition bg-rose-50/60 hover:bg-rose-50 rounded-xl">
+            View all results for "${escapeHtml(q)}" in Shop →
+          </a>
+        </div>
+      `;
     } catch (err) {
-      resultsContainer.innerHTML = `
+      modalResultsContainer.innerHTML = `
         <div class="text-center py-6 text-rose-500 text-xs">Search error. Please try again.</div>
       `;
     }
+  }
+
+  // --- Inline Header Search Bar Logic ---
+  if (headerSearchInput && headerSearchResults) {
+    let headerDebounceTimer: any = null;
+
+    const performHeaderSearch = async (queryText: string) => {
+      const q = queryText.trim();
+      if (!q) {
+        headerSearchResults.classList.add('hidden');
+        headerSearchResults.innerHTML = '';
+        return;
+      }
+
+      headerSearchResults.classList.remove('hidden');
+      headerSearchResults.innerHTML = `
+        <div class="flex items-center justify-center py-6 text-neutral-400 text-xs gap-2">
+          <div class="w-4 h-4 border-2 border-[#0B2D19] border-t-transparent rounded-full animate-spin"></div>
+          <span>Searching catalog...</span>
+        </div>
+      `;
+
+      try {
+        const products = await searchShopifyProducts(q, 6);
+        if (products.length === 0) {
+          headerSearchResults.innerHTML = `
+            <div class="text-center py-6 px-4">
+              <p class="text-xs font-bold text-neutral-800">No gifts found for "${escapeHtml(q)}"</p>
+              <p class="text-[11px] text-neutral-400 mt-1">Press Enter to search the full shop</p>
+              <a href="/shop.html?q=${encodeURIComponent(q)}" class="inline-block mt-3 px-3 py-1.5 text-xs font-bold bg-[#0B2D19] text-white rounded-lg hover:bg-emerald-900 transition">
+                Search in Shop
+              </a>
+            </div>
+          `;
+          return;
+        }
+
+        headerSearchResults.innerHTML = `
+          <div class="space-y-1">
+            ${products.map((p) => {
+              const img = p.featuredImage?.url || '/images/personalized_box.jpg';
+              const cur = p.priceRange.minVariantPrice.currencyCode || 'GBP';
+              const price = formatShopifyMoney(p.priceRange.minVariantPrice.amount, cur);
+              return `
+                <a href="/product.html?handle=${p.handle}" class="flex items-center gap-3 p-2 rounded-xl hover:bg-neutral-50 transition border border-transparent hover:border-gray-100 group">
+                  <img src="${img}" alt="${escapeHtml(p.title)}" class="w-10 h-10 object-contain rounded-lg bg-gray-50 flex-shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-xs font-bold text-neutral-900 group-hover:text-[#ff4d61] transition line-clamp-1">${escapeHtml(p.title)}</h4>
+                    <p class="text-[10px] text-neutral-400">${escapeHtml(p.productType || 'Gift Item')}</p>
+                  </div>
+                  <span class="text-xs font-black text-neutral-900">${price}</span>
+                </a>
+              `;
+            }).join('')}
+            <a href="/shop.html?q=${encodeURIComponent(q)}" class="block text-center py-2 mt-1 border-t border-gray-100 text-xs font-bold text-[#ff4d61] hover:text-[#e03a4e] transition bg-rose-50/50 hover:bg-rose-50 rounded-lg">
+              View all results for "${escapeHtml(q)}" in Shop →
+            </a>
+          </div>
+        `;
+      } catch (err) {
+        headerSearchResults.innerHTML = `
+          <div class="text-center py-4 text-rose-500 text-xs">Search error. Please try again.</div>
+        `;
+      }
+    };
+
+    headerSearchInput.addEventListener('input', (e) => {
+      clearTimeout(headerDebounceTimer);
+      const val = (e.target as HTMLInputElement).value;
+      headerDebounceTimer = setTimeout(() => {
+        performHeaderSearch(val);
+      }, 200);
+    });
+
+    headerSearchInput.addEventListener('focus', () => {
+      if (headerSearchInput.value.trim()) {
+        performHeaderSearch(headerSearchInput.value);
+      }
+    });
+
+    headerSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const q = headerSearchInput.value.trim();
+        if (q) {
+          window.location.href = `/shop.html?q=${encodeURIComponent(q)}`;
+        }
+      }
+    });
+
+    // Close dropdown on click outside
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (!headerSearchInput.contains(target) && !headerSearchResults.contains(target)) {
+        headerSearchResults.classList.add('hidden');
+      }
+    });
+  }
+
+  if (headerSearchSubmit) {
+    headerSearchSubmit.addEventListener('click', (e) => {
+      e.preventDefault();
+      const q = headerSearchInput?.value.trim() || '';
+      if (q) {
+        window.location.href = `/shop.html?q=${encodeURIComponent(q)}`;
+      } else if (headerSearchInput) {
+        headerSearchInput.focus();
+      }
+    });
   }
 }
 
@@ -430,17 +585,35 @@ async function initHomepageCommerce() {
       if (collections.length > 0) {
         track.innerHTML = collections
           .map((col, idx) => {
-            const bgClass = ['bg-[#ffe1e8]', 'bg-[#e6f5ea]', 'bg-[#fdf0df]', 'bg-[#e9e2fb]', 'bg-[#fceee5]'][idx % 5];
+            const THEMES = [
+              { outer: 'bg-[#ffe1e8]', inner: 'bg-[#f4cbd6]' }, // 0. Handmade Gifts (Pink)
+              { outer: 'bg-[#e6f5ea]', inner: 'bg-[#b8dcba]' }, // 1. Christmas Gifts (Mint)
+              { outer: 'bg-[#fdf0df]', inner: 'bg-[#eed5b3]' }, // 2. Clocks (Honey)
+              { outer: 'bg-[#e9e2fb]', inner: 'bg-[#d8c6f4]' }, // 3. Table Lamps (Lavender)
+              { outer: 'bg-[#fceee5]', inner: 'bg-[#f0d4c4]' }, // 4. Personalized Gifts (Blush)
+              { outer: 'bg-[#ffe1e8]', inner: 'bg-[#cfbecb]' }, // 5. Desk Organizers (Pink)
+              { outer: 'bg-[#e6f5ea]', inner: 'bg-[#a7cea8]' }, // 6. HomeDecor (Mint)
+              { outer: 'bg-[#fdf0df]', inner: 'bg-[#eed5b3]' }, // 7. Toys (Honey)
+            ];
+            const theme = THEMES[idx % THEMES.length];
             const imgUrl = col.image?.url;
+            const isPhoto = imgUrl && (col.title.toLowerCase().includes('personalized') || imgUrl.includes('IMG_3962'));
+
             const imgHtml = imgUrl
-              ? `<img alt="${col.title}" class="w-full h-full object-contain scale-[1.15] group-hover:scale-[1.25] transition-transform duration-500 ease-out mix-blend-multiply" src="${imgUrl}">`
+              ? `<img alt="${col.title}" class="w-full h-full ${
+                  isPhoto ? 'object-cover' : 'object-contain mix-blend-multiply scale-[1.12] sm:scale-[1.16]'
+                } object-center transition-transform duration-500 ease-out group-hover:scale-125" src="${imgUrl}">`
               : `<div class="w-full h-full text-[#ff4d61] flex items-center justify-center font-bold text-3xl">${col.title.charAt(0)}</div>`;
 
             return `
               <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none w-28 sm:w-36 lg:w-44 snap-center cursor-pointer" 
                  href="/collection.html?handle=${col.handle}">
-                <div class="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full ${bgClass} flex items-center justify-center transition-all duration-300 group-hover:-translate-y-1.5 shadow-sm group-hover:shadow-md overflow-hidden">
-                  ${imgHtml}
+                <!-- Outer Border Ring Frame -->
+                <div class="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full ${theme.outer} flex items-center justify-center p-2 sm:p-2.5 lg:p-3 transition-all duration-300 group-hover:-translate-y-1.5 shadow-sm group-hover:shadow-md">
+                  <!-- Inner Circle -->
+                  <div class="w-full h-full rounded-full ${theme.inner} flex items-center justify-center overflow-hidden p-1 sm:p-1.5 shadow-inner">
+                    ${imgHtml}
+                  </div>
                 </div>
                 <span class="mt-3 sm:mt-4 text-xs sm:text-sm font-bold text-neutral-800 text-center group-hover:text-[#ff4d61] transition-colors">${col.title}</span>
               </a>
@@ -484,19 +657,34 @@ async function initShopPageCommerce() {
   let currentSearch = '';
   let currentSort = 'featured';
 
+  // Read URL query params for search or collection filtering
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialQuery = urlParams.get('q') || urlParams.get('search');
+  if (initialQuery) {
+    currentSearch = initialQuery.trim();
+    if (searchInput) searchInput.value = currentSearch;
+    const headerInput = document.getElementById('header-search-input') as HTMLInputElement | null;
+    if (headerInput) headerInput.value = currentSearch;
+  }
+  const initialCategory = urlParams.get('collection') || urlParams.get('category');
+  if (initialCategory) {
+    currentFilter = initialCategory.trim();
+  }
+
   // 1. Fetch live collections from Shopify and build dynamic filter buttons
   if (filterContainer) {
     try {
       const collections = await getShopifyCollections(25);
       let filterHTML = `
-        <button class="shop-filter-btn active bg-neutral-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer whitespace-nowrap" data-filter="all">
+        <button class="shop-filter-btn ${currentFilter === 'all' ? 'active bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-700'} text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer whitespace-nowrap" data-filter="all">
           All Products
         </button>
       `;
 
       collections.forEach((col) => {
+        const isSelected = currentFilter === col.handle;
         filterHTML += `
-          <button class="shop-filter-btn bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-semibold px-4 py-2 rounded-xl transition cursor-pointer whitespace-nowrap" data-filter="${col.handle}" data-title="${col.title}">
+          <button class="shop-filter-btn ${isSelected ? 'active bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-700'} hover:bg-neutral-200 text-xs font-semibold px-4 py-2 rounded-xl transition cursor-pointer whitespace-nowrap" data-filter="${col.handle}" data-title="${col.title}">
             ${col.title}
           </button>
         `;
@@ -548,7 +736,16 @@ async function initShopPageCommerce() {
   // 2. Fetch all products initially
   try {
     allProducts = await getShopifyProducts({ first: 50 });
-    currentProducts = [...allProducts];
+    if (currentFilter !== 'all') {
+      try {
+        const colData = await getShopifyCollectionByHandle(currentFilter, 30);
+        currentProducts = colData?.products || [];
+      } catch (e) {
+        currentProducts = [...allProducts];
+      }
+    } else {
+      currentProducts = [...allProducts];
+    }
     applyFilterAndSort();
   } catch (err) {
     console.error('Error fetching catalog:', err);
@@ -614,6 +811,11 @@ async function initShopPageCommerce() {
       currentFilter = 'all';
       currentSearch = '';
       if (searchInput) searchInput.value = '';
+      const headerInput = document.getElementById('header-search-input') as HTMLInputElement | null;
+      if (headerInput) headerInput.value = '';
+      if (window.location.search) {
+        window.history.replaceState({}, '', window.location.pathname);
+      }
       if (filterContainer) {
         filterContainer.querySelectorAll('.shop-filter-btn').forEach((b, idx) => {
           if (idx === 0) {
@@ -1353,6 +1555,203 @@ function showToast(message: string) {
 // ====================================================
 // GIFT FINDER QUIZ CONTROLLER (Integrated with Shopify)
 // ====================================================
+
+// Pre-verified fallback catalog of live Shopify products for instant, zero-delay quiz matching
+const VERIFIED_QUIZ_CATALOG: ShopifyProduct[] = [
+  {
+    id: "gid://shopify/Product/16345824526417",
+    title: "Personalized Crystal Ball LED Lamp",
+    handle: "personlized-crystal-ball-led-lamp",
+    description: "Personalized crystal ball night light with warm LED wooden base.",
+    vendor: "Present Panic",
+    productType: "Lighting & Home Decor",
+    tags: ["lamp", "crystal", "personalized", "night light", "cozy", "luxury", "mum", "partner"],
+    availableForSale: true,
+    priceRange: {
+      minVariantPrice: { amount: "48.99", currencyCode: "GBP" },
+      maxVariantPrice: { amount: "48.99", currencyCode: "GBP" }
+    },
+    featuredImage: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/Celestial_Crystal_Globe_Lamp.png?v=1791453230",
+      altText: "Personalized Crystal Ball LED Lamp"
+    },
+    images: { nodes: [] },
+    variants: {
+      nodes: [
+        {
+          id: "gid://shopify/ProductVariant/62793929687121",
+          title: "Default Title",
+          availableForSale: true,
+          price: { amount: "48.99", currencyCode: "GBP" },
+          selectedOptions: []
+        }
+      ]
+    },
+    options: []
+  },
+  {
+    id: "gid://shopify/Product/16352140558417",
+    title: "Handmade Feather Dream Catcher Wall Hanging",
+    handle: "handmade-feather-dream-catcher-wall-hanging",
+    description: "Boho chic feather dream catcher wall hanging with wooden beads and soft feathers.",
+    vendor: "Present Panic",
+    productType: "Wall Decor",
+    tags: ["boho", "handmade", "cozy", "sentimental", "gift", "friend", "mum"],
+    availableForSale: true,
+    priceRange: {
+      minVariantPrice: { amount: "24.00", currencyCode: "GBP" },
+      maxVariantPrice: { amount: "24.00", currencyCode: "GBP" }
+    },
+    featuredImage: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/BohemianDreamcatcherwithLayeredFeathers.png?v=1791358935",
+      altText: "Handmade Feather Dream Catcher Wall Hanging"
+    },
+    images: { nodes: [] },
+    variants: {
+      nodes: [
+        {
+          id: "gid://shopify/ProductVariant/62832114040913",
+          title: "Default Title",
+          availableForSale: true,
+          price: { amount: "24.00", currencyCode: "GBP" },
+          selectedOptions: []
+        }
+      ]
+    },
+    options: []
+  },
+  {
+    id: "gid://shopify/Product/16352294633553",
+    title: "Handmade Crochet Christmas Hanging Ornaments",
+    handle: "handmade-crochet-christmas-hanging-ornaments",
+    description: "Festive artisan crochet ornaments for holiday trees and seasonal gifting.",
+    vendor: "Present Panic",
+    productType: "Holiday Decor",
+    tags: ["christmas", "holiday", "ornament", "crochet", "festive", "cozy", "playful"],
+    availableForSale: true,
+    priceRange: {
+      minVariantPrice: { amount: "28.99", currencyCode: "GBP" },
+      maxVariantPrice: { amount: "28.99", currencyCode: "GBP" }
+    },
+    featuredImage: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/Untitled-1_adasg2.png?v=1791453230",
+      altText: "Handmade Crochet Christmas Hanging Ornaments"
+    },
+    images: { nodes: [] },
+    variants: {
+      nodes: [
+        {
+          id: "gid://shopify/ProductVariant/62833053171793",
+          title: "Default Title",
+          availableForSale: true,
+          price: { amount: "28.99", currencyCode: "GBP" },
+          selectedOptions: []
+        }
+      ]
+    },
+    options: []
+  },
+  {
+    id: "gid://shopify/Product/16352161857617",
+    title: "Woven Straw Beach Tote Bag for Women",
+    handle: "woven-straw-beach-tote-bag-for-women",
+    description: "Chic luxury crochet raffia tote bag for weekend outings and stylish summer wear.",
+    vendor: "Present Panic",
+    productType: "Accessories",
+    tags: ["luxury", "bag", "mum", "partner", "fashion", "pampering"],
+    availableForSale: true,
+    priceRange: {
+      minVariantPrice: { amount: "79.99", currencyCode: "GBP" },
+      maxVariantPrice: { amount: "79.99", currencyCode: "GBP" }
+    },
+    featuredImage: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/CrochetRaffiaToteBag_ParisMilano.png?v=1791359674",
+      altText: "Woven Straw Beach Tote Bag"
+    },
+    images: { nodes: [] },
+    variants: {
+      nodes: [
+        {
+          id: "gid://shopify/ProductVariant/62832270868561",
+          title: "Default Title",
+          availableForSale: true,
+          price: { amount: "79.99", currencyCode: "GBP" },
+          selectedOptions: []
+        }
+      ]
+    },
+    options: []
+  },
+  {
+    id: "gid://shopify/Product/16352187908177",
+    title: "Handwoven Straw Fan Wall Decor",
+    handle: "handwoven-straw-fan-wall-decor",
+    description: "Natural handwoven straw fan wall art for minimalist and bohemian home accents.",
+    vendor: "Present Panic",
+    productType: "Wall Decor",
+    tags: ["decor", "straw", "artisan", "cozy", "classic", "dad", "colleague"],
+    availableForSale: true,
+    priceRange: {
+      minVariantPrice: { amount: "17.99", currencyCode: "GBP" },
+      maxVariantPrice: { amount: "17.99", currencyCode: "GBP" }
+    },
+    featuredImage: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/Untitled-1_adasg.png?v=1791453230",
+      altText: "Handwoven Straw Fan Wall Decor"
+    },
+    images: { nodes: [] },
+    variants: {
+      nodes: [
+        {
+          id: "gid://shopify/ProductVariant/62832412524625",
+          title: "Default Title",
+          availableForSale: true,
+          price: { amount: "17.99", currencyCode: "GBP" },
+          selectedOptions: []
+        }
+      ]
+    },
+    options: []
+  },
+  {
+    id: "gid://shopify/Product/16352149012561",
+    title: "Boho Hanging Photo Display with Wooden Clips",
+    handle: "boho-hanging-photo-display-with-wooden-clips",
+    description: "Macrame photo clip string organizer for polaroids, memories, and cards.",
+    vendor: "Present Panic",
+    productType: "Home Decor",
+    tags: ["sentimental", "photo", "friend", "mum", "cozy", "heartfelt"],
+    availableForSale: true,
+    priceRange: {
+      minVariantPrice: { amount: "28.99", currencyCode: "GBP" },
+      maxVariantPrice: { amount: "28.99", currencyCode: "GBP" }
+    },
+    featuredImage: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/BohoMacramePhotoDisplay.png?v=1791359274",
+      altText: "Boho Hanging Photo Display"
+    },
+    images: { nodes: [] },
+    variants: {
+      nodes: [
+        {
+          id: "gid://shopify/ProductVariant/62832191832145",
+          title: "Default Title",
+          availableForSale: true,
+          price: { amount: "28.99", currencyCode: "GBP" },
+          selectedOptions: []
+        }
+      ]
+    },
+    options: []
+  }
+];
+
+// Pre-cached products so quiz recommendations render instantaneously without freezing
+let quizCatalogCache: ShopifyProduct[] = [...VERIFIED_QUIZ_CATALOG];
+getShopifyProducts({ first: 50 }).then((prods) => {
+  if (prods && prods.length > 0) quizCatalogCache = prods;
+}).catch(() => {});
+
 export function initGiftQuiz() {
   const quizOverlay = document.getElementById('gift-quiz-modal-overlay');
   const quizModalContainer = document.getElementById('quiz-modal-container');
@@ -1366,26 +1765,9 @@ export function initGiftQuiz() {
   const quizResultsWrapper = document.getElementById('quiz-recommendations-wrapper');
   const quizHeroHeadline = document.getElementById('quiz-main-headline');
 
-  // Trigger buttons
-  const navQuizBtn = document.getElementById('btn-nav-quiz');
-  const topBarQuizBtn = document.getElementById('top-bar-quiz-btn');
-  const heroQuizBtn = document.getElementById('hero-quiz-btn');
-  const floatingQuizTrigger = document.getElementById('floating-quiz-trigger');
+  if (!quizOverlay) return;
 
-  if (!quizOverlay) return; // Only init if the modal is in the DOM
-
-  const triggers: HTMLElement[] = [];
-  if (navQuizBtn) triggers.push(navQuizBtn);
-  if (topBarQuizBtn) triggers.push(topBarQuizBtn);
-  if (heroQuizBtn) triggers.push(heroQuizBtn);
-  if (floatingQuizTrigger) triggers.push(floatingQuizTrigger);
-  document.querySelectorAll('.footer-quiz-link').forEach(btn => triggers.push(btn as HTMLElement));
-
-  triggers.forEach(btn => {
-    if (btn) btn.addEventListener('click', openGiftQuiz);
-  });
-
-  // Quiz Questions Data (Reduced to 4 questions)
+  // Quiz Questions Data (4 distinct steps)
   const quizQuestions = [
     {
       id: 'who',
@@ -1405,11 +1787,12 @@ export function initGiftQuiz() {
     {
       id: 'budget',
       title: "What's your ideal budget?",
-      options: ['Under $25', '$25 – $50', '$50 – $100', 'Luxury $100+']
+      options: ['Under £25', '£25 – £50', '£50 – £100', 'Luxury £100+']
     }
   ];
 
   let currentQuizStep = 0;
+  let isTransitioning = false;
   let quizAnswers: Record<string, string> = {
     who: '',
     occasion: '',
@@ -1419,12 +1802,17 @@ export function initGiftQuiz() {
 
   function openGiftQuiz() {
     if (!quizOverlay) return;
+    
+    // Always start fresh from question 1
+    currentQuizStep = 0;
+    isTransitioning = false;
+    quizAnswers = { who: '', occasion: '', vibe: '', budget: '' };
+
     quizOverlay.classList.remove('hidden');
-    setTimeout(() => {
-      quizOverlay.classList.add('flex', 'active');
-    }, 10);
+    quizOverlay.classList.add('flex', 'active');
     document.body.style.overflow = 'hidden';
-    renderQuizStep(currentQuizStep);
+
+    renderQuizStep(0);
   }
 
   function closeGiftQuiz() {
@@ -1433,14 +1821,34 @@ export function initGiftQuiz() {
     setTimeout(() => {
       quizOverlay.classList.add('hidden');
       quizOverlay.classList.remove('flex');
-    }, 300);
+    }, 200);
     document.body.style.overflow = '';
-    if (quizModalContainer) quizModalContainer.classList.remove('max-w-4xl');
+    if (quizModalContainer) {
+      quizModalContainer.classList.remove('max-w-4xl');
+      quizModalContainer.classList.add('max-w-xl');
+    }
+    isTransitioning = false;
   }
+
+  // Expose globally for HTML onclick and mobile drawer
+  (window as any).openGiftQuiz = openGiftQuiz;
+  (window as any).closeGiftQuiz = closeGiftQuiz;
+
+  // Bind all potential quiz trigger elements
+  const triggers = document.querySelectorAll(
+    '#btn-nav-quiz, #top-bar-quiz-btn, #hero-quiz-btn, #floating-quiz-trigger, #mobile-drawer-quiz-btn, .footer-quiz-link, [data-quiz-trigger], a[href="#quiz"], .mobile-quiz-link'
+  );
+  triggers.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openGiftQuiz();
+    });
+  });
 
   function renderQuizStep(stepIdx: number) {
     if (!quizStepContent) return;
-    currentQuizStep = stepIdx;
+    currentQuizStep = Math.max(0, Math.min(stepIdx, quizQuestions.length - 1));
+    isTransitioning = false;
 
     if (quizModalContainer) {
       quizModalContainer.classList.remove('max-w-4xl');
@@ -1448,20 +1856,24 @@ export function initGiftQuiz() {
     }
 
     if (quizCardWrapper) quizCardWrapper.classList.remove('hidden');
-    if (quizResultsWrapper) quizResultsWrapper.classList.add('hidden');
+    if (quizResultsWrapper) {
+      quizResultsWrapper.classList.add('hidden');
+      quizResultsWrapper.classList.remove('flex');
+      quizResultsWrapper.innerHTML = '';
+    }
     if (quizHeroHeadline) {
       quizHeroHeadline.innerHTML = 'Answer 4 questions.<br>Get the perfect gift.';
     }
 
-    const q = quizQuestions[stepIdx];
+    const q = quizQuestions[currentQuizStep];
 
-    // Update Dashes
+    // Update Progress Dashes
     if (quizProgressPills) {
       const dashes = quizProgressPills.querySelectorAll('span');
       dashes.forEach((dash, idx) => {
-        if (idx === stepIdx) {
+        if (idx === currentQuizStep) {
           dash.className = 'w-10 sm:w-12 h-1.5 rounded-full bg-[#ff4d61] transition-all duration-300';
-        } else if (idx < stepIdx) {
+        } else if (idx < currentQuizStep) {
           dash.className = 'w-10 sm:w-12 h-1.5 rounded-full bg-neutral-900 transition-all duration-300';
         } else {
           dash.className = 'w-10 sm:w-12 h-1.5 rounded-full bg-gray-200 transition-all duration-300';
@@ -1471,12 +1883,12 @@ export function initGiftQuiz() {
 
     // Update Step Counter
     if (quizStepCounter) {
-      quizStepCounter.textContent = `${stepIdx + 1} / 4`;
+      quizStepCounter.textContent = `${currentQuizStep + 1} / ${quizQuestions.length}`;
     }
 
     // Update Back Button
     if (btnQuizPrev) {
-      if (stepIdx > 0) {
+      if (currentQuizStep > 0) {
         btnQuizPrev.classList.remove('opacity-0', 'pointer-events-none');
         btnQuizPrev.classList.add('opacity-100', 'pointer-events-auto');
       } else {
@@ -1489,38 +1901,55 @@ export function initGiftQuiz() {
     quizStepContent.className = 'w-full flex flex-col items-center py-2 fade-step-enter';
     quizStepContent.innerHTML = `
       <h3 class="text-lg sm:text-xl font-bold text-neutral-900 mb-5 text-center">${q.title}</h3>
-      <div class="flex flex-wrap justify-center gap-2.5 max-w-lg mb-4">
-        ${q.options.map(opt => `
-          <button type="button" class="quiz-option-pill px-5 py-2.5 rounded-full border text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${quizAnswers[q.id] === opt ? 'bg-[#ff4d61] text-white border-[#ff4d61] shadow-md scale-105' : 'bg-gray-50 border-gray-200 text-neutral-800 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white'}" data-value="${opt}">
-            ${opt}
-          </button>
-        `).join('')}
+      <div class="flex flex-wrap justify-center gap-2.5 max-w-lg mb-2">
+        ${q.options.map(opt => {
+          const isSelected = quizAnswers[q.id] === opt;
+          return `
+            <button type="button" class="quiz-option-pill px-5 py-2.5 rounded-full border text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
+              isSelected
+                ? 'bg-[#ff4d61] text-white border-[#ff4d61] shadow-md scale-105'
+                : 'bg-gray-50 border-gray-200 text-neutral-800 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white'
+            }" data-value="${escapeHtml(opt)}">
+              ${escapeHtml(opt)}
+            </button>
+          `;
+        }).join('')}
       </div>
     `;
 
     // Attach Click to Options
     quizStepContent.querySelectorAll('.quiz-option-pill').forEach((pill) => {
-      pill.addEventListener('click', () => {
+      pill.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (isTransitioning) return;
+        isTransitioning = true;
+
         const val = pill.getAttribute('data-value') || '';
         quizAnswers[q.id] = val;
 
+        // Visual selection feedback
         quizStepContent.querySelectorAll('.quiz-option-pill').forEach(p => {
           p.className = 'quiz-option-pill px-5 py-2.5 rounded-full border text-xs sm:text-sm font-semibold transition-all duration-200 bg-gray-50 border-gray-200 text-neutral-800 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white cursor-pointer';
         });
         pill.className = 'quiz-option-pill px-5 py-2.5 rounded-full border text-xs sm:text-sm font-semibold transition-all duration-200 bg-[#ff4d61] text-white border-[#ff4d61] shadow-md scale-105 cursor-pointer';
 
         setTimeout(() => {
-          if (stepIdx < quizQuestions.length - 1) {
-            renderQuizStep(stepIdx + 1);
+          isTransitioning = false;
+          if (currentQuizStep < quizQuestions.length - 1) {
+            renderQuizStep(currentQuizStep + 1);
           } else {
             showQuizResults();
           }
-        }, 240);
+        }, 160);
       });
     });
   }
 
   async function showQuizResults() {
+    isTransitioning = false;
+
     if (quizModalContainer) {
       quizModalContainer.classList.remove('max-w-xl');
       quizModalContainer.classList.add('max-w-4xl');
@@ -1531,153 +1960,206 @@ export function initGiftQuiz() {
       quizResultsWrapper.classList.remove('hidden');
       quizResultsWrapper.classList.add('flex');
     }
-    if (quizHeroHeadline) quizHeroHeadline.innerHTML = 'Your Curated Gift Matches';
+    if (quizHeroHeadline) {
+      quizHeroHeadline.innerHTML = '✨ Your Curated Gift Matches';
+    }
+
+    // Retrieve products (always instant because quizCatalogCache is pre-populated)
+    let allProducts = (quizCatalogCache && quizCatalogCache.length > 0) ? quizCatalogCache : VERIFIED_QUIZ_CATALOG;
+
+    // Intelligent Scored Matching based on user answers
+    const who = (quizAnswers.who || '').toLowerCase();
+    const occasion = (quizAnswers.occasion || '').toLowerCase();
+    const vibe = (quizAnswers.vibe || '').toLowerCase();
+    const budget = quizAnswers.budget || '';
+
+    const scoredProducts = allProducts.map(p => {
+      let score = Math.floor(Math.random() * 20); // baseline variation
+      const title = (p.title || '').toLowerCase();
+      const desc = (p.description || '').toLowerCase();
+      const type = (p.productType || '').toLowerCase();
+      const tags = (p.tags || []).join(' ').toLowerCase();
+      const text = `${title} ${desc} ${type} ${tags}`;
+      const price = parseFloat(p.priceRange?.minVariantPrice?.amount || '0');
+
+      // Occasion matching
+      if (occasion.includes('christmas') && (text.includes('christmas') || text.includes('snowman') || text.includes('holiday') || text.includes('decor') || text.includes('hanging'))) {
+        score += 40;
+      }
+      if (occasion.includes('birthday') && (text.includes('lamp') || text.includes('ball') || text.includes('tote') || text.includes('gift'))) {
+        score += 35;
+      }
+      if (occasion.includes('anniversary') && (text.includes('crystal') || text.includes('photo') || text.includes('lamp'))) {
+        score += 35;
+      }
+
+      // Who matching
+      if ((who.includes('partner') || who.includes('mum')) && (text.includes('lamp') || text.includes('crystal') || text.includes('feather') || text.includes('tote') || text.includes('photo'))) {
+        score += 35;
+      }
+      if ((who.includes('dad') || who.includes('colleague')) && (text.includes('fan') || text.includes('straw') || text.includes('lamp') || text.includes('wall'))) {
+        score += 35;
+      }
+      if (who.includes('friend') && (text.includes('photo') || text.includes('feather') || text.includes('tote'))) {
+        score += 35;
+      }
+
+      // Vibe matching
+      if (vibe.includes('cozy') && (text.includes('lamp') || text.includes('light') || text.includes('crochet') || text.includes('hanging') || text.includes('feather'))) {
+        score += 30;
+      }
+      if (vibe.includes('luxury') && (text.includes('crystal') || text.includes('tote') || text.includes('gold') || text.includes('lamp'))) {
+        score += 30;
+      }
+      if (vibe.includes('sentimental') && (text.includes('photo') || text.includes('crystal') || text.includes('feather') || text.includes('handmade'))) {
+        score += 30;
+      }
+      if (vibe.includes('playful') && (text.includes('christmas') || text.includes('crochet') || text.includes('ornament'))) {
+        score += 30;
+      }
+
+      // Budget matching
+      if (budget.includes('25') && price > 0 && price <= 25) score += 30;
+      if (budget.includes('50') && price > 25 && price <= 50) score += 30;
+      if (budget.includes('100') && price > 50 && price <= 100) score += 30;
+      if (budget.includes('100+') && price >= 75) score += 30;
+
+      return { product: p, score };
+    });
+
+    scoredProducts.sort((a, b) => b.score - a.score);
+    const topPicks = scoredProducts.slice(0, 3).map(sp => sp.product);
+
+    // If fewer than 3 picked, fill with verified items
+    while (topPicks.length < 3) {
+      const extra = VERIFIED_QUIZ_CATALOG[topPicks.length % VERIFIED_QUIZ_CATALOG.length];
+      topPicks.push(extra);
+    }
+
+    const badges = ['⭐ 98% Match', '✨ Top Personalized Pick', '🌟 Popular Choice'];
 
     if (quizResultsWrapper) {
       quizResultsWrapper.innerHTML = `
-        <div class="flex flex-col items-center justify-center py-12 text-center">
-          <div class="w-10 h-10 border-4 border-gray-200 border-t-[#ff4d61] rounded-full animate-spin-custom mb-4"></div>
-          <p class="text-sm sm:text-base font-bold text-neutral-800">✨ Curating the ultimate gifts from Shopify for <strong>${quizAnswers.who || 'someone special'}</strong>...</p>
+        <div class="text-center mb-6 w-full">
+          <span class="text-[10px] sm:text-xs font-extrabold tracking-widest text-[#ff4d61] uppercase bg-rose-50 px-3 py-1 rounded-full">Tailored Recommendations</span>
+          <h3 class="text-xl sm:text-2xl font-black text-neutral-900 mt-2">Handpicked for ${escapeHtml(quizAnswers.who || 'Someone Special')}</h3>
+          <p class="text-xs sm:text-sm text-neutral-500 mt-1">
+            ${quizAnswers.who ? `<strong>${escapeHtml(quizAnswers.who)}</strong> &bull; ` : ''}
+            ${quizAnswers.occasion ? `<strong>${escapeHtml(quizAnswers.occasion)}</strong> &bull; ` : ''}
+            ${quizAnswers.vibe ? `<strong>${escapeHtml(quizAnswers.vibe)}</strong> &bull; ` : ''}
+            ${quizAnswers.budget ? `<strong>${escapeHtml(quizAnswers.budget)}</strong>` : 'Curated Catalog'}
+          </p>
         </div>
-      `;
-    }
 
-    try {
-      // Fetch REAL products from Shopify! 
-      let allProducts = await getShopifyProducts(30);
-      
-      if (allProducts.length === 0) {
-        throw new Error("No products found");
-      }
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8 w-full">
+          ${topPicks.map((item, idx) => {
+            const badge = badges[idx] || '🔥 Staff Pick';
+            const priceAmount = item.priceRange?.minVariantPrice?.amount || '24.00';
+            const currency = item.priceRange?.minVariantPrice?.currencyCode || 'GBP';
+            const priceFormatted = formatShopifyMoney(priceAmount, currency);
+            const imgUrl = item.featuredImage?.url || '/images/personalized_box.jpg';
+            const variantId = item.variants?.nodes?.[0]?.id || '';
 
-      // Shuffle array to make results dynamic
-      const shuffled = [...allProducts].sort(() => 0.5 - Math.random());
-      const topPicks = shuffled.slice(0, 3);
-
-      if (quizResultsWrapper) {
-        quizResultsWrapper.innerHTML = `
-          <div class="text-center mb-6">
-            <span class="text-[10px] sm:text-xs font-extrabold tracking-widest text-[#ff4d61] uppercase">Tailored Recommendations</span>
-            <h3 class="text-xl sm:text-2xl font-bold text-neutral-900 mt-1">Handpicked for ${quizAnswers.who || 'Someone Special'}</h3>
-            <p class="text-xs sm:text-sm text-neutral-500 mt-1">
-              Criteria: <strong>${quizAnswers.who || 'Special One'}</strong> &bull; <strong>${quizAnswers.occasion || 'Everyday'}</strong> &bull; <strong>${quizAnswers.budget || 'Any Budget'}</strong>
-            </p>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
-            ${topPicks.map((item, idx) => {
-              const badges = ['⭐ 98% Match', '✨ Top Heirloom Pick', '🌟 Pure Luxury'];
-              const badge = badges[idx] || '🔥 Bestseller';
-              const priceNum = parseFloat(item.priceRange.minVariantPrice.amount);
-              const currency = item.priceRange.minVariantPrice.currencyCode;
-              const priceFormatted = formatShopifyMoney(priceNum, currency);
-              const imgUrl = item.featuredImage?.url || '/images/personalized_box.jpg';
-              
-              return `
+            return `
               <div class="border border-gray-100 rounded-2xl p-4 bg-white flex flex-col justify-between hover:shadow-xl transition-all duration-300">
-                <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6 group cursor-pointer" onclick="window.location.href='/product.html?handle=${item.handle}'">
+                <div class="relative w-full h-52 sm:h-56 flex items-center justify-center overflow-hidden mb-4 bg-[#f8f9fa] rounded-xl p-3 group cursor-pointer" onclick="window.location.href='/product.html?handle=${item.handle}'">
                   <span class="absolute top-2 left-2 bg-[#ff4d61] text-white text-[9px] font-extrabold px-2 py-0.5 rounded shadow-sm z-10">${badge}</span>
-                  <img src="${imgUrl}" alt="${item.title}" class="h-full w-full object-contain scale-[1.15] hover:scale-[1.25] transition duration-500 ease-out mix-blend-multiply">
+                  <img src="${imgUrl}" alt="${escapeHtml(item.title)}" class="h-full w-full object-contain object-center group-hover:scale-105 transition duration-500 ease-out mix-blend-multiply">
                 </div>
-                <div class="mt-4 flex-1 flex flex-col justify-between text-left">
+                <div class="flex-1 flex flex-col justify-between text-left">
                   <a href="/product.html?handle=${item.handle}" class="block">
-                    <h4 class="text-xs sm:text-sm font-bold text-neutral-900 line-clamp-2 mt-1 leading-snug hover:text-rose-600 transition">${item.title}</h4>
+                    <h4 class="text-xs sm:text-sm font-bold text-neutral-900 line-clamp-2 mt-1 leading-snug hover:text-[#ff4d61] transition">${escapeHtml(item.title)}</h4>
                     <div class="mt-2 flex items-baseline gap-2">
                       <span class="text-base font-extrabold text-neutral-900">${priceFormatted}</span>
                     </div>
                   </a>
-                  <button type="button" class="quiz-add-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-id="${item.variants.nodes[0]?.id}" data-name="${item.title}">
-                    <i class="w-4 h-4" data-lucide="shopping-bag"></i>
+                  <button type="button" class="quiz-add-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-id="${variantId}" data-name="${escapeHtml(item.title)}">
+                    <i class="w-4 h-4 stroke-[2]" data-lucide="shopping-bag"></i>
                     <span>Add to Bag</span>
                   </button>
                 </div>
               </div>
-              `;
-            }).join('')}
-          </div>
+            `;
+          }).join('')}
+        </div>
 
-          <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 border-t border-gray-100">
-            <button type="button" class="w-full sm:w-auto px-7 py-3 rounded-full border border-gray-200 text-neutral-800 text-xs sm:text-sm font-bold hover:bg-neutral-100 transition cursor-pointer" id="btn-quiz-retake">
-              ↺ Retake Quiz
-            </button>
-            <button type="button" class="w-full sm:w-auto px-7 py-3 rounded-full bg-[#ff4d61] text-white text-xs sm:text-sm font-bold hover:bg-rose-600 transition shadow-sm cursor-pointer" id="btn-quiz-explore">
-              Explore All Gifts &rarr;
-            </button>
-          </div>
-        `;
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 border-t border-gray-100 w-full">
+          <button type="button" class="w-full sm:w-auto px-7 py-3 rounded-full border border-gray-200 text-neutral-800 text-xs sm:text-sm font-bold hover:bg-neutral-100 transition cursor-pointer" id="btn-quiz-retake">
+            ↺ Retake Quiz
+          </button>
+          <button type="button" class="w-full sm:w-auto px-7 py-3 rounded-full bg-[#ff4d61] text-white text-xs sm:text-sm font-bold hover:bg-rose-600 transition shadow-sm cursor-pointer" id="btn-quiz-explore">
+            Explore All Gifts &rarr;
+          </button>
+        </div>
+      `;
 
-        if ((window as any).lucide) {
-          (window as any).lucide.createIcons();
-        }
-
-        // Wire Add to Bag in results via Shopify Cart
-        quizResultsWrapper.querySelectorAll('.quiz-add-btn').forEach(btn => {
-          btn.addEventListener('click', async () => {
-            const variantId = btn.getAttribute('data-id');
-            const name = btn.getAttribute('data-name');
-            if (!variantId) return;
-
-            const origHtml = btn.innerHTML;
-            btn.innerHTML = `<span>Adding...</span>`;
-            
-            try {
-              await cart.addItem(variantId, 1);
-              btn.classList.remove('bg-neutral-900');
-              btn.classList.add('bg-emerald-600');
-              btn.innerHTML = `<span>✓ Added!</span>`;
-              showToast(`Added "${name}" to your bag!`);
-              
-              const cartTrigger = document.getElementById('btn-header-cart');
-              if (cartTrigger) cartTrigger.click();
-
-              setTimeout(() => {
-                btn.classList.remove('bg-emerald-600');
-                btn.classList.add('bg-neutral-900');
-                btn.innerHTML = origHtml;
-                if ((window as any).lucide) (window as any).lucide.createIcons();
-              }, 2000);
-            } catch (err) {
-              btn.innerHTML = origHtml;
-              showToast('Could not add item to bag.');
-            }
-          });
-        });
-
-        // Retake and Explore handlers
-        const retakeBtn = document.getElementById('btn-quiz-retake');
-        if (retakeBtn) {
-          retakeBtn.addEventListener('click', () => {
-            quizAnswers = { who: '', occasion: '', vibe: '', budget: '' };
-            renderQuizStep(0);
-          });
-        }
-
-        const exploreBtn = document.getElementById('btn-quiz-explore');
-        if (exploreBtn) {
-          exploreBtn.addEventListener('click', () => {
-            closeGiftQuiz();
-            window.location.href = '/shop.html';
-          });
-        }
-
+      if ((window as any).lucide && typeof (window as any).lucide.createIcons === 'function') {
+        (window as any).lucide.createIcons();
       }
-    } catch (err) {
-      console.error("Error fetching products for quiz:", err);
-      if (quizResultsWrapper) {
-        quizResultsWrapper.innerHTML = `
-          <div class="py-12 text-center text-neutral-500">
-            Could not fetch recommendations at this time.
-            <br>
-            <button class="mt-4 text-rose-500 font-bold" onclick="window.location.href='/shop.html'">Browse Shop</button>
-          </div>
-        `;
+
+      // Add to Bag handler inside Quiz results
+      quizResultsWrapper.querySelectorAll('.quiz-add-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const variantId = btn.getAttribute('data-id');
+          const name = btn.getAttribute('data-name') || 'Item';
+          if (!variantId) {
+            window.location.href = '/shop.html';
+            return;
+          }
+
+          const origHtml = btn.innerHTML;
+          btn.innerHTML = `<span>Adding...</span>`;
+
+          try {
+            await cart.addItem(variantId, 1);
+            btn.classList.remove('bg-neutral-900');
+            btn.classList.add('bg-emerald-600');
+            btn.innerHTML = `<span>✓ Added!</span>`;
+            showToast(`Added "${name}" to bag!`);
+
+            const cartTrigger = document.getElementById('btn-header-cart');
+            if (cartTrigger) cartTrigger.click();
+
+            setTimeout(() => {
+              btn.classList.remove('bg-emerald-600');
+              btn.classList.add('bg-neutral-900');
+              btn.innerHTML = origHtml;
+              if ((window as any).lucide && typeof (window as any).lucide.createIcons === 'function') {
+                (window as any).lucide.createIcons();
+              }
+            }, 2000);
+          } catch (err) {
+            btn.innerHTML = origHtml;
+            showToast('Could not add item to bag.');
+          }
+        });
+      });
+
+      // Retake and Explore handlers
+      const retakeBtn = document.getElementById('btn-quiz-retake');
+      if (retakeBtn) {
+        retakeBtn.addEventListener('click', () => {
+          currentQuizStep = 0;
+          quizAnswers = { who: '', occasion: '', vibe: '', budget: '' };
+          renderQuizStep(0);
+        });
+      }
+
+      const exploreBtn = document.getElementById('btn-quiz-explore');
+      if (exploreBtn) {
+        exploreBtn.addEventListener('click', () => {
+          closeGiftQuiz();
+          window.location.href = '/shop.html';
+        });
       }
     }
   }
 
-  // Previous & Skip handlers
+  // Previous & Skip button handlers
   if (btnQuizPrev) {
-    btnQuizPrev.addEventListener('click', () => {
+    btnQuizPrev.addEventListener('click', (e) => {
+      e.preventDefault();
       if (currentQuizStep > 0) {
         renderQuizStep(currentQuizStep - 1);
       }
@@ -1685,13 +2167,17 @@ export function initGiftQuiz() {
   }
 
   if (btnQuizSkip) {
-    btnQuizSkip.addEventListener('click', () => {
+    btnQuizSkip.addEventListener('click', (e) => {
+      e.preventDefault();
       showQuizResults();
     });
   }
 
   if (btnCloseQuiz) {
-    btnCloseQuiz.addEventListener('click', closeGiftQuiz);
+    btnCloseQuiz.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeGiftQuiz();
+    });
   }
 
   if (quizOverlay) {
@@ -1702,11 +2188,11 @@ export function initGiftQuiz() {
     });
   }
 
-  // Keyboard escape to close
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && quizOverlay && !quizOverlay.classList.contains('hidden')) {
       closeGiftQuiz();
     }
   });
 }
+
 
