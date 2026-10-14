@@ -19,5 +19,5 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["components", "lib", "**/*.ts", "**/*.tsx"]
+  "include": ["lib", "src", "**/*.ts"]
 }

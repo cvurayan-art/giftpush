@@ -13,6 +13,9 @@ import {
   searchShopifyProducts,
   getShopifyProductRecommendations,
   formatShopifyMoney,
+  getFallbackCollections,
+  getFallbackProducts,
+  prioritizeHeroProduct,
   ShopifyProduct,
   ShopifyVariant,
   ShopifyCollection,
@@ -34,18 +37,15 @@ import { cart } from '../lib/cart';
 (window as any).showToast = showToast;
 
 async function initStorefront() {
-  // Initialize Shopify Cart
-  try {
-    await cart.init();
-  } catch (err) {
-    console.warn('Cart initialization notice:', err);
-  }
+  // Non-blocking Cart initialization (Synchronously loaded from snapshot, revalidates quietly)
+  cart.init().catch(err => console.warn('Cart initialization notice:', err));
 
   // Bind Shared Global Components
   setupCartDrawer();
   setupSearchModal();
   setupMobileMenuDrawer();
   initGiftQuiz();
+  setupHoverPrefetching();
 
   // Initialize Lucide Icons if available
   if ((window as any).lucide && typeof (window as any).lucide.createIcons === 'function') {
@@ -109,32 +109,34 @@ function createProductCardHTML(p: ShopifyProduct): string {
   const variantId = defaultVariant ? defaultVariant.id : '';
 
   return `
-    <div class="flex flex-col group transition-all duration-300 w-full relative">
-      <a href="/product.html?handle=${p.handle}" class="relative w-full aspect-square overflow-hidden mb-4">
-        ${hasCompare ? `<span class="absolute top-3 left-3 bg-[#ff4d61] text-white text-[10px] font-extrabold px-2 py-1 uppercase tracking-wider z-10">Sale</span>` : ''}
-        <img alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="${img}" loading="lazy">
-      </a>
-      <div class="flex-1 flex flex-col justify-start text-left">
-        <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">${p.category || 'GIFTS'}</div>
-        <a href="/product.html?handle=${p.handle}" class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug hover:text-[#ff4d61] transition block mb-1">
+    <div class="flex flex-col group w-full relative transition-all duration-300">
+      <div class="relative w-full aspect-square overflow-hidden mb-3 flex items-center justify-center bg-white rounded-lg">
+        ${hasCompare ? `<span class="absolute top-2.5 left-2.5 bg-neutral-900 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider z-10 shadow-xs">Sale</span>` : ''}
+        <a href="/product.html?handle=${p.handle}" class="w-full h-full flex items-center justify-center p-2" aria-label="${p.title}">
+          <img alt="${p.title}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="${img}" loading="lazy">
+        </a>
+        <button class="add-to-cart-action-btn absolute bottom-3 left-3 right-3 bg-neutral-900 hover:bg-black text-white text-xs font-semibold py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-200 cursor-pointer shadow-md z-10"
+                data-variant-id="${variantId}"
+                data-title="${p.title}"
+                data-price="${price}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span>Add to Cart</span>
+        </button>
+      </div>
+      <div class="flex flex-col text-left">
+        <div class="text-[11px] sm:text-xs font-medium text-neutral-500 uppercase tracking-wider mb-1">
+          ${p.productType || 'Gifts'}
+        </div>
+        <a href="/product.html?handle=${p.handle}" class="text-sm sm:text-base font-semibold text-neutral-900 hover:text-neutral-600 transition block mb-1 line-clamp-1 sm:line-clamp-2 leading-snug">
           ${p.title}
         </a>
-        <div class="flex items-center gap-2 flex-wrap font-medium">
-          <span class="text-sm sm:text-base text-neutral-900">${price}</span>
-          ${hasCompare ? `<span class="text-xs text-neutral-400 line-through">${comparePrice}</span>` : ''}
-        </div>
-        <div class="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <button class="add-to-cart-action-btn w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-bold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-xs"
-                  data-variant-id="${variantId}"
-                  data-title="${p.title}"
-                  data-price="${price}">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <path d="M16 10a4 4 0 0 1-8 0"/>
-            </svg>
-            <span>Add to Cart</span>
-          </button>
+        <div class="flex items-baseline gap-2">
+          <span class="text-sm sm:text-base font-bold text-neutral-900">${price}</span>
+          ${hasCompare ? `<span class="text-xs sm:text-sm text-neutral-400 line-through font-normal">${comparePrice}</span>` : ''}
         </div>
       </div>
     </div>
@@ -145,6 +147,7 @@ function bindAddToCartButtons(container: HTMLElement) {
   container.querySelectorAll('.add-to-cart-action-btn').forEach((btn) => {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
+      e.stopPropagation();
       const variantId = btn.getAttribute('data-variant-id');
       const title = btn.getAttribute('data-title') || 'Gift';
       if (!variantId) return;
@@ -573,70 +576,106 @@ function setupSearchModal() {
   }
 }
 
+function renderHomepageCategories(collections: ShopifyCollection[]) {
+  const track = document.getElementById('category-stories-track');
+  if (!track || !collections || collections.length === 0) return;
+
+  const THEMES = [
+    { outer: 'bg-[#ffe1e8]', inner: 'bg-[#f4cbd6]' }, // 0. Handmade Gifts (Pink)
+    { outer: 'bg-[#e6f5ea]', inner: 'bg-[#b8dcba]' }, // 1. Christmas Gifts (Mint)
+    { outer: 'bg-[#fdf0df]', inner: 'bg-[#eed5b3]' }, // 2. Clocks (Honey)
+    { outer: 'bg-[#e9e2fb]', inner: 'bg-[#d8c6f4]' }, // 3. Table Lamps (Lavender)
+    { outer: 'bg-[#fceee5]', inner: 'bg-[#f0d4c4]' }, // 4. Personalized Gifts (Blush)
+    { outer: 'bg-[#ffe1e8]', inner: 'bg-[#cfbecb]' }, // 5. Desk Organizers (Pink)
+    { outer: 'bg-[#e6f5ea]', inner: 'bg-[#a7cea8]' }, // 6. HomeDecor (Mint)
+    { outer: 'bg-[#fdf0df]', inner: 'bg-[#eed5b3]' }, // 7. Toys (Honey)
+  ];
+
+  track.innerHTML = collections
+    .map((col, idx) => {
+      const theme = THEMES[idx % THEMES.length];
+      const imgUrl = col.image?.url;
+      const isPhoto = imgUrl && (col.title.toLowerCase().includes('personalized') || imgUrl.includes('IMG_3962'));
+
+      const imgHtml = imgUrl
+        ? `<img alt="${col.title}" class="w-full h-full ${
+            isPhoto ? 'object-cover' : 'object-contain mix-blend-multiply scale-[1.12] sm:scale-[1.16]'
+          } object-center transition-transform duration-500 ease-out group-hover:scale-125" src="${imgUrl}" loading="eager">`
+        : `<div class="w-full h-full text-[#ff4d61] flex items-center justify-center font-bold text-3xl">${col.title.charAt(0)}</div>`;
+
+      return `
+        <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none w-28 sm:w-36 lg:w-44 snap-center cursor-pointer" 
+           href="/collection.html?handle=${col.handle}">
+          <!-- Outer Border Ring Frame -->
+          <div class="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full ${theme.outer} flex items-center justify-center p-2 sm:p-2.5 lg:p-3 transition-all duration-300 group-hover:-translate-y-1.5 shadow-sm group-hover:shadow-md">
+            <!-- Inner Circle -->
+            <div class="w-full h-full rounded-full ${theme.inner} flex items-center justify-center overflow-hidden p-1 sm:p-1.5 shadow-inner">
+              ${imgHtml}
+            </div>
+          </div>
+          <span class="mt-3 sm:mt-4 text-xs sm:text-sm font-bold text-neutral-800 text-center group-hover:text-[#ff4d61] transition-colors">${col.title}</span>
+        </a>
+      `;
+    })
+    .join('');
+}
+
+function renderHomepageProducts(products: ShopifyProduct[]) {
+  const container = document.getElementById('flash-deals-container');
+  if (!container || !products || products.length === 0) return;
+  container.innerHTML = products.map(createProductCardHTML).join('');
+  bindAddToCartButtons(container);
+}
+
+function setupHoverPrefetching() {
+  if (typeof document === 'undefined') return;
+  document.addEventListener('mouseover', (e) => {
+    const target = (e.target as HTMLElement)?.closest('a');
+    if (!target) return;
+    const href = target.getAttribute('href') || '';
+    if (href.includes('/product.html?handle=')) {
+      const handle = href.split('handle=')[1]?.split('&')[0];
+      if (handle) getShopifyProductByHandle(handle).catch(() => {});
+    } else if (href.includes('/collection.html?handle=')) {
+      const handle = href.split('handle=')[1]?.split('&')[0];
+      if (handle) getShopifyCollectionByHandle(handle, 24).catch(() => {});
+    }
+  }, { passive: true });
+}
+
 // ====================================================
 // 4. HOMEPAGE COMMERCE INITIALIZATION
 // ====================================================
 async function initHomepageCommerce() {
-  // 1. DYNAMICALLY LOAD REAL SHOPIFY COLLECTIONS IN STORY BAR
-  const track = document.getElementById('category-stories-track');
-  if (track) {
-    try {
-      const collections = await getShopifyCollections(25);
-      if (collections.length > 0) {
-        track.innerHTML = collections
-          .map((col, idx) => {
-            const THEMES = [
-              { outer: 'bg-[#ffe1e8]', inner: 'bg-[#f4cbd6]' }, // 0. Handmade Gifts (Pink)
-              { outer: 'bg-[#e6f5ea]', inner: 'bg-[#b8dcba]' }, // 1. Christmas Gifts (Mint)
-              { outer: 'bg-[#fdf0df]', inner: 'bg-[#eed5b3]' }, // 2. Clocks (Honey)
-              { outer: 'bg-[#e9e2fb]', inner: 'bg-[#d8c6f4]' }, // 3. Table Lamps (Lavender)
-              { outer: 'bg-[#fceee5]', inner: 'bg-[#f0d4c4]' }, // 4. Personalized Gifts (Blush)
-              { outer: 'bg-[#ffe1e8]', inner: 'bg-[#cfbecb]' }, // 5. Desk Organizers (Pink)
-              { outer: 'bg-[#e6f5ea]', inner: 'bg-[#a7cea8]' }, // 6. HomeDecor (Mint)
-              { outer: 'bg-[#fdf0df]', inner: 'bg-[#eed5b3]' }, // 7. Toys (Honey)
-            ];
-            const theme = THEMES[idx % THEMES.length];
-            const imgUrl = col.image?.url;
-            const isPhoto = imgUrl && (col.title.toLowerCase().includes('personalized') || imgUrl.includes('IMG_3962'));
+  // 1. Instant 0ms Render with Pre-Seeded / SWR Cached Data
+  const seedCollections = getFallbackCollections();
+  renderHomepageCategories(seedCollections);
 
-            const imgHtml = imgUrl
-              ? `<img alt="${col.title}" class="w-full h-full ${
-                  isPhoto ? 'object-cover' : 'object-contain mix-blend-multiply scale-[1.12] sm:scale-[1.16]'
-                } object-center transition-transform duration-500 ease-out group-hover:scale-125" src="${imgUrl}">`
-              : `<div class="w-full h-full text-[#ff4d61] flex items-center justify-center font-bold text-3xl">${col.title.charAt(0)}</div>`;
+  const seedProducts = prioritizeHeroProduct(getFallbackProducts());
+  renderHomepageProducts(seedProducts.slice(0, 12));
 
-            return `
-              <a class="flex flex-col items-center flex-shrink-0 group outline-none focus:outline-none w-28 sm:w-36 lg:w-44 snap-center cursor-pointer" 
-                 href="/collection.html?handle=${col.handle}">
-                <!-- Outer Border Ring Frame -->
-                <div class="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full ${theme.outer} flex items-center justify-center p-2 sm:p-2.5 lg:p-3 transition-all duration-300 group-hover:-translate-y-1.5 shadow-sm group-hover:shadow-md">
-                  <!-- Inner Circle -->
-                  <div class="w-full h-full rounded-full ${theme.inner} flex items-center justify-center overflow-hidden p-1 sm:p-1.5 shadow-inner">
-                    ${imgHtml}
-                  </div>
-                </div>
-                <span class="mt-3 sm:mt-4 text-xs sm:text-sm font-bold text-neutral-800 text-center group-hover:text-[#ff4d61] transition-colors">${col.title}</span>
-              </a>
-            `;
-          })
-          .join('');
-      }
-    } catch (err) {
-      console.warn('[Homepage] Notice loading categories from Shopify:', err);
+  // 2. Fetch Live Shopify Data in Parallel (0ms cache hit or background refresh)
+  Promise.all([
+    getShopifyCollections(25),
+    getShopifyProducts({ first: 12 }),
+  ]).then(([freshCollections, freshProducts]) => {
+    if (freshCollections && freshCollections.length > 0) {
+      renderHomepageCategories(freshCollections);
     }
-  }
-
-  // 2. DYNAMICALLY LOAD REAL PRODUCTS FOR FLASH DEALS
-  try {
-    const products = await getShopifyProducts({ first: 12 });
-    const container = document.getElementById('flash-deals-container');
-    if (container && products.length > 0) {
-      container.innerHTML = products.map(createProductCardHTML).join('');
-      bindAddToCartButtons(container);
+    if (freshProducts && freshProducts.length > 0) {
+      renderHomepageProducts(prioritizeHeroProduct(freshProducts));
     }
-  } catch (err) {
-    console.warn('[Homepage] Notice loading products:', err);
-  }
+  }).catch((err) => {
+    console.warn('[Homepage] Parallel fetch notice:', err);
+  });
+
+  // 3. React to silent SWR background updates
+  window.addEventListener('shopify:collections:updated', (e: any) => {
+    if (e.detail && Array.isArray(e.detail)) renderHomepageCategories(e.detail);
+  });
+  window.addEventListener('shopify:products:updated', (e: any) => {
+    if (e.detail && Array.isArray(e.detail)) renderHomepageProducts(prioritizeHeroProduct(e.detail));
+  });
 }
 
 // ====================================================
@@ -671,85 +710,82 @@ async function initShopPageCommerce() {
     currentFilter = initialCategory.trim();
   }
 
-  // 1. Fetch live collections from Shopify and build dynamic filter buttons
-  if (filterContainer) {
-    try {
-      const collections = await getShopifyCollections(25);
-      let filterHTML = `
-        <button class="shop-filter-btn ${currentFilter === 'all' ? 'active bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-700'} text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer whitespace-nowrap" data-filter="all">
-          All Products
+  function renderShopFilterButtons(collections: ShopifyCollection[]) {
+    if (!filterContainer) return;
+    let filterHTML = `
+      <button class="shop-filter-btn ${currentFilter === 'all' ? 'active bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-700'} text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer whitespace-nowrap" data-filter="all">
+        All Products
+      </button>
+    `;
+
+    collections.forEach((col) => {
+      const isSelected = currentFilter === col.handle;
+      filterHTML += `
+        <button class="shop-filter-btn ${isSelected ? 'active bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-700'} hover:bg-neutral-200 text-xs font-semibold px-4 py-2 rounded-xl transition cursor-pointer whitespace-nowrap" data-filter="${col.handle}" data-title="${col.title}">
+          ${col.title}
         </button>
       `;
+    });
 
-      collections.forEach((col) => {
-        const isSelected = currentFilter === col.handle;
-        filterHTML += `
-          <button class="shop-filter-btn ${isSelected ? 'active bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-700'} hover:bg-neutral-200 text-xs font-semibold px-4 py-2 rounded-xl transition cursor-pointer whitespace-nowrap" data-filter="${col.handle}" data-title="${col.title}">
-            ${col.title}
-          </button>
-        `;
-      });
+    filterContainer.innerHTML = filterHTML;
 
-      filterContainer.innerHTML = filterHTML;
-
-      // Attach filter clicks
-      filterContainer.querySelectorAll('.shop-filter-btn').forEach((btn) => {
-        btn.addEventListener('click', async () => {
-          filterContainer.querySelectorAll('.shop-filter-btn').forEach(b => {
-            b.classList.remove('active', 'bg-neutral-900', 'text-white');
-            b.classList.add('bg-neutral-100', 'text-neutral-700');
-          });
-          btn.classList.add('active', 'bg-neutral-900', 'text-white');
-          btn.classList.remove('bg-neutral-100', 'text-neutral-700');
-
-          currentFilter = btn.getAttribute('data-filter') || 'all';
-
-          if (currentFilter === 'all') {
-            currentProducts = [...allProducts];
-            applyFilterAndSort();
-          } else {
-            // Load collection products dynamically from Shopify
-            if (grid) {
-              grid.innerHTML = `
-                <div class="animate-pulse border border-gray-100 rounded-2xl p-4 bg-white flex flex-col justify-between aspect-3/4">
-                  <div class="bg-gray-100 rounded-xl h-44 w-full mb-4"></div>
-                  <div class="h-4 bg-gray-100 rounded w-3/4 mb-2"></div>
-                </div>
-              `;
-            }
-            try {
-              const colData = await getShopifyCollectionByHandle(currentFilter, 30);
-              currentProducts = colData?.products || [];
-            } catch (e) {
-              currentProducts = [];
-            }
-            applyFilterAndSort();
-          }
+    filterContainer.querySelectorAll('.shop-filter-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        filterContainer.querySelectorAll('.shop-filter-btn').forEach(b => {
+          b.classList.remove('active', 'bg-neutral-900', 'text-white');
+          b.classList.add('bg-neutral-100', 'text-neutral-700');
         });
+        btn.classList.add('active', 'bg-neutral-900', 'text-white');
+        btn.classList.remove('bg-neutral-100', 'text-neutral-700');
+
+        currentFilter = btn.getAttribute('data-filter') || 'all';
+
+        if (currentFilter === 'all') {
+          currentProducts = [...allProducts];
+          applyFilterAndSort();
+        } else {
+          try {
+            const colData = await getShopifyCollectionByHandle(currentFilter, 30);
+            currentProducts = colData?.products || [];
+          } catch (e) {
+            currentProducts = [];
+          }
+          applyFilterAndSort();
+        }
       });
-
-    } catch (err) {
-      console.warn('[Shop] Error loading collections from Shopify:', err);
-    }
+    });
   }
 
-  // 2. Fetch all products initially
-  try {
-    allProducts = await getShopifyProducts({ first: 50 });
-    if (currentFilter !== 'all') {
-      try {
-        const colData = await getShopifyCollectionByHandle(currentFilter, 30);
-        currentProducts = colData?.products || [];
-      } catch (e) {
+  // 1. Instant 0ms render of categories & catalog from seed/cache
+  const initialCollections = getFallbackCollections();
+  renderShopFilterButtons(initialCollections);
+
+  const initialProds = prioritizeHeroProduct(getFallbackProducts());
+  allProducts = [...initialProds];
+  currentProducts = [...initialProds];
+  applyFilterAndSort();
+
+  // 2. Fetch fresh collections & products in parallel!
+  Promise.all([
+    getShopifyCollections(25),
+    getShopifyProducts({ first: 50 }),
+  ]).then(async ([freshCols, freshProds]) => {
+    if (freshCols && freshCols.length > 0) {
+      renderShopFilterButtons(freshCols);
+    }
+    if (freshProds && freshProds.length > 0) {
+      allProducts = prioritizeHeroProduct(freshProds);
+      if (currentFilter === 'all') {
         currentProducts = [...allProducts];
+      } else {
+        const colData = await getShopifyCollectionByHandle(currentFilter, 30);
+        currentProducts = colData?.products || [...allProducts];
       }
-    } else {
-      currentProducts = [...allProducts];
+      applyFilterAndSort();
     }
-    applyFilterAndSort();
-  } catch (err) {
-    console.error('Error fetching catalog:', err);
-  }
+  }).catch(err => {
+    console.warn('[Shop] Notice during parallel fetch:', err);
+  });
 
   function applyFilterAndSort() {
     if (!grid) return;
@@ -774,6 +810,11 @@ async function initShopPageCommerce() {
       filtered.sort((a, b) => parseFloat(b.priceRange.minVariantPrice.amount) - parseFloat(a.priceRange.minVariantPrice.amount));
     } else if (currentSort === 'title-asc') {
       filtered.sort((a, b) => a.title.localeCompare(b.title));
+    } else {
+      // 'featured' / default sort: Always pin DIY Crochet Cat Bed Kit to index 0 on top!
+      if (!currentSearch.trim()) {
+        filtered = prioritizeHeroProduct(filtered);
+      }
     }
 
     if (countEl) countEl.textContent = String(filtered.length);
@@ -1139,18 +1180,9 @@ async function initProductPageCommerce() {
 
   try {
     // If no handle provided in URL (e.g. visiting /product.html directly),
-    // fetch the first available product from the merchant's live Shopify catalog!
+    // pick the DIY Crochet Cat Bed Kit immediately!
     if (!handle) {
-      const initialProducts = await getShopifyProducts({ first: 1 });
-      if (initialProducts && initialProducts.length > 0) {
-        handle = initialProducts[0].handle;
-      }
-    }
-
-    if (!handle) {
-      if (skeleton) skeleton.classList.add('hidden');
-      if (notFound) notFound.classList.remove('hidden');
-      return;
+      handle = 'diy-crochet-cat-bed-kit';
     }
 
     const product = await getShopifyProductByHandle(handle);
@@ -1172,7 +1204,10 @@ async function initProductPageCommerce() {
     if (breadcrumbCat) breadcrumbCat.textContent = product.productType || 'Gifts';
 
     const vendorEl = document.getElementById('pdp-vendor');
-    if (vendorEl) vendorEl.textContent = product.vendor || 'Present Panic Curated';
+    const displayVendor = (!product.vendor || product.vendor.toLowerCase() === 'my store')
+      ? 'Present Panic Curated'
+      : product.vendor;
+    if (vendorEl) vendorEl.textContent = displayVendor;
 
     // 2. Pricing & Currency Formatting
     const currency = product.priceRange.minVariantPrice.currencyCode || 'GBP';
@@ -1210,41 +1245,65 @@ async function initProductPageCommerce() {
     }
 
     const specVendor = document.getElementById('pdp-spec-vendor');
-    if (specVendor) specVendor.textContent = product.vendor || 'Present Panic';
+    if (specVendor) specVendor.textContent = displayVendor;
 
     const specType = document.getElementById('pdp-spec-type');
     if (specType) specType.textContent = product.productType || 'Curated Gifts';
 
     // 4. Main Gallery & Thumbnails
     const activeImg = document.getElementById('pdp-active-image') as HTMLImageElement | null;
-    const featuredUrl = product.featuredImage?.url || (product.images.nodes[0] ? product.images.nodes[0].url : '');
+    const isCatBed = (handle === 'diy-crochet-cat-bed-kit' || !handle || product.title.toLowerCase().includes('cat bed'));
+
+    // Keep top gallery focused purely on the main product shot for the Cat Bed
+    if (isCatBed && product.images?.nodes) {
+      product.images.nodes = product.images.nodes.filter(img =>
+        !img.url.includes('Cozy_Crochet_Basket') &&
+        !img.url.includes('Curious_Cat_Watches') &&
+        !img.url.includes('Cozy_Kitten_in_Handmade')
+      );
+      if (product.images.nodes.length === 0) {
+        product.images.nodes = [{
+          url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/CozyGrayCatCavewithKitten.png?v=1791363758",
+          altText: "DIY Crochet Cat Bed Kit"
+        }];
+      }
+    }
+
+    const featuredUrl = isCatBed
+      ? "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/CozyGrayCatCavewithKitten.png?v=1791363758"
+      : (product.featuredImage?.url || (product.images.nodes[0] ? product.images.nodes[0].url : ''));
     if (activeImg && featuredUrl) {
       activeImg.src = featuredUrl;
       activeImg.alt = product.title;
     }
 
     const thumbsContainer = document.getElementById('pdp-thumbnails-strip');
-    if (thumbsContainer && product.images.nodes.length > 0) {
-      thumbsContainer.innerHTML = product.images.nodes
-        .map((img, idx) => `
-          <button class="thumb-btn w-16 h-16 sm:w-20 sm:h-20 bg-transparent border-2 ${idx === 0 ? 'border-[#ff4d61]' : 'border-transparent'} p-0 flex items-center justify-center flex-shrink-0 cursor-pointer overflow-hidden transition aspect-square" data-img="${img.url}">
-            <img src="${img.url}" alt="${img.altText || product.title}" class="w-full h-full object-cover">
-          </button>
-        `)
-        .join('');
+    if (thumbsContainer) {
+      if (product.images.nodes.length > 1) {
+        thumbsContainer.classList.remove('hidden');
+        thumbsContainer.innerHTML = product.images.nodes
+          .map((img, idx) => `
+            <button class="thumb-btn w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border-2 ${idx === 0 ? 'border-[#0B2D19] ring-2 ring-[#0B2D19]/20 shadow-xs' : 'border-neutral-200/80 hover:border-neutral-400'} p-1 flex items-center justify-center flex-shrink-0 cursor-pointer overflow-hidden transition-all aspect-square" data-img="${img.url}">
+              <img src="${img.url}" alt="${img.altText || product.title}" class="w-full h-full object-contain rounded-xl">
+            </button>
+          `)
+          .join('');
 
-      thumbsContainer.querySelectorAll('.thumb-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          thumbsContainer.querySelectorAll('.thumb-btn').forEach(b => {
-            b.classList.remove('border-[#ff4d61]');
-            b.classList.add('border-transparent');
+        thumbsContainer.querySelectorAll('.thumb-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            thumbsContainer.querySelectorAll('.thumb-btn').forEach(b => {
+              b.classList.remove('border-[#0B2D19]', 'ring-2', 'ring-[#0B2D19]/20', 'shadow-xs');
+              b.classList.add('border-neutral-200/80');
+            });
+            btn.classList.add('border-[#0B2D19]', 'ring-2', 'ring-[#0B2D19]/20', 'shadow-xs');
+            btn.classList.remove('border-neutral-200/80');
+            const newSrc = btn.getAttribute('data-img');
+            if (activeImg && newSrc) activeImg.src = newSrc;
           });
-          btn.classList.add('border-[#ff4d61]');
-          btn.classList.remove('border-transparent');
-          const newSrc = btn.getAttribute('data-img');
-          if (activeImg && newSrc) activeImg.src = newSrc;
         });
-      });
+      } else {
+        thumbsContainer.classList.add('hidden');
+      }
     }
 
     // 5. Dynamic Shopify Variants Selection
@@ -1341,6 +1400,11 @@ async function initProductPageCommerce() {
       if (v.image?.url && activeImg) {
         activeImg.src = v.image.url;
       }
+
+      const stickyImg = document.getElementById('sticky-pdp-img') as HTMLImageElement | null;
+      const stickyPrice = document.getElementById('sticky-pdp-price');
+      if (stickyPrice) stickyPrice.textContent = formatShopifyMoney(vPrice, cur);
+      if (v.image?.url && stickyImg) stickyImg.src = v.image.url;
 
       const skuEl = document.getElementById('pdp-spec-sku');
       if (skuEl) skuEl.textContent = v.sku || 'N/A';
@@ -1505,11 +1569,15 @@ async function initProductPageCommerce() {
       });
     }
 
-    // 11. Load Real Recommendations
+    // 11. Load Real Recommendations (with smart fallback)
     const recsGrid = document.getElementById('pdp-recommendations-grid');
     if (recsGrid) {
       try {
-        const recs = await getShopifyProductRecommendations(product.id, 4);
+        let recs = await getShopifyProductRecommendations(product.id);
+        if (!recs || recs.length === 0) {
+          const allCatalog = await getShopifyProducts({ first: 8 });
+          recs = allCatalog.filter(p => p.id !== product.id).slice(0, 4);
+        }
         if (recs.length > 0) {
           recsGrid.innerHTML = recs.map(createProductCardHTML).join('');
           bindAddToCartButtons(recsGrid);
@@ -1517,6 +1585,239 @@ async function initProductPageCommerce() {
       } catch (err) {
         console.warn('Notice loading recommendations:', err);
       }
+    }
+
+    // 12. Interactive Tabs (Overview, Specs, Shipping, Reviews)
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+    tabButtons.forEach((tabBtn) => {
+      tabBtn.addEventListener('click', () => {
+        const targetId = tabBtn.getAttribute('data-target');
+        if (!targetId) return;
+
+        tabButtons.forEach((btn) => {
+          btn.classList.remove('active', 'border-[#0B2D19]', 'bg-emerald-50', 'text-[#0B2D19]');
+          btn.classList.add('border-transparent', 'text-neutral-600');
+        });
+        tabBtn.classList.add('active', 'border-[#0B2D19]', 'bg-emerald-50', 'text-[#0B2D19]');
+        tabBtn.classList.remove('border-transparent', 'text-neutral-600');
+
+        tabPanels.forEach((panel) => {
+          if (panel.id === targetId) {
+            panel.classList.remove('hidden');
+          } else {
+            panel.classList.add('hidden');
+          }
+        });
+
+        if ((window as any).lucide && typeof (window as any).lucide.createIcons === 'function') {
+          (window as any).lucide.createIcons();
+        }
+      });
+    });
+
+    // 12b. Dedicated DTC Cat Bed Experience Controller (Shows for Cat Bed only)
+    const catBedLanding = document.getElementById('cat-bed-landing-experience');
+    const standardTabs = document.getElementById('pdp-details-tabs');
+    const isCatBedProduct = (handle === 'diy-crochet-cat-bed-kit' || !handle || product.title.toLowerCase().includes('cat bed'));
+
+    if (catBedLanding) {
+      if (isCatBedProduct) {
+        catBedLanding.classList.remove('hidden');
+        if (standardTabs) standardTabs.classList.add('hidden');
+      } else {
+        catBedLanding.classList.add('hidden');
+        if (standardTabs) standardTabs.classList.remove('hidden');
+      }
+    }
+
+    // Scroll to order form buttons on landing sections
+    document.querySelectorAll('.btn-scroll-order').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const pdpHero = document.getElementById('pdp-hero-container') || document.getElementById('btn-add-pdp-cart');
+        if (pdpHero) {
+          pdpHero.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const mainAddBtn = document.getElementById('btn-add-pdp-cart');
+          if (mainAddBtn) {
+            mainAddBtn.classList.add('ring-2', 'ring-emerald-500', 'scale-105');
+            setTimeout(() => {
+              mainAddBtn.classList.remove('ring-2', 'ring-emerald-500', 'scale-105');
+            }, 1200);
+          }
+        }
+      });
+    });
+
+    // Cat Bed FAQ Accordion
+    const faqAccordion = document.getElementById('cat-bed-faq-accordion');
+    if (faqAccordion) {
+      faqAccordion.querySelectorAll('.faq-toggle').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const content = btn.nextElementSibling as HTMLElement;
+          const chevron = btn.querySelector('svg, i');
+          const isCurrentlyHidden = content.classList.contains('hidden');
+
+          // Close all FAQ items
+          faqAccordion.querySelectorAll('.faq-content').forEach((c) => c.classList.add('hidden'));
+          faqAccordion.querySelectorAll('.faq-toggle svg, .faq-toggle i').forEach((icon) => {
+            icon.classList.remove('rotate-180');
+          });
+
+          if (isCurrentlyHidden) {
+            content.classList.remove('hidden');
+            chevron?.classList.add('rotate-180');
+          }
+        });
+      });
+    }
+
+    // Jump to Reviews when clicking star rating in hero
+    const btnScrollReviews = document.getElementById('btn-scroll-reviews');
+    if (btnScrollReviews) {
+      btnScrollReviews.addEventListener('click', () => {
+        if (isCatBedProduct && catBedLanding) {
+          const reviewsSection = catBedLanding.querySelector('section:nth-of-type(4)');
+          reviewsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          const reviewsTabNav = document.getElementById('tab-nav-reviews');
+          if (reviewsTabNav) {
+            reviewsTabNav.click();
+            const tabsSection = document.getElementById('pdp-details-tabs');
+            tabsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    }
+
+    // 13. Sticky Floating Add to Cart Bar
+    const stickyBar = document.getElementById('sticky-pdp-bar');
+    const stickyImg = document.getElementById('sticky-pdp-img') as HTMLImageElement | null;
+    const stickyTitle = document.getElementById('sticky-pdp-title');
+    const stickyPrice = document.getElementById('sticky-pdp-price');
+    const stickyAddBtn = document.getElementById('btn-sticky-add-cart');
+
+    if (stickyBar) {
+      if (stickyTitle) stickyTitle.textContent = product.title;
+      if (stickyPrice) stickyPrice.textContent = formatShopifyMoney(minPrice, currency);
+      if (stickyImg && featuredUrl) stickyImg.src = featuredUrl;
+
+      stickyAddBtn?.addEventListener('click', () => {
+        const mainAddBtn = document.getElementById('btn-add-pdp-cart');
+        mainAddBtn?.click();
+      });
+
+      window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY || window.pageYOffset;
+        if (scrollY > 550) {
+          stickyBar.classList.remove('translate-y-full');
+          stickyBar.classList.add('translate-y-0');
+        } else {
+          stickyBar.classList.add('translate-y-full');
+          stickyBar.classList.remove('translate-y-0');
+        }
+      }, { passive: true });
+    }
+
+    // 14. Wishlist & Share Buttons
+    const btnWishlist = document.getElementById('btn-wishlist');
+    let isWishlisted = false;
+    if (btnWishlist) {
+      btnWishlist.addEventListener('click', () => {
+        isWishlisted = !isWishlisted;
+        const heartSvg = btnWishlist.querySelector('svg');
+        if (isWishlisted) {
+          btnWishlist.classList.add('text-[#ff4d61]', 'bg-rose-50', 'border-rose-300');
+          if (heartSvg) heartSvg.classList.add('fill-[#ff4d61]');
+          showToast('Saved to your favorites!');
+        } else {
+          btnWishlist.classList.remove('text-[#ff4d61]', 'bg-rose-50', 'border-rose-300');
+          if (heartSvg) heartSvg.classList.remove('fill-[#ff4d61]');
+          showToast('Removed from favorites.');
+        }
+      });
+    }
+
+    const btnShare = document.getElementById('btn-share-product');
+    if (btnShare) {
+      btnShare.addEventListener('click', async () => {
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: `${product.title} | Present Panic`,
+              text: `Discover ${product.title} at Present Panic!`,
+              url: window.location.href,
+            });
+          } catch (_) {}
+        } else {
+          try {
+            await navigator.clipboard.writeText(window.location.href);
+            showToast('Gift link copied to clipboard!');
+          } catch (_) {
+            showToast('Could not copy link.');
+          }
+        }
+      });
+    }
+
+    // 15. Lightbox Modal
+    const lightboxModal = document.getElementById('lightbox-modal');
+    const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement | null;
+    const btnOpenLightbox = document.getElementById('btn-open-lightbox');
+    const btnCloseLightbox = document.getElementById('btn-close-lightbox');
+
+    function openLightbox() {
+      if (!lightboxModal || !activeImg) return;
+      if (lightboxImg) lightboxImg.src = activeImg.src;
+      lightboxModal.classList.remove('hidden');
+      lightboxModal.classList.add('flex');
+    }
+
+    function closeLightbox() {
+      if (!lightboxModal) return;
+      lightboxModal.classList.add('hidden');
+      lightboxModal.classList.remove('flex');
+    }
+
+    btnOpenLightbox?.addEventListener('click', openLightbox);
+    activeImg?.addEventListener('click', openLightbox);
+    btnCloseLightbox?.addEventListener('click', closeLightbox);
+    lightboxModal?.addEventListener('click', (e) => {
+      if (e.target === lightboxModal) closeLightbox();
+    });
+
+    // 16. Write a Review Modal
+    const reviewModal = document.getElementById('write-review-modal');
+    const btnOpenReview = document.getElementById('btn-open-review-modal');
+    const btnCloseReview = document.getElementById('btn-close-review-modal');
+    const reviewForm = document.getElementById('write-review-form');
+
+    btnOpenReview?.addEventListener('click', () => {
+      reviewModal?.classList.remove('hidden');
+      reviewModal?.classList.add('flex');
+    });
+
+    btnCloseReview?.addEventListener('click', () => {
+      reviewModal?.classList.add('hidden');
+      reviewModal?.classList.remove('flex');
+    });
+
+    reviewModal?.addEventListener('click', (e) => {
+      if (e.target === reviewModal) {
+        reviewModal.classList.add('hidden');
+        reviewModal.classList.remove('flex');
+      }
+    });
+
+    reviewForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      reviewModal?.classList.add('hidden');
+      reviewModal?.classList.remove('flex');
+      showToast('Thank you! Your verified review has been submitted for publishing.');
+    });
+
+    // Re-initialize Lucide Icons
+    if ((window as any).lucide && typeof (window as any).lucide.createIcons === 'function') {
+      (window as any).lucide.createIcons();
     }
 
   } catch (err) {

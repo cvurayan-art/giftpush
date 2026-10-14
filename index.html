@@ -8,6 +8,12 @@
   <link rel="icon" type="image/png" href="/images/FAvicon.png">
   <link rel="apple-touch-icon" href="/images/FAvicon.png">
   
+  <!-- High-Speed Preconnects for Shopify Storefront API and CDN -->
+  <link rel="preconnect" href="https://checkout.presentpanic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://checkout.presentpanic.com">
+  <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.shopify.com">
+
   <!-- Tailwind CSS CDN with forms & container queries -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <!-- Google Fonts: Inter -->
@@ -105,13 +111,35 @@
       animation: quizSpin 0.75s linear infinite;
     }
 
-    /* Floating quiz badge pulse */
+    /* Floating quiz badge pulse & mobile circle styling */
     @keyframes badgeGlow {
       0%, 100% { box-shadow: 0 10px 25px -5px rgba(255, 77, 97, 0.4), 0 8px 10px -6px rgba(255, 77, 97, 0.2); }
       50% { box-shadow: 0 15px 30px -3px rgba(255, 77, 97, 0.65), 0 10px 14px -5px rgba(255, 77, 97, 0.35); }
     }
     .quiz-glow-btn {
       animation: badgeGlow 2.5s infinite ease-in-out;
+    }
+    @media (max-width: 639px) {
+      #floating-quiz-trigger {
+        width: 44px !important;
+        height: 44px !important;
+        padding: 0 !important;
+        border-radius: 9999px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        right: 14px !important;
+        bottom: 20px !important;
+      }
+      #floating-quiz-trigger span {
+        display: none !important;
+      }
+      #floating-quiz-trigger i,
+      #floating-quiz-trigger svg {
+        width: 20px !important;
+        height: 20px !important;
+        margin: 0 !important;
+      }
     }
 
     /* Mobile drawer slide */
@@ -488,117 +516,37 @@
       <div class="relative pt-6">
 
         <!-- Cards Row (Grid spanning across 1 to 5 columns smoothly) -->
-        <div id="flash-deals-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth">
-          <!-- Product 1: Baby Shark Cube -->
-          <div class="flex flex-col group transition-all duration-300 w-full relative">
-            <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
-              <img alt="Baby Shark Cube" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAbpL3DDBevdG7mICAKmSPCEMvSxy1REopIlTY-lDRKUU6SCucxpdwA4dukABgDgYKb6_BQviOaWJlspcSEWn5cEY7PM6d4GRFLQtMzsZLGZECskQF0ZhYejULGLBJxBVoaAFV_TFs63AxQvQSPAe_u27W5DSqemKH4JQizwZdWxaSvukw19YAUP9AmpbUFm2yuGSQKLF_mJlQPhy0zHh3BrvvACmOGAlFPJx7c10LAwKwp4DLwE-w">
-            </div>
-            <div class="flex-1 flex flex-col justify-start text-left px-1">
-              <div>
-                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
-                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Pinkfong Baby Shark Official Song Cube</h4>
-                <div class="mt-2 text-base font-medium text-neutral-900">$15.00</div>
-              </div>
-              <div class="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <button class="add-to-cart-btn w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-3 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Pinkfong Baby Shark Official Song Cube" data-price="15.00">
-                  <i class="w-4 h-4" data-lucide="shopping-cart"></i>
-                  <span>Add To Cart</span>
-                </button>
-              </div>
-            </div>
+        <div id="flash-deals-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-5 gap-y-10 sm:gap-x-6 sm:gap-y-10 overflow-x-auto no-scrollbar scroll-smooth">
+          <!-- Loading Skeletons (Dynamically replaced by real gifts via storefront.ts) -->
+          <div class="animate-pulse flex flex-col w-full">
+            <div class="bg-neutral-100 rounded-lg aspect-square w-full mb-3"></div>
+            <div class="h-3 bg-neutral-100 rounded w-1/4 mb-1.5"></div>
+            <div class="h-4 bg-neutral-100 rounded w-3/4 mb-1.5"></div>
+            <div class="h-4 bg-neutral-100 rounded w-1/3"></div>
           </div>
-
-          <!-- Product 2: Smart Keyboard Folio -->
-          <div class="flex flex-col group transition-all duration-300 w-full relative">
-            <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
-              <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-15%</span>
-              <img alt="Smart Keyboard" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApDPK8TWzUOizUU3LAPphRFXsUMewmF5Kacm5vCHqKZRSXz4QojncX5nOWXwOXX85aDy7K_qGT_9uOUR9EMhljJHdFH7ON1SNvYSuJSBATh6e4rvdYKJGTc6F_hXfg0VEGzMUGnKAd1ZX5Lc9qt3uADP90lhIihyp3eYX07bVSOLf7JG_AM0rYZzIpehvcxNAlUA0gy6Gm11i9eaPZDhCm_etpv-UDzn2mVsKy5DE-1ba9tnQifJdN">
-            </div>
-            <div class="flex-1 flex flex-col justify-start text-left px-1">
-              <div>
-                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
-                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Smart Keyboard Folio for 12.9 (English)</h4>
-                <div class="mt-2 flex items-center gap-2">
-                  <span class="text-xs text-neutral-400 line-through">$1,299.00</span>
-                  <span class="text-base font-medium text-neutral-900">$1,099.00</span>
-                </div>
-              </div>
-              <div class="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <button class="add-to-cart-btn w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-3 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Smart Keyboard Folio for 12.9 (English)" data-price="1099.00">
-                  <i class="w-4 h-4" data-lucide="shopping-cart"></i>
-                  <span>Add To Cart</span>
-                </button>
-              </div>
-            </div>
+          <div class="animate-pulse flex flex-col w-full">
+            <div class="bg-neutral-100 rounded-lg aspect-square w-full mb-3"></div>
+            <div class="h-3 bg-neutral-100 rounded w-1/4 mb-1.5"></div>
+            <div class="h-4 bg-neutral-100 rounded w-3/4 mb-1.5"></div>
+            <div class="h-4 bg-neutral-100 rounded w-1/3"></div>
           </div>
-
-          <!-- Product 3: Retro Coffee Maker -->
-          <div class="flex flex-col group transition-all duration-300 w-full relative">
-            <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
-              <img alt="Coffee Maker" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCC2ZQ_M4SyGUXrLeJVZWFta13x96nqu8p5_ZBwZehIpgg0fgU78DEv4Kd88z3Qh728mPgQ7pqiE52PkZ5IdztMW_v6oFkW3XMkjYZZvncCcLL4MEO9rzwpfJ1Qiql2iOeo1EDzKVUmZ_D71BEhbNP37Dn9EGcnOX7i93hgrSq1jiZ390uvDPXoZ9AiuiOWBJqYhThtEBQrTGmcp72ld63M7rn0zXXGFd3LedMJxwTUsNncpAITJsd">
-            </div>
-            <div class="flex-1 flex flex-col justify-start text-left px-1">
-              <div>
-                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
-                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Retro Style Coffee Maker Machine</h4>
-                <div class="mt-2 text-base font-medium text-neutral-900">$229.00</div>
-              </div>
-              <div class="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <button class="add-to-cart-btn w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-3 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Retro Style Coffee Maker Machine" data-price="229.00">
-                  <i class="w-4 h-4" data-lucide="shopping-cart"></i>
-                  <span>Add To Cart</span>
-                </button>
-              </div>
-            </div>
+          <div class="animate-pulse flex flex-col w-full">
+            <div class="bg-neutral-100 rounded-lg aspect-square w-full mb-3"></div>
+            <div class="h-3 bg-neutral-100 rounded w-1/4 mb-1.5"></div>
+            <div class="h-4 bg-neutral-100 rounded w-3/4 mb-1.5"></div>
+            <div class="h-4 bg-neutral-100 rounded w-1/3"></div>
           </div>
-
-          <!-- Product 4: Apple Watch Series 5 -->
-          <div class="flex flex-col group transition-all duration-300 w-full relative">
-            <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
-              <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-4%</span>
-              <img alt="Apple Watch" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtuE99cs-6_cyaPwZrlesKmbzDsv9lrhPkO52LxdTdS9BjY4W_KrVhyeuhAAXRZk4u8mNiUOXNjsmppsRQq_x704W3L8zIf55ZjIGpBCINbQs2_Zi-SE6OFF_CYrFp80-srKY5Jtv6_EESLn6hS6EZJfGbZ9S10h-qMiUtq-oLrpyHcLPRl8BppoLNhE2ebeNGBedv-wdHGs9Gq7d8H7_zj7EOgIbi97eCOZsvPPz4t625679-wT_z">
-            </div>
-            <div class="flex-1 flex flex-col justify-start text-left px-1">
-              <div>
-                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
-                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">Apple Watch Series 5 GPS, 40mm Gold</h4>
-                <div class="mt-2 flex items-center gap-2">
-                  <span class="text-xs text-neutral-400 line-through">$520.00</span>
-                  <span class="text-base font-medium text-neutral-900">$499.00</span>
-                </div>
-              </div>
-              <div class="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <button class="add-to-cart-btn w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-3 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="Apple Watch Series 5 GPS, 40mm Gold" data-price="499.00">
-                  <i class="w-4 h-4" data-lucide="shopping-cart"></i>
-                  <span>Add To Cart</span>
-                </button>
-              </div>
-            </div>
+          <div class="animate-pulse flex flex-col w-full">
+            <div class="bg-neutral-100 rounded-lg aspect-square w-full mb-3"></div>
+            <div class="h-3 bg-neutral-100 rounded w-1/4 mb-1.5"></div>
+            <div class="h-4 bg-neutral-100 rounded w-3/4 mb-1.5"></div>
+            <div class="h-4 bg-neutral-100 rounded w-1/3"></div>
           </div>
-
-          <!-- Product 5: AF 1 Shadow Sneaker -->
-          <div class="flex flex-col group transition-all duration-300 w-full relative">
-            <div class="relative w-full h-56 sm:h-64 flex items-center justify-center overflow-hidden mb-4 bg-[#f5f5f5] rounded-xl p-4 sm:p-6">
-              <span class="absolute top-3 left-3 bg-neutral-900 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm">-30%</span>
-              <img alt="Sneaker" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBG00JE-JBUH062KoQKTtQNRqYZ678TNSBpmn1x5K8Z0eQ7bcRgeJgS6mnnPuM10X7kUc36955NipONJZUqV5Nqba8eS1p5iD1liW6oy2EUBL9ftSZv7F6pZ1A6mICek7q4B35IQQtl04n9DlFTW8z9_X0bNH2QjpKSZecYTQgxjg9BHcWSLp3hdCyZo7So9Yg5I9cCbq0mc3iXNHoo5RbOhYuA9RFvOAlJ3zTyUvK3Aqc_Qz2dVgMA">
-            </div>
-            <div class="flex-1 flex flex-col justify-start text-left px-1">
-              <div>
-                <div class="text-[9px] sm:text-[10px] text-neutral-500 uppercase tracking-widest mb-1.5">GIFTS</div>
-                <h4 class="text-xs sm:text-sm font-medium text-neutral-900 line-clamp-2 leading-snug mb-1">AF 1 Shadow Women's Sneaker (Cream Color)</h4>
-                <div class="mt-2 flex items-center gap-2">
-                  <span class="text-xs text-neutral-400 line-through">$999.00</span>
-                  <span class="text-base font-medium text-neutral-900">$699.00</span>
-                </div>
-              </div>
-              <div class="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <button class="add-to-cart-btn w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-semibold py-3 px-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-name="AF 1 Shadow Women's Sneaker (Cream Color)" data-price="699.00">
-                  <i class="w-4 h-4" data-lucide="shopping-cart"></i>
-                  <span>Add To Cart</span>
-                </button>
-              </div>
-            </div>
+          <div class="animate-pulse flex flex-col w-full">
+            <div class="bg-neutral-100 rounded-lg aspect-square w-full mb-3"></div>
+            <div class="h-3 bg-neutral-100 rounded w-1/4 mb-1.5"></div>
+            <div class="h-4 bg-neutral-100 rounded w-3/4 mb-1.5"></div>
+            <div class="h-4 bg-neutral-100 rounded w-1/3"></div>
           </div>
         </div>
       </div>
@@ -1410,10 +1358,10 @@
       </div>
     </div>
   </div>
-  <!-- Floating Gift Finder Trigger Button (Fixed Bottom-Right) -->
-  <button id="floating-quiz-trigger" type="button" class="fixed bottom-6 right-6 z-40 flex items-center gap-2 bg-[#ff4d61] text-white px-4 py-3 rounded-full shadow-2xl hover:bg-rose-600 hover:scale-105 transition-all duration-300 font-bold text-xs sm:text-sm cursor-pointer group" aria-label="Take Gift Finder Quiz">
-    <i class="w-4 h-4 group-hover:rotate-12 transition-transform stroke-[2.5]" data-lucide="sparkles"></i>
-    <span>Gift Finder Quiz</span>
+  <!-- Floating Gift Finder Trigger Button (Fixed Bottom-Right: Small Circle on Mobile, Pill on Desktop) -->
+  <button id="floating-quiz-trigger" type="button" class="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center justify-center w-11 h-11 sm:w-auto sm:h-auto p-0 sm:px-4 sm:py-3 sm:gap-2 bg-[#ff4d61] text-white rounded-full shadow-2xl hover:bg-rose-600 hover:scale-110 active:scale-95 transition-all duration-300 font-bold text-xs sm:text-sm cursor-pointer group quiz-glow-btn" aria-label="Take Gift Finder Quiz" title="Take Gift Finder Quiz">
+    <i class="w-5 h-5 sm:w-4 sm:h-4 group-hover:rotate-12 transition-transform stroke-[2.5] shrink-0" data-lucide="sparkles"></i>
+    <span class="hidden sm:inline">Gift Finder Quiz</span>
   </button>
 
   <!-- BEGIN: GIFT FINDER QUIZ MODAL (Fully Responsive for All Screen Sizes) -->

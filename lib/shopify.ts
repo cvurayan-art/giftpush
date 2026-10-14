@@ -1,6 +1,8 @@
 /**
  * Present Panic - Shopify Storefront API Client
- * Modern Headless Architecture using Shopify Storefront GraphQL API
+ * Ultra-Fast Headless Architecture using Shopify Storefront GraphQL API
+ * Features Multi-Tier SWR Caching (Memory + LocalStorage), In-Flight Request Deduplication,
+ * Cross-Query Product Indexing, and Instant 0ms Pre-seeding
  */
 
 export interface ShopifyImage {
@@ -128,46 +130,133 @@ export const isShopifyConfigured = (): boolean => {
 };
 
 // ----------------------------------------------------
-// GraphQL Execution
+// Multi-Tier SWR (Stale-While-Revalidate) Cache Engine
+// ----------------------------------------------------
+interface CacheItem<T> {
+  data: T;
+  timestamp: number;
+}
+
+const MEMORY_CACHE = new Map<string, CacheItem<any>>();
+const IN_FLIGHT_PROMISES = new Map<string, Promise<any>>();
+
+const CACHE_FRESH_MS = 15 * 60 * 1000; // 15 minutes fresh
+const CACHE_MAX_STALE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days stale allowance
+
+export function getCachedData<T>(key: string): { data: T; isStale: boolean } | null {
+  const now = Date.now();
+  // 1. In-memory check (0ms)
+  const mem = MEMORY_CACHE.get(key);
+  if (mem) {
+    const age = now - mem.timestamp;
+    if (age < CACHE_FRESH_MS) return { data: mem.data, isStale: false };
+    if (age < CACHE_MAX_STALE_MS) return { data: mem.data, isStale: true };
+  }
+  // 2. LocalStorage check (0ms)
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem(`pp_cache_v3_${key}`);
+      if (raw) {
+        const item: CacheItem<T> = JSON.parse(raw);
+        MEMORY_CACHE.set(key, item);
+        const age = now - item.timestamp;
+        if (age < CACHE_FRESH_MS) return { data: item.data, isStale: false };
+        if (age < CACHE_MAX_STALE_MS) return { data: item.data, isStale: true };
+      }
+    } catch (_) {}
+  }
+  return null;
+}
+
+export function setCachedData<T>(key: string, data: T): void {
+  const item: CacheItem<T> = { data, timestamp: Date.now() };
+  MEMORY_CACHE.set(key, item);
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(`pp_cache_v3_${key}`, JSON.stringify(item));
+    } catch (_) {}
+  }
+}
+
+export function dedupeRequest<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
+  if (IN_FLIGHT_PROMISES.has(key)) {
+    return IN_FLIGHT_PROMISES.get(key) as Promise<T>;
+  }
+  const promise = fetcher().finally(() => {
+    IN_FLIGHT_PROMISES.delete(key);
+  });
+  IN_FLIGHT_PROMISES.set(key, promise);
+  return promise;
+}
+
+/**
+ * Indexes individual products from lists so PDP navigation renders in 0ms
+ */
+export function indexProductsInCache(products: ShopifyProduct[]): void {
+  if (!products || !Array.isArray(products)) return;
+  for (const p of products) {
+    if (p && p.handle) {
+      setCachedData(`product_handle_${p.handle}`, p);
+    }
+    if (p && p.id) {
+      setCachedData(`product_id_${p.id}`, p);
+    }
+  }
+}
+
+// ----------------------------------------------------
+// GraphQL Execution with 6-second timeout
 // ----------------------------------------------------
 export async function shopifyFetch<T>({
   query,
   variables = {},
+  timeoutMs = 6000,
 }: {
   query: string;
   variables?: Record<string, any>;
+  timeoutMs?: number;
 }): Promise<T> {
   if (!isShopifyConfigured()) {
     throw new Error('Shopify credentials not configured in environment variables.');
   }
 
   const endpoint = `https://${STORE_DOMAIN}/api/${API_VERSION}/graphql.json`;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': STOREFRONT_TOKEN,
-      'Accept': 'application/json',
-    },
-    body: JSON.stringify({ query, variables }),
-  });
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': STOREFRONT_TOKEN,
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ query, variables }),
+      signal: controller.signal,
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Shopify API Error (${response.status}): ${errorText}`);
+    clearTimeout(timer);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Shopify API Error (${response.status}): ${errorText}`);
+    }
+
+    const json = await response.json();
+    if (json.errors && json.errors.length > 0) {
+      throw new Error(`Shopify GraphQL Error: ${json.errors[0].message}`);
+    }
+
+    return json.data as T;
+  } catch (err: any) {
+    clearTimeout(timer);
+    throw err;
   }
-
-  const json = await response.json();
-  if (json.errors && json.errors.length > 0) {
-    throw new Error(`Shopify GraphQL Error: ${json.errors[0].message}`);
-  }
-
-  return json.data as T;
 }
 
 // ----------------------------------------------------
-// GraphQL Queries
+// GraphQL Fragments
 // ----------------------------------------------------
 
 const PRODUCT_FRAGMENT = `
@@ -286,22 +375,26 @@ export function formatShopifyMoney(amount: string | number, currencyCode = 'USD'
 }
 
 // ----------------------------------------------------
-// Public API Methods
+// Public High-Speed API Methods with SWR Caching
 // ----------------------------------------------------
 
-/**
- * Fetch products list with optional filtering & sorting
- */
-export async function getShopifyProducts(options: {
+export function prioritizeHeroProduct(products: ShopifyProduct[]): ShopifyProduct[] {
+  if (!products || !Array.isArray(products)) return products;
+  const list = [...products];
+  const idx = list.findIndex(p => p.handle === 'diy-crochet-cat-bed-kit' || p.title.toLowerCase().includes('cat bed'));
+  if (idx > 0) {
+    const [catBed] = list.splice(idx, 1);
+    list.unshift(catBed);
+  }
+  return list;
+}
+
+async function fetchProductsFromShopify(options: {
   first?: number;
   query?: string;
   sortKey?: string;
   reverse?: boolean;
-} = {}): Promise<ShopifyProduct[]> {
-  if (!isShopifyConfigured()) {
-    return getFallbackProducts(options.query);
-  }
-
+}, cacheKey: string): Promise<ShopifyProduct[]> {
   const query = `
     query GetProducts($first: Int!, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean) {
       products(first: $first, query: $query, sortKey: $sortKey, reverse: $reverse) {
@@ -324,27 +417,72 @@ export async function getShopifyProducts(options: {
     });
 
     if (data.products?.nodes && data.products.nodes.length > 0) {
-      return data.products.nodes;
+      const sorted = (!options.query || options.query === '') ? prioritizeHeroProduct(data.products.nodes) : data.products.nodes;
+      setCachedData(cacheKey, sorted);
+      indexProductsInCache(sorted);
+      return sorted;
     }
     if (options.query) {
       return [];
     }
     return getFallbackProducts();
   } catch (err) {
-    console.warn('[Shopify] Falling back to default catalog:', err);
+    console.warn('[Shopify] Falling back to catalog:', err);
     return getFallbackProducts(options.query);
   }
 }
 
 /**
- * Fetch single product details by handle
+ * Fetch products list with instant SWR cache return
  */
-export async function getShopifyProductByHandle(handle: string): Promise<ShopifyProduct | null> {
+export async function getShopifyProducts(options: {
+  first?: number;
+  query?: string;
+  sortKey?: string;
+  reverse?: boolean;
+} = {}): Promise<ShopifyProduct[]> {
+  const first = options.first || 24;
+  const sortKey = options.sortKey || 'BEST_SELLING';
+  const reverse = options.reverse || false;
+  const queryFilter = options.query || '';
+  const cacheKey = `products_${first}_${queryFilter}_${sortKey}_${reverse}`;
+
   if (!isShopifyConfigured()) {
-    const fallback = getFallbackProducts().find(p => p.handle === handle) || getFallbackProducts()[0];
-    return fallback || null;
+    return getFallbackProducts(options.query);
   }
 
+  // 1. Fast Cache Hit (0ms)
+  const cached = getCachedData<ShopifyProduct[]>(cacheKey);
+  if (cached && cached.data && cached.data.length > 0) {
+    const sorted = (!queryFilter) ? prioritizeHeroProduct(cached.data) : cached.data;
+    if (cached.isStale) {
+      // Revalidate in background
+      dedupeRequest(cacheKey, () => fetchProductsFromShopify(options, cacheKey)).then(fresh => {
+        if (fresh && fresh.length > 0) {
+          window.dispatchEvent(new CustomEvent('shopify:products:updated', { detail: fresh }));
+        }
+      }).catch(() => {});
+    }
+    return sorted;
+  }
+
+  // 2. For default queries, return seed products immediately in 0ms while revalidating
+  if (!queryFilter) {
+    const seed = getFallbackProducts();
+    dedupeRequest(cacheKey, () => fetchProductsFromShopify(options, cacheKey)).then(fresh => {
+      if (fresh && fresh.length > 0) {
+        window.dispatchEvent(new CustomEvent('shopify:products:updated', { detail: fresh }));
+      }
+    }).catch(() => {});
+    if (seed && seed.length > 0) {
+      return seed.slice(0, first);
+    }
+  }
+
+  return dedupeRequest(cacheKey, () => fetchProductsFromShopify(options, cacheKey));
+}
+
+async function fetchProductByHandleFromShopify(handle: string, cacheKey: string): Promise<ShopifyProduct | null> {
   const query = `
     query GetProductByHandle($handle: String!) {
       product(handle: $handle) {
@@ -359,6 +497,8 @@ export async function getShopifyProductByHandle(handle: string): Promise<Shopify
       variables: { handle },
     });
     if (data.product) {
+      setCachedData(cacheKey, data.product);
+      setCachedData(`product_id_${data.product.id}`, data.product);
       return data.product;
     }
     return getFallbackProducts().find(p => p.handle === handle) || null;
@@ -369,13 +509,44 @@ export async function getShopifyProductByHandle(handle: string): Promise<Shopify
 }
 
 /**
- * Fetch collections list directly from Shopify
+ * Fetch single product details by handle with instant SWR cache return
  */
-export async function getShopifyCollections(first = 25): Promise<ShopifyCollection[]> {
-  if (!isShopifyConfigured()) {
-    return getFallbackCollections();
+export async function getShopifyProductByHandle(handle: string): Promise<ShopifyProduct | null> {
+  if (!handle) return null;
+  const cacheKey = `product_handle_${handle}`;
+
+  // 1. Fast Cache Hit (0ms) - If shopper came from Home or Shop, it is already cached!
+  const cached = getCachedData<ShopifyProduct>(cacheKey);
+  if (cached && cached.data) {
+    if (cached.isStale) {
+      dedupeRequest(cacheKey, () => fetchProductByHandleFromShopify(handle, cacheKey)).then(fresh => {
+        if (fresh) {
+          window.dispatchEvent(new CustomEvent('shopify:product:updated', { detail: fresh }));
+        }
+      }).catch(() => {});
+    }
+    return cached.data;
   }
 
+  // 2. Check Fallback Catalog for Instant Render
+  const fallbackMatch = getFallbackProducts().find(p => p.handle === handle);
+  if (fallbackMatch) {
+    dedupeRequest(cacheKey, () => fetchProductByHandleFromShopify(handle, cacheKey)).then(fresh => {
+      if (fresh) {
+        window.dispatchEvent(new CustomEvent('shopify:product:updated', { detail: fresh }));
+      }
+    }).catch(() => {});
+    return fallbackMatch;
+  }
+
+  if (!isShopifyConfigured()) {
+    return getFallbackProducts()[0] || null;
+  }
+
+  return dedupeRequest(cacheKey, () => fetchProductByHandleFromShopify(handle, cacheKey));
+}
+
+async function fetchCollectionsFromShopify(first: number, cacheKey: string): Promise<ShopifyCollection[]> {
   const query = `
     query GetCollections($first: Int!) {
       collections(first: $first) {
@@ -395,10 +566,11 @@ export async function getShopifyCollections(first = 25): Promise<ShopifyCollecti
       query,
       variables: { first },
     });
-    // Filter out internal 'frontpage' if other collections exist
     const valid = data.collections.nodes.filter(c => c.handle !== 'frontpage');
     const result = valid.length > 0 ? valid : data.collections.nodes;
-    return result.length > 0 ? result : getFallbackCollections();
+    const finalCollections = result.length > 0 ? result : getFallbackCollections();
+    setCachedData(cacheKey, finalCollections);
+    return finalCollections;
   } catch (err) {
     console.warn('[Shopify] Error fetching collections, using fallback:', err);
     return getFallbackCollections();
@@ -406,18 +578,41 @@ export async function getShopifyCollections(first = 25): Promise<ShopifyCollecti
 }
 
 /**
- * Fetch collection by handle with its products
+ * Fetch collections list directly from Shopify with instant SWR cache return (0ms)
  */
-export async function getShopifyCollectionByHandle(
-  handle: string,
-  first = 24
-): Promise<{ collection: ShopifyCollection; products: ShopifyProduct[] } | null> {
-  if (!isShopifyConfigured()) {
-    const col = getFallbackCollections().find(c => c.handle === handle) || getFallbackCollections()[0];
-    const prods = getFallbackProducts();
-    return { collection: col, products: prods };
+export async function getShopifyCollections(first = 25): Promise<ShopifyCollection[]> {
+  const cacheKey = `collections_${first}`;
+
+  // 1. Fast Cache Hit (0ms)
+  const cached = getCachedData<ShopifyCollection[]>(cacheKey);
+  if (cached && cached.data && cached.data.length > 0) {
+    if (cached.isStale) {
+      dedupeRequest(cacheKey, () => fetchCollectionsFromShopify(first, cacheKey)).then(fresh => {
+        if (fresh && fresh.length > 0) {
+          window.dispatchEvent(new CustomEvent('shopify:collections:updated', { detail: fresh }));
+        }
+      }).catch(() => {});
+    }
+    return cached.data;
   }
 
+  // 2. Return DEFAULT_COLLECTIONS in 0ms while revalidating in background
+  const seedCollections = getFallbackCollections();
+  if (isShopifyConfigured()) {
+    dedupeRequest(cacheKey, () => fetchCollectionsFromShopify(first, cacheKey)).then(fresh => {
+      if (fresh && fresh.length > 0) {
+        window.dispatchEvent(new CustomEvent('shopify:collections:updated', { detail: fresh }));
+      }
+    }).catch(() => {});
+  }
+  return seedCollections;
+}
+
+async function fetchCollectionByHandleFromShopify(
+  handle: string,
+  first: number,
+  cacheKey: string
+): Promise<{ collection: ShopifyCollection; products: ShopifyProduct[] } | null> {
   const query = `
     query GetCollectionByHandle($handle: String!, $first: Int!) {
       collection(handle: $handle) {
@@ -444,7 +639,7 @@ export async function getShopifyCollectionByHandle(
     });
 
     if (data.collection) {
-      return {
+      const result = {
         collection: {
           id: data.collection.id,
           title: data.collection.title,
@@ -454,6 +649,9 @@ export async function getShopifyCollectionByHandle(
         },
         products: data.collection.products?.nodes || [],
       };
+      setCachedData(cacheKey, result);
+      indexProductsInCache(result.products);
+      return result;
     }
 
     const col = getFallbackCollections().find(c => c.handle === handle);
@@ -467,6 +665,44 @@ export async function getShopifyCollectionByHandle(
   }
 }
 
+/**
+ * Fetch collection by handle with its products and instant SWR cache return
+ */
+export async function getShopifyCollectionByHandle(
+  handle: string,
+  first = 24
+): Promise<{ collection: ShopifyCollection; products: ShopifyProduct[] } | null> {
+  const cacheKey = `collection_${handle}_${first}`;
+
+  // 1. Fast Cache Hit (0ms)
+  const cached = getCachedData<{ collection: ShopifyCollection; products: ShopifyProduct[] }>(cacheKey);
+  if (cached && cached.data) {
+    if (cached.isStale) {
+      dedupeRequest(cacheKey, () => fetchCollectionByHandleFromShopify(handle, first, cacheKey)).then(fresh => {
+        if (fresh) {
+          window.dispatchEvent(new CustomEvent('shopify:collection:updated', { detail: fresh }));
+        }
+      }).catch(() => {});
+    }
+    return cached.data;
+  }
+
+  // 2. Check Seed
+  const col = getFallbackCollections().find(c => c.handle === handle);
+  if (col) {
+    const prods = getFallbackProducts();
+    if (isShopifyConfigured()) {
+      dedupeRequest(cacheKey, () => fetchCollectionByHandleFromShopify(handle, first, cacheKey)).then(fresh => {
+        if (fresh) {
+          window.dispatchEvent(new CustomEvent('shopify:collection:updated', { detail: fresh }));
+        }
+      }).catch(() => {});
+    }
+    return { collection: col, products: prods };
+  }
+
+  return dedupeRequest(cacheKey, () => fetchCollectionByHandleFromShopify(handle, first, cacheKey));
+}
 
 /**
  * Search products
@@ -474,6 +710,12 @@ export async function getShopifyCollectionByHandle(
 export async function searchShopifyProducts(searchQuery: string, first = 10): Promise<ShopifyProduct[]> {
   const cleanQ = searchQuery.trim();
   if (!cleanQ) return [];
+
+  const cacheKey = `search_${cleanQ.toLowerCase()}_${first}`;
+  const cached = getCachedData<ShopifyProduct[]>(cacheKey);
+  if (cached && cached.data) {
+    return cached.data;
+  }
 
   if (isShopifyConfigured()) {
     const query = `
@@ -487,15 +729,19 @@ export async function searchShopifyProducts(searchQuery: string, first = 10): Pr
     `;
 
     try {
-      const data = await shopifyFetch<{ products: { nodes: ShopifyProduct[] } }>({
-        query,
-        variables: { query: cleanQ, first },
-      });
+      const data = await dedupeRequest(cacheKey, () =>
+        shopifyFetch<{ products: { nodes: ShopifyProduct[] } }>({
+          query,
+          variables: { query: cleanQ, first },
+        })
+      );
       if (data?.products?.nodes && data.products.nodes.length > 0) {
+        setCachedData(cacheKey, data.products.nodes);
+        indexProductsInCache(data.products.nodes);
         return data.products.nodes;
       }
 
-      // If exact query gave 0 results and no wildcard was present, try wildcard
+      // If exact query gave 0 results, try wildcard
       if (!cleanQ.includes('*')) {
         try {
           const wildcardData = await shopifyFetch<{ products: { nodes: ShopifyProduct[] } }>({
@@ -503,6 +749,8 @@ export async function searchShopifyProducts(searchQuery: string, first = 10): Pr
             variables: { query: `${cleanQ}*`, first },
           });
           if (wildcardData?.products?.nodes && wildcardData.products.nodes.length > 0) {
+            setCachedData(cacheKey, wildcardData.products.nodes);
+            indexProductsInCache(wildcardData.products.nodes);
             return wildcardData.products.nodes;
           }
         } catch (_) {}
@@ -512,34 +760,26 @@ export async function searchShopifyProducts(searchQuery: string, first = 10): Pr
     }
   }
 
-  // Fallback to catalog filtering across all products
-  try {
-    const all = await getShopifyProducts({ first: 100 });
-    const q = cleanQ.toLowerCase();
-    const filtered = all.filter(p =>
-      p.title.toLowerCase().includes(q) ||
-      (p.description && p.description.toLowerCase().includes(q)) ||
-      (p.productType && p.productType.toLowerCase().includes(q)) ||
-      (p.tags && p.tags.some(t => t.toLowerCase().includes(q)))
-    );
-    if (filtered.length > 0) {
-      return filtered.slice(0, first);
-    }
-  } catch (err) {
-    console.warn('[Shopify] Catalog fallback error:', err);
-  }
-
+  // Fallback to catalog filtering
+  const all = getFallbackProducts();
   const q = cleanQ.toLowerCase();
-  return getFallbackProducts().filter(p =>
+  const filtered = all.filter(p =>
     p.title.toLowerCase().includes(q) ||
-    p.description.toLowerCase().includes(q)
-  ).slice(0, first);
+    (p.description && p.description.toLowerCase().includes(q)) ||
+    (p.productType && p.productType.toLowerCase().includes(q)) ||
+    (p.tags && p.tags.some(t => t.toLowerCase().includes(q)))
+  );
+  return filtered.slice(0, first);
 }
 
 /**
  * Product recommendations
  */
 export async function getShopifyProductRecommendations(productId: string): Promise<ShopifyProduct[]> {
+  const cacheKey = `recommendations_${productId}`;
+  const cached = getCachedData<ShopifyProduct[]>(cacheKey);
+  if (cached && cached.data) return cached.data;
+
   if (!isShopifyConfigured() || !productId.startsWith('gid://shopify/Product/')) {
     return getFallbackProducts().slice(1, 5);
   }
@@ -553,11 +793,16 @@ export async function getShopifyProductRecommendations(productId: string): Promi
   `;
 
   try {
-    const data = await shopifyFetch<{ productRecommendations: ShopifyProduct[] }>({
-      query,
-      variables: { productId },
-    });
-    return data.productRecommendations || getFallbackProducts().slice(1, 5);
+    const data = await dedupeRequest(cacheKey, () =>
+      shopifyFetch<{ productRecommendations: ShopifyProduct[] }>({
+        query,
+        variables: { productId },
+      })
+    );
+    const recs = data.productRecommendations || getFallbackProducts().slice(1, 5);
+    setCachedData(cacheKey, recs);
+    indexProductsInCache(recs);
+    return recs;
   } catch (err) {
     console.warn('[Shopify] Error fetching recommendations:', err);
     return getFallbackProducts().slice(1, 5);
@@ -705,7 +950,7 @@ export async function shopifyCartLinesUpdate(
 }
 
 /**
- * Remove items from cart
+ * Remove lines from cart
  */
 export async function shopifyCartLinesRemove(cartId: string, lineIds: string[]): Promise<ShopifyCart> {
   if (!isShopifyConfigured()) {
@@ -773,21 +1018,435 @@ export async function shopifyCartDiscountCodesUpdate(cartId: string, discountCod
 }
 
 // ====================================================
-// FALLBACK & DEMO DATASET (When Shopify keys not yet set)
-// Matches exact Shopify Storefront schema so app never breaks
+// REAL STORE PRE-SEEDED DATASET (0ms Instant First Paint)
+// Real collections and products from checkout.presentpanic.com
 // ====================================================
 
+export const DEFAULT_COLLECTIONS: ShopifyCollection[] = [
+  {
+    id: "gid://shopify/Collection/703246073937",
+    title: "Handmade Gifts",
+    handle: "handmade-gifts",
+    description: "Curated handmade gifts made with love and unique artisan touches.",
+    image: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/collections/Orange_Tabby_in_Cozy_Crochet_Cat_Cave.png?v=1791024224",
+      altText: "Handmade Gifts"
+    }
+  },
+  {
+    id: "gid://shopify/Collection/703246598225",
+    title: "Christmas Gifts",
+    handle: "christmas-gifts",
+    description: "Festive holiday presents, seasonal ornaments, and cozy winter treats.",
+    image: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/collections/Se9dd434f21014d61bf2f70680f69e583P_jpg_220x220q75_jpg.jpg?v=1791025495",
+      altText: "Christmas Gifts"
+    }
+  },
+  {
+    id: "gid://shopify/Collection/703246827601",
+    title: "Clocks",
+    handle: "clocks",
+    description: "Timeless and aesthetic decorative desk and wall clocks.",
+    image: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/collections/S4692b2913e1d4d24b744ba4b8307a8feX_jpg_220x220q75_jpg.jpg?v=1791026049",
+      altText: "Clocks"
+    }
+  },
+  {
+    id: "gid://shopify/Collection/703246925905",
+    title: "Table Lamps",
+    handle: "personlized-gifts",
+    description: "Warm glow ambient table lamps, crystal globes, and bedside lights.",
+    image: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/collections/Sb20fe0704a9d4e309d85723c0a442e2bc_jpg_220x220q75_jpg.jpg?v=1791026180",
+      altText: "Table Lamps"
+    }
+  },
+  {
+    id: "gid://shopify/Collection/703247056977",
+    title: "Personalized Gifts",
+    handle: "personalized-gifts",
+    description: "Custom engraved and bespoke keepsake gifts tailored for your loved ones.",
+    image: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/collections/Sf81211ac5cdf4ad3b79d70d6a9457bb9P_png_220x220_png.jpg?v=1791026626",
+      altText: "Personalized Gifts"
+    }
+  },
+  {
+    id: "gid://shopify/Collection/703619792977",
+    title: "Desk Organizers",
+    handle: "desk-organizers",
+    description: "Sleek bamboo organizers, catchall trays, and productivity gifts.",
+    image: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/collections/Minimalist_Bamboo_Desk_Organizer_Stand.png?v=1791451648",
+      altText: "Desk Organizers"
+    }
+  },
+  {
+    id: "gid://shopify/Collection/703619858513",
+    title: "HomeDecor",
+    handle: "homedecor",
+    description: "Charming home decorations, macrame hangings, and comforting aesthetic decor.",
+    image: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/collections/Pastel_Pink_Rose_Tree_Lamp.png?v=1791451726",
+      altText: "HomeDecor"
+    }
+  },
+  {
+    id: "gid://shopify/Collection/703619956817",
+    title: "Toys",
+    handle: "toys",
+    description: "Delightful music boxes, whimsical toys, and joyful gifts for all ages.",
+    image: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/collections/Miniature_Wooden_Train_Music_Box.png?v=1791451769",
+      altText: "Toys"
+    }
+  }
+];
+
+export const DEFAULT_CATALOG_PRODUCTS: ShopifyProduct[] = [
+  {
+    id: "gid://shopify/Product/16352296370257",
+    title: "DIY Crochet Cat Bed Kit",
+    handle: "diy-crochet-cat-bed-kit",
+    description: "Create a cozy handmade hideaway for your cat with this DIY Crochet Cat Bed Kit. Designed for craft lovers, this creative kit lets you crochet an adorable cat-shaped bed while enjoying a fun and rewarding DIY project. The finished design features cute pointed cat ears and a spacious front opening, creating a snug resting space for your feline friend.",
+    vendor: "Present Panic",
+    productType: "Handmade & Crafts",
+    tags: ["cat bed", "diy", "crochet", "pet", "handmade", "cozy", "gift", "crafts"],
+    availableForSale: true,
+    priceRange: {
+      minVariantPrice: { amount: "77.99", currencyCode: "GBP" },
+      maxVariantPrice: { amount: "77.99", currencyCode: "GBP" }
+    },
+    compareAtPriceRange: null,
+    featuredImage: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/CozyGrayCatCavewithKitten.png?v=1791363758",
+      altText: "DIY Crochet Cat Bed Kit"
+    },
+    images: {
+      nodes: [
+        { url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/CozyGrayCatCavewithKitten.png?v=1791363758", altText: "DIY Crochet Cat Bed Kit" }
+      ]
+    },
+    variants: {
+      nodes: [
+        {
+          id: "gid://shopify/ProductVariant/62833058250833",
+          title: "Default Title",
+          availableForSale: true,
+          price: { amount: "77.99", currencyCode: "GBP" },
+          selectedOptions: [{ name: "Title", value: "Default Title" }],
+          image: {
+            url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/CozyGrayCatCavewithKitten.png?v=1791363758",
+            altText: "DIY Crochet Cat Bed Kit"
+          }
+        }
+      ]
+    },
+    options: [{ name: "Title", values: ["Default Title"] }]
+  },
+  {
+    id: "gid://shopify/Product/16345824526417",
+    title: "Personalized Crystal Ball LED Lamp",
+    handle: "personlized-crystal-ball-led-lamp",
+    description: "Personalized crystal ball night light with warm LED wooden base. A comforting ambient glow for desks, bedrooms, and meaningful occasions.",
+    vendor: "Present Panic",
+    productType: "Lighting & Home Decor",
+    tags: ["lamp", "crystal", "personalized", "night light", "cozy", "luxury", "mum", "partner"],
+    availableForSale: true,
+    priceRange: {
+      minVariantPrice: { amount: "48.99", currencyCode: "GBP" },
+      maxVariantPrice: { amount: "48.99", currencyCode: "GBP" }
+    },
+    featuredImage: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/Celestial_Crystal_Globe_Lamp.png?v=1791453230",
+      altText: "Personalized Crystal Ball LED Lamp"
+    },
+    images: {
+      nodes: [
+        { url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/Celestial_Crystal_Globe_Lamp.png?v=1791453230", altText: "Personalized Crystal Ball LED Lamp" },
+        { url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/Sb20fe0704a9d4e309d85723c0a442e2bc_jpg_220x220q75_jpg.jpg?v=1791026180", altText: "Lamp details" }
+      ]
+    },
+    variants: {
+      nodes: [
+        {
+          id: "gid://shopify/ProductVariant/62793929687121",
+          title: "Default Title",
+          availableForSale: true,
+          price: { amount: "48.99", currencyCode: "GBP" },
+          selectedOptions: [{ name: "Title", value: "Default Title" }]
+        }
+      ]
+    },
+    options: [{ name: "Title", values: ["Default Title"] }]
+  },
+  {
+    id: "gid://shopify/Product/16352140558417",
+    title: "Handmade Feather Dream Catcher Wall Hanging",
+    handle: "handmade-feather-dream-catcher-wall-hanging",
+    description: "Boho chic feather dream catcher wall hanging with natural wooden beads and soft layered feathers.",
+    vendor: "Present Panic",
+    productType: "Wall Decor",
+    tags: ["boho", "handmade", "cozy", "sentimental", "gift", "friend", "mum"],
+    availableForSale: true,
+    priceRange: {
+      minVariantPrice: { amount: "24.00", currencyCode: "GBP" },
+      maxVariantPrice: { amount: "24.00", currencyCode: "GBP" }
+    },
+    featuredImage: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/BohemianDreamcatcherwithLayeredFeathers.png?v=1791358935",
+      altText: "Handmade Feather Dream Catcher Wall Hanging"
+    },
+    images: {
+      nodes: [
+        { url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/BohemianDreamcatcherwithLayeredFeathers.png?v=1791358935", altText: "Dream Catcher" }
+      ]
+    },
+    variants: {
+      nodes: [
+        {
+          id: "gid://shopify/ProductVariant/62832114040913",
+          title: "Default Title",
+          availableForSale: true,
+          price: { amount: "24.00", currencyCode: "GBP" },
+          selectedOptions: [{ name: "Title", value: "Default Title" }]
+        }
+      ]
+    },
+    options: [{ name: "Title", values: ["Default Title"] }]
+  },
+  {
+    id: "gid://shopify/Product/16352294633553",
+    title: "Handmade Crochet Christmas Hanging Ornaments",
+    handle: "handmade-crochet-christmas-hanging-ornaments",
+    description: "Festive artisan crochet ornaments for holiday trees and seasonal gifting.",
+    vendor: "Present Panic",
+    productType: "Holiday Decor",
+    tags: ["christmas", "holiday", "ornament", "crochet", "festive", "cozy", "playful"],
+    availableForSale: true,
+    priceRange: {
+      minVariantPrice: { amount: "28.99", currencyCode: "GBP" },
+      maxVariantPrice: { amount: "28.99", currencyCode: "GBP" }
+    },
+    featuredImage: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/Untitled-1_adasg2.png?v=1791453230",
+      altText: "Handmade Crochet Christmas Hanging Ornaments"
+    },
+    images: {
+      nodes: [
+        { url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/Untitled-1_adasg2.png?v=1791453230", altText: "Crochet Ornaments" }
+      ]
+    },
+    variants: {
+      nodes: [
+        {
+          id: "gid://shopify/ProductVariant/62833053171793",
+          title: "Default Title",
+          availableForSale: true,
+          price: { amount: "28.99", currencyCode: "GBP" },
+          selectedOptions: [{ name: "Title", value: "Default Title" }]
+        }
+      ]
+    },
+    options: [{ name: "Title", values: ["Default Title"] }]
+  },
+  {
+    id: "gid://shopify/Product/16352161857617",
+    title: "Woven Straw Beach Tote Bag for Women",
+    handle: "woven-straw-beach-tote-bag-for-women",
+    description: "Chic luxury crochet raffia tote bag for weekend outings and stylish summer wear.",
+    vendor: "Present Panic",
+    productType: "Accessories",
+    tags: ["luxury", "bag", "mum", "partner", "fashion", "pampering"],
+    availableForSale: true,
+    priceRange: {
+      minVariantPrice: { amount: "79.99", currencyCode: "GBP" },
+      maxVariantPrice: { amount: "79.99", currencyCode: "GBP" }
+    },
+    featuredImage: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/CrochetRaffiaToteBag_ParisMilano.png?v=1791359674",
+      altText: "Woven Straw Beach Tote Bag"
+    },
+    images: {
+      nodes: [
+        { url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/CrochetRaffiaToteBag_ParisMilano.png?v=1791359674", altText: "Tote Bag" }
+      ]
+    },
+    variants: {
+      nodes: [
+        {
+          id: "gid://shopify/ProductVariant/62832270868561",
+          title: "Default Title",
+          availableForSale: true,
+          price: { amount: "79.99", currencyCode: "GBP" },
+          selectedOptions: [{ name: "Title", value: "Default Title" }]
+        }
+      ]
+    },
+    options: [{ name: "Title", values: ["Default Title"] }]
+  },
+  {
+    id: "gid://shopify/Product/16352149012561",
+    title: "Boho Hanging Photo Display with Wooden Clips",
+    handle: "boho-hanging-photo-display-with-wooden-clips",
+    description: "Macrame photo clip string organizer for polaroids, memories, and cards.",
+    vendor: "Present Panic",
+    productType: "Home Decor",
+    tags: ["sentimental", "photo", "friend", "mum", "cozy", "heartfelt"],
+    availableForSale: true,
+    priceRange: {
+      minVariantPrice: { amount: "28.99", currencyCode: "GBP" },
+      maxVariantPrice: { amount: "28.99", currencyCode: "GBP" }
+    },
+    featuredImage: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/BohoMacramePhotoDisplay.png?v=1791359274",
+      altText: "Boho Hanging Photo Display"
+    },
+    images: {
+      nodes: [
+        { url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/BohoMacramePhotoDisplay.png?v=1791359274", altText: "Photo Display" }
+      ]
+    },
+    variants: {
+      nodes: [
+        {
+          id: "gid://shopify/ProductVariant/62832191832145",
+          title: "Default Title",
+          availableForSale: true,
+          price: { amount: "28.99", currencyCode: "GBP" },
+          selectedOptions: [{ name: "Title", value: "Default Title" }]
+        }
+      ]
+    },
+    options: [{ name: "Title", values: ["Default Title"] }]
+  },
+  {
+    id: "gid://shopify/Product/16352155369553",
+    title: "Boho Woven Round Wall Hanging Decor",
+    handle: "boho-woven-round-wall-hanging-decor",
+    description: "Artisan woven circular wall hanging handcrafted with natural fibers.",
+    vendor: "Present Panic",
+    productType: "Home Decor",
+    tags: ["decor", "boho", "handmade", "artisan"],
+    availableForSale: true,
+    priceRange: {
+      minVariantPrice: { amount: "14.99", currencyCode: "GBP" },
+      maxVariantPrice: { amount: "14.99", currencyCode: "GBP" }
+    },
+    featuredImage: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/RoundBraidedJuteRugwithTassels.png?v=1791359467",
+      altText: "Boho Woven Round Wall Hanging"
+    },
+    images: {
+      nodes: [
+        { url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/RoundBraidedJuteRugwithTassels.png?v=1791359467", altText: "Round Wall Hanging" }
+      ]
+    },
+    variants: {
+      nodes: [
+        {
+          id: "gid://shopify/ProductVariant/62832230138065",
+          title: "Default Title",
+          availableForSale: true,
+          price: { amount: "14.99", currencyCode: "GBP" },
+          selectedOptions: [{ name: "Title", value: "Default Title" }]
+        }
+      ]
+    },
+    options: [{ name: "Title", values: ["Default Title"] }]
+  },
+  {
+    id: "gid://shopify/Product/16352170082385",
+    title: "Macrame Evil Eye Wall Hanging",
+    handle: "macrame-evil-eye-wall-hanging",
+    description: "Protection symbol woven macrame wall hanging with deep blue glass bead accent.",
+    vendor: "Present Panic",
+    productType: "Home Decor",
+    tags: ["evil-eye", "macrame", "boho", "spiritual"],
+    availableForSale: true,
+    priceRange: {
+      minVariantPrice: { amount: "33.99", currencyCode: "GBP" },
+      maxVariantPrice: { amount: "33.99", currencyCode: "GBP" }
+    },
+    featuredImage: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/BlueEvilEyeMacrameWallHanging.png?v=1791359872",
+      altText: "Macrame Evil Eye Wall Hanging"
+    },
+    images: {
+      nodes: [
+        { url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/BlueEvilEyeMacrameWallHanging.png?v=1791359872", altText: "Evil Eye Hanging" }
+      ]
+    },
+    variants: {
+      nodes: [
+        {
+          id: "gid://shopify/ProductVariant/62832328409425",
+          title: "Default Title",
+          availableForSale: true,
+          price: { amount: "33.99", currencyCode: "GBP" },
+          selectedOptions: [{ name: "Title", value: "Default Title" }]
+        }
+      ]
+    },
+    options: [{ name: "Title", values: ["Default Title"] }]
+  },
+  {
+    id: "gid://shopify/Product/16352179978321",
+    title: "Boho Starfish Beaded Tassel Hanging Decor",
+    handle: "boho-starfish-beaded-tassel-hanging-decor",
+    description: "Coastal charm beaded tassel garland with sculpted natural starfish embellishment.",
+    vendor: "Present Panic",
+    productType: "Home Decor",
+    tags: ["coastal", "beads", "starfish", "tassel", "boho"],
+    availableForSale: true,
+    priceRange: {
+      minVariantPrice: { amount: "14.99", currencyCode: "GBP" },
+      maxVariantPrice: { amount: "14.99", currencyCode: "GBP" }
+    },
+    featuredImage: {
+      url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/CoastalStarfishTasselGarlandSet.png?v=1791360267",
+      altText: "Boho Starfish Beaded Tassel"
+    },
+    images: {
+      nodes: [
+        { url: "https://cdn.shopify.com/s/files/1/1078/7828/5393/files/CoastalStarfishTasselGarlandSet.png?v=1791360267", altText: "Starfish Tassel" }
+      ]
+    },
+    variants: {
+      nodes: [
+        {
+          id: "gid://shopify/ProductVariant/62832398532945",
+          title: "Default Title",
+          availableForSale: true,
+          price: { amount: "14.99", currencyCode: "GBP" },
+          selectedOptions: [{ name: "Title", value: "Default Title" }]
+        }
+      ]
+    },
+    options: [{ name: "Title", values: ["Default Title"] }]
+  }
+];
+
+// Pre-seed memory cache on startup so PDP & Category queries hit 0ms
+indexProductsInCache(DEFAULT_CATALOG_PRODUCTS);
+
 export function getFallbackCollections(): ShopifyCollection[] {
-  return [];
+  return DEFAULT_COLLECTIONS;
 }
 
 export function getFallbackProducts(filterQuery?: string): ShopifyProduct[] {
-  return [];
+  if (!filterQuery) return DEFAULT_CATALOG_PRODUCTS;
+  const q = filterQuery.toLowerCase().trim();
+  return DEFAULT_CATALOG_PRODUCTS.filter(p =>
+    p.title.toLowerCase().includes(q) ||
+    p.tags.some(t => t.toLowerCase().includes(q))
+  );
 }
 
-
 // ----------------------------------------------------
-// Local Cart Mocking for Seamless Initial Experience
+// Local Cart Mocking for Seamless Fallback
 // ----------------------------------------------------
 const CART_STORAGE_KEY = 'present_panic_shopify_local_cart';
 
@@ -795,17 +1454,15 @@ function getStoredLocalCart(): ShopifyCart {
   try {
     const raw = localStorage.getItem(CART_STORAGE_KEY);
     if (raw) return JSON.parse(raw);
-  } catch (e) {
-    // ignore
-  }
+  } catch (e) {}
 
   const newCart: ShopifyCart = {
     id: `gid://shopify/Cart/local-${Date.now()}`,
-    checkoutUrl: `https://${STORE_DOMAIN || 'present-panic-store.myshopify.com'}/checkouts/demo-${Date.now()}`,
+    checkoutUrl: `https://${STORE_DOMAIN || 'checkout.presentpanic.com'}/checkouts/demo-${Date.now()}`,
     totalQuantity: 0,
     cost: {
-      subtotalAmount: { amount: '0.00', currencyCode: 'USD' },
-      totalAmount: { amount: '0.00', currencyCode: 'USD' },
+      subtotalAmount: { amount: '0.00', currencyCode: 'GBP' },
+      totalAmount: { amount: '0.00', currencyCode: 'GBP' },
     },
     lines: { nodes: [] },
     discountCodes: [],
@@ -829,8 +1486,8 @@ function recalculateCart(cart: ShopifyCart): ShopifyCart {
     const unit = parseFloat(line.merchandise.price.amount);
     const lineSub = unit * line.quantity;
     line.cost = {
-      subtotalAmount: { amount: lineSub.toFixed(2), currencyCode: 'USD' },
-      totalAmount: { amount: lineSub.toFixed(2), currencyCode: 'USD' },
+      subtotalAmount: { amount: lineSub.toFixed(2), currencyCode: line.merchandise.price.currencyCode },
+      totalAmount: { amount: lineSub.toFixed(2), currencyCode: line.merchandise.price.currencyCode },
     };
     subtotal += lineSub;
     totalQty += line.quantity;
@@ -839,7 +1496,7 @@ function recalculateCart(cart: ShopifyCart): ShopifyCart {
   let discount = 0;
   if (cart.discountCodes && cart.discountCodes.length > 0 && cart.discountCodes[0].applicable) {
     discount = subtotal * 0.2; // 20% discount demo
-    cart.discountAllocations = [{ discountedAmount: { amount: discount.toFixed(2), currencyCode: 'USD' } }];
+    cart.discountAllocations = [{ discountedAmount: { amount: discount.toFixed(2), currencyCode: 'GBP' } }];
   } else {
     cart.discountAllocations = [];
   }
@@ -848,8 +1505,8 @@ function recalculateCart(cart: ShopifyCart): ShopifyCart {
 
   cart.totalQuantity = totalQty;
   cart.cost = {
-    subtotalAmount: { amount: subtotal.toFixed(2), currencyCode: 'USD' },
-    totalAmount: { amount: total.toFixed(2), currencyCode: 'USD' },
+    subtotalAmount: { amount: subtotal.toFixed(2), currencyCode: 'GBP' },
+    totalAmount: { amount: total.toFixed(2), currencyCode: 'GBP' },
   };
 
   saveStoredLocalCart(cart);

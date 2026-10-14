@@ -15,20 +15,57 @@ import {
 } from './shopify';
 
 const SHOPIFY_CART_ID_KEY = 'present_panic_shopify_cart_id';
+const SHOPIFY_CART_SNAPSHOT_KEY = 'present_panic_shopify_cart_snapshot';
 
 class CartManager {
   private cart: ShopifyCart | null = null;
   private isBusy = false;
 
   constructor() {
-    // Listen for storage changes across tabs
     if (typeof window !== 'undefined') {
+      this.loadCachedCart();
       window.addEventListener('storage', (e) => {
         if (e.key === SHOPIFY_CART_ID_KEY) {
           this.init();
         }
       });
     }
+  }
+
+  private loadCachedCart() {
+    try {
+      const raw = localStorage.getItem(SHOPIFY_CART_SNAPSHOT_KEY);
+      if (raw) {
+        this.cart = JSON.parse(raw);
+        // Instant synchronous badge and drawer update
+        setTimeout(() => this.broadcastUpdate(), 0);
+      }
+    } catch (_) {}
+  }
+
+  private saveCachedCart(cart: ShopifyCart | null) {
+    try {
+      if (cart) {
+        localStorage.setItem(SHOPIFY_CART_SNAPSHOT_KEY, JSON.stringify(cart));
+      } else {
+        localStorage.removeItem(SHOPIFY_CART_SNAPSHOT_KEY);
+      }
+    } catch (_) {}
+  }
+
+  private getBlankCart(): ShopifyCart {
+    return {
+      id: `blank-${Date.now()}`,
+      checkoutUrl: '',
+      totalQuantity: 0,
+      cost: {
+        subtotalAmount: { amount: '0.00', currencyCode: 'GBP' },
+        totalAmount: { amount: '0.00', currencyCode: 'GBP' },
+      },
+      discountCodes: [],
+      discountAllocations: [],
+      lines: { nodes: [] },
+    };
   }
 
   public getCartId(): string | null {
@@ -50,34 +87,29 @@ class CartManager {
   }
 
   /**
-   * Initialize or retrieve active Shopify cart
+   * Initialize or retrieve active Shopify cart (Non-blocking)
    */
-  public async init(): Promise<ShopifyCart> {
+  public async init(): Promise<ShopifyCart | null> {
     const existingId = this.getCartId();
     if (existingId) {
       try {
         const fetched = await shopifyGetCart(existingId);
         if (fetched) {
           this.cart = fetched;
+          this.saveCachedCart(fetched);
           this.broadcastUpdate();
           return fetched;
         }
       } catch (err) {
-        console.warn('[CartManager] Existing cart expired or invalid, creating new:', err);
+        console.warn('[CartManager] Existing cart expired or invalid:', err);
       }
     }
 
-    // Create fresh cart
-    try {
-      const newCart = await shopifyCreateCart([]);
-      this.cart = newCart;
-      this.setCartId(newCart.id);
+    if (!this.cart) {
+      this.cart = this.getBlankCart();
       this.broadcastUpdate();
-      return newCart;
-    } catch (err) {
-      console.error('[CartManager] Error creating cart:', err);
-      throw err;
     }
+    return this.cart;
   }
 
   /**
@@ -88,16 +120,33 @@ class CartManager {
     quantity = 1,
     attributes: { key: string; value: string }[] = []
   ): Promise<ShopifyCart> {
-    if (!this.cart) {
-      await this.init();
+    const existingId = this.getCartId();
+    if (!existingId || !this.cart || !this.cart.id || this.cart.id.startsWith('blank-')) {
+      this.isBusy = true;
+      try {
+        const newCart = await shopifyCreateCart([
+          { merchandiseId: variantId, quantity, attributes },
+        ]);
+        this.cart = newCart;
+        this.setCartId(newCart.id);
+        this.saveCachedCart(newCart);
+        this.broadcastUpdate();
+        return newCart;
+      } catch (err: any) {
+        console.error('[CartManager] Failed to create cart with item:', err);
+        throw err;
+      } finally {
+        this.isBusy = false;
+      }
     }
 
     try {
       this.isBusy = true;
-      const updated = await shopifyCartLinesAdd(this.cart!.id, [
+      const updated = await shopifyCartLinesAdd(this.cart.id, [
         { merchandiseId: variantId, quantity, attributes },
       ]);
       this.cart = updated;
+      this.saveCachedCart(updated);
       this.broadcastUpdate();
       return updated;
     } catch (err: any) {
@@ -112,12 +161,16 @@ class CartManager {
    * Update quantity of a line item
    */
   public async updateQuantity(lineId: string, quantity: number): Promise<ShopifyCart> {
-    if (!this.cart) return this.init();
+    if (!this.cart) {
+      const c = await this.init();
+      if (!c) throw new Error('Cart unavailable');
+    }
 
     try {
       this.isBusy = true;
-      const updated = await shopifyCartLinesUpdate(this.cart.id, [{ id: lineId, quantity }]);
+      const updated = await shopifyCartLinesUpdate(this.cart!.id, [{ id: lineId, quantity }]);
       this.cart = updated;
+      this.saveCachedCart(updated);
       this.broadcastUpdate();
       return updated;
     } catch (err: any) {
@@ -132,12 +185,16 @@ class CartManager {
    * Remove a line item from cart
    */
   public async removeItem(lineId: string): Promise<ShopifyCart> {
-    if (!this.cart) return this.init();
+    if (!this.cart) {
+      const c = await this.init();
+      if (!c) throw new Error('Cart unavailable');
+    }
 
     try {
       this.isBusy = true;
-      const updated = await shopifyCartLinesRemove(this.cart.id, [lineId]);
+      const updated = await shopifyCartLinesRemove(this.cart!.id, [lineId]);
       this.cart = updated;
+      this.saveCachedCart(updated);
       this.broadcastUpdate();
       return updated;
     } catch (err: any) {
@@ -152,12 +209,16 @@ class CartManager {
    * Apply discount code via Shopify Cart API
    */
   public async applyPromoCode(code: string): Promise<ShopifyCart> {
-    if (!this.cart) return this.init();
+    if (!this.cart) {
+      const c = await this.init();
+      if (!c) throw new Error('Cart unavailable');
+    }
 
     try {
       this.isBusy = true;
-      const updated = await shopifyCartDiscountCodesUpdate(this.cart.id, [code]);
+      const updated = await shopifyCartDiscountCodesUpdate(this.cart!.id, [code]);
       this.cart = updated;
+      this.saveCachedCart(updated);
       this.broadcastUpdate();
       return updated;
     } catch (err: any) {
@@ -172,12 +233,16 @@ class CartManager {
    * Remove discount code from cart
    */
   public async removePromoCode(): Promise<ShopifyCart> {
-    if (!this.cart) return this.init();
+    if (!this.cart) {
+      const c = await this.init();
+      if (!c) throw new Error('Cart unavailable');
+    }
 
     try {
       this.isBusy = true;
-      const updated = await shopifyCartDiscountCodesUpdate(this.cart.id, []);
+      const updated = await shopifyCartDiscountCodesUpdate(this.cart!.id, []);
       this.cart = updated;
+      this.saveCachedCart(updated);
       this.broadcastUpdate();
       return updated;
     } catch (err: any) {
