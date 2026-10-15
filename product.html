@@ -75,6 +75,77 @@
     .animate-subtle-pulse {
       animation: subtlePulse 2.5s infinite ease-in-out;
     }
+
+    /* PDP Lead Description Styling */
+    #pdp-lead-description p {
+      color: #374151;
+      font-size: 14.5px;
+      line-height: 1.6;
+      margin-bottom: 0.65rem;
+    }
+    #pdp-lead-description ul {
+      list-style: none !important;
+      list-style-type: none !important;
+      padding-left: 0 !important;
+      margin: 0.5rem 0 0.85rem 0 !important;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    #pdp-lead-description li {
+      list-style: none !important;
+      list-style-type: none !important;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #1f2937;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      line-height: 1.4;
+      padding-left: 0 !important;
+      margin-left: 0 !important;
+    }
+    #pdp-lead-description li p {
+      margin: 0 !important;
+      font-size: inherit;
+      color: inherit;
+      font-weight: inherit;
+      line-height: inherit;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* Gift Quiz Overlay Styling */
+    .gift-quiz-overlay {
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+    .star-dot {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background-color: #fff;
+      border-radius: 50%;
+      opacity: 0.35;
+      animation: starTwinkle 3s ease-in-out infinite alternate;
+    }
+    .star-dot.s1 { top: 12%; left: 15%; width: 5px; height: 5px; animation-delay: 0.2s; }
+    .star-dot.s2 { top: 22%; right: 18%; animation-delay: 0.8s; }
+    .star-dot.s3 { bottom: 20%; left: 12%; animation-delay: 1.4s; }
+    .star-dot.s4 { bottom: 28%; right: 22%; animation-delay: 0.5s; }
+    .star-dot.s5 { top: 45%; left: 8%; animation-delay: 1.1s; }
+    .star-dot.s6 { top: 65%; right: 10%; width: 6px; height: 6px; animation-delay: 1.7s; }
+    .star-dot.s7 { bottom: 12%; right: 35%; animation-delay: 0.9s; }
+    @keyframes starTwinkle {
+      0% { opacity: 0.2; transform: scale(0.8); }
+      100% { opacity: 0.85; transform: scale(1.2); }
+    }
+    .fade-step-enter {
+      animation: quizStepFade 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes quizStepFade {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 
   <!-- Google tag (gtag.js) -->
@@ -107,12 +178,16 @@
           </span>
         </a>
 
-        <nav class="hidden lg:flex items-center space-x-6 xl:space-x-8 text-sm font-semibold text-emerald-50">
+        <nav class="hidden lg:flex items-center space-x-5 xl:space-x-7 text-sm font-semibold text-emerald-50">
           <a class="text-white font-bold hover:text-emerald-200 transition-colors py-2" href="/">Home</a>
           <a class="hover:text-emerald-200 transition-colors py-2" href="/shop.html">Shop</a>
           <a class="hover:text-emerald-200 transition-colors py-2" href="/categories.html">Categories</a>
           <a class="hover:text-emerald-200 transition-colors py-2" href="/about.html">About Us</a>
           <a class="hover:text-emerald-200 transition-colors py-2" href="/contact.html">Contact Us</a>
+          <button id="btn-nav-quiz" type="button" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-rose-500 to-[#ff4d61] text-white text-xs font-bold shadow-md hover:brightness-110 transition cursor-pointer">
+            <i class="w-3.5 h-3.5" data-lucide="sparkles"></i>
+            <span>Gift Finder</span>
+          </button>
         </nav>
       </div>
 
@@ -203,8 +278,8 @@
         <span id="pdp-breadcrumb-title" class="text-neutral-900 font-semibold truncate max-w-[200px] sm:max-w-xs md:max-w-md">Loading...</span>
       </nav>
 
-      <div class="hidden sm:flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50/90 border border-emerald-200/70 px-3.5 py-1.5 rounded-full whitespace-nowrap shadow-xs">
-        <i class="w-3.5 h-3.5 text-emerald-600 animate-pulse" data-lucide="zap"></i>
+      <div class="hidden sm:flex items-center gap-2 text-xs font-semibold text-neutral-800 bg-neutral-100 border border-neutral-200 px-3.5 py-1.5 rounded-full whitespace-nowrap">
+        <i class="w-3.5 h-3.5 text-neutral-600" data-lucide="truck"></i>
         <span>Free UK Tracked Delivery on orders over £40</span>
       </div>
     </div>
@@ -290,153 +365,249 @@
         </div>
       </div>
 
-      <!-- RIGHT: Clean Slim Details & Purchase -->
-      <div class="lg:col-span-5 flex flex-col gap-5">
+      <!-- RIGHT: High-Converting DTC Description Panel -->
+      <div class="lg:col-span-5 flex flex-col gap-0">
 
-        <!-- Slim Category / Vendor -->
-        <div id="pdp-vendor" class="text-xs uppercase tracking-widest text-neutral-400 font-normal">
+        <!-- ── VENDOR TAG ── -->
+        <div id="pdp-vendor" class="text-[11px] font-black tracking-[0.2em] uppercase text-[#ff4d61] mb-2">
           Present Panic
         </div>
 
-        <!-- Slim Title (Not bold) -->
-        <div>
-          <h1 id="pdp-title" class="text-2xl sm:text-3xl font-normal text-neutral-900 tracking-tight leading-snug">
-            Loading Product...
-          </h1>
+        <!-- ── BOLD HEADLINE ── -->
+        <h1 id="pdp-title" class="text-[28px] sm:text-[34px] font-black text-neutral-950 tracking-tight leading-[1.15] mb-3">
+          DIY Crochet Cat Bed Kit
+        </h1>
 
-          <!-- Clean Slim Star Rating -->
-          <div class="mt-2 flex items-center gap-2">
-            <button type="button" id="btn-scroll-reviews" class="flex items-center gap-1.5 cursor-pointer text-xs text-neutral-500 font-normal text-left" aria-label="Jump to customer reviews">
-              <div class="flex items-center text-amber-400">
-                <i class="w-3.5 h-3.5 fill-amber-400 text-amber-400" data-lucide="star"></i>
-                <i class="w-3.5 h-3.5 fill-amber-400 text-amber-400" data-lucide="star"></i>
-                <i class="w-3.5 h-3.5 fill-amber-400 text-amber-400" data-lucide="star"></i>
-                <i class="w-3.5 h-3.5 fill-amber-400 text-amber-400" data-lucide="star"></i>
-                <i class="w-3.5 h-3.5 fill-amber-400 text-amber-400" data-lucide="star"></i>
-              </div>
-              <span class="font-normal text-neutral-700">4.9</span>
-              <span class="text-neutral-400 underline underline-offset-2">(128 reviews)</span>
-            </button>
+        <!-- ── LEAD DESCRIPTION (Direct from Shopify / High-Converting Maker Tone) ── -->
+        <div id="pdp-lead-description" class="text-[14.5px] text-neutral-700 leading-relaxed mb-4">
+          <p class="mb-2.5 text-neutral-700 leading-relaxed">
+            Create a cozy handmade cat hideaway with this adorable DIY crochet cat bed kit, perfect for creative pet lovers.
+          </p>
+          <ul class="space-y-1.5 list-none p-0 my-2">
+            <li class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-neutral-800">
+              <span class="text-base flex-shrink-0">🧶</span>
+              <span>Fun &amp; Creative DIY Crochet Project</span>
+            </li>
+            <li class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-neutral-800">
+              <span class="text-base flex-shrink-0">🐱</span>
+              <span>Cozy Cat-Shaped Design with Cute Ears</span>
+            </li>
+            <li class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-neutral-800">
+              <span class="text-base flex-shrink-0">🎁</span>
+              <span>Perfect Gift for Cat &amp; Crochet Lovers</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- ── SOCIAL PROOF ROW ── -->
+        <div class="flex items-center gap-3 mb-3.5 flex-wrap">
+          <button type="button" id="btn-scroll-reviews" class="flex items-center gap-1.5 cursor-pointer group" aria-label="Jump to reviews">
+            <div class="flex text-amber-400">
+              <i class="w-4 h-4 fill-amber-400" data-lucide="star"></i>
+              <i class="w-4 h-4 fill-amber-400" data-lucide="star"></i>
+              <i class="w-4 h-4 fill-amber-400" data-lucide="star"></i>
+              <i class="w-4 h-4 fill-amber-400" data-lucide="star"></i>
+              <i class="w-4 h-4 fill-amber-400" data-lucide="star"></i>
+            </div>
+            <span class="text-sm font-bold text-neutral-900 group-hover:text-emerald-700 transition">4.8</span>
+            <span class="text-sm text-neutral-400 underline underline-offset-2">(170 reviews)</span>
+          </button>
+          <span class="text-neutral-200 select-none">|</span>
+          <span class="text-xs font-semibold text-neutral-500">🏆 #1 Best Seller in Craft Kits</span>
+        </div>
+
+        <!-- ── PRICE ROW ── -->
+        <div class="flex items-baseline gap-3 flex-wrap mb-1">
+          <span id="pdp-display-price" class="text-[38px] font-black text-neutral-950 tracking-tight leading-none">£77.99</span>
+          <span id="pdp-compare-price" class="hidden text-xl text-neutral-400 line-through font-normal">£92.00</span>
+          <span id="pdp-save-badge" class="hidden bg-[#ff4d61] text-white text-xs font-extrabold px-3 py-1.5 rounded-full tracking-wide">SAVE 15%</span>
+        </div>
+        <p class="text-xs text-neutral-400 mb-4">Taxes included. Free UK delivery over £40.</p>
+
+        <!-- ── STOCK / URGENCY ── -->
+        <div class="bg-neutral-50 border border-neutral-200/90 rounded-xl px-4 py-3 flex flex-col gap-1.5 mb-4">
+          <div id="pdp-stock-status" class="flex items-center gap-2 text-sm font-bold text-neutral-950">
+            <i data-lucide="check-circle-2" class="w-4 h-4 flex-shrink-0 text-[#0B2D19]"></i>
+            <span>In Stock — Ships Within 24 Hours</span>
+          </div>
+          <div class="flex items-center gap-2 text-xs font-semibold text-neutral-700">
+            <span class="w-2 h-2 rounded-full bg-[#dc2626] flex-shrink-0"></span>
+            <span>Only 10 left in stock — high demand item</span>
           </div>
         </div>
 
-        <!-- Clean Borderless Price & Stock -->
-        <div class="flex items-baseline gap-3 flex-wrap">
-          <span id="pdp-display-price" class="text-2xl sm:text-3xl font-normal text-neutral-900">
-            $0.00
-          </span>
-          <span id="pdp-compare-price" class="hidden text-base text-neutral-400 line-through font-normal">
-            $0.00
-          </span>
-          <span id="pdp-save-badge" class="hidden text-xs text-rose-600 font-normal">
-            Save 0%
-          </span>
-
-          <div id="pdp-stock-status" class="ml-auto flex items-center gap-1.5 text-xs text-emerald-700 font-normal">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            <span>In stock</span>
+        <!-- ── FLASH SALE COUNTDOWN ── -->
+        <div class="flex items-center gap-3 bg-neutral-950 text-white rounded-xl px-4 py-3 mb-4 shadow-sm">
+          <div class="flex flex-col">
+            <span class="text-[10px] font-bold tracking-widest uppercase text-amber-400">⚡ Flash Deal</span>
+            <span class="text-xs font-bold text-white">This price expires in:</span>
+          </div>
+          <div class="flex items-center gap-1.5 ml-auto">
+            <div class="flex flex-col items-center">
+              <span id="pdp-timer-h" class="bg-white text-neutral-950 font-black text-sm w-10 h-10 flex items-center justify-center rounded-lg shadow-inner">00</span>
+              <span class="text-[9px] text-neutral-400 mt-0.5 font-semibold">HRS</span>
+            </div>
+            <span class="text-neutral-500 font-bold text-lg mb-3">:</span>
+            <div class="flex flex-col items-center">
+              <span id="pdp-timer-m" class="bg-white text-neutral-950 font-black text-sm w-10 h-10 flex items-center justify-center rounded-lg shadow-inner">07</span>
+              <span class="text-[9px] text-neutral-400 mt-0.5 font-semibold">MIN</span>
+            </div>
+            <span class="text-neutral-500 font-bold text-lg mb-3">:</span>
+            <div class="flex flex-col items-center">
+              <span id="pdp-timer-s" class="bg-white text-neutral-950 font-black text-sm w-10 h-10 flex items-center justify-center rounded-lg shadow-inner">04</span>
+              <span class="text-[9px] text-neutral-400 mt-0.5 font-semibold">SEC</span>
+            </div>
           </div>
         </div>
 
-        <!-- Slim Product Description -->
-        <div id="pdp-lead-description" class="text-sm text-neutral-600 font-normal leading-relaxed">
-          Detailed product information loading directly from Shopify...
+        <!-- ── FEATURE PILLS (DTC Converting Badges) ── -->
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-neutral-100 text-neutral-800 border border-neutral-200">
+            <span>🧶</span> Beginner Friendly
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-neutral-100 text-neutral-800 border border-neutral-200">
+            <span>🌿</span> 100% Organic Cotton
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-neutral-100 text-neutral-800 border border-neutral-200">
+            <span>⏱</span> Done in 35-45 Mins
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-neutral-100 text-neutral-800 border border-neutral-200">
+            <span>🐾</span> Non-Slip Base Pad
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-neutral-100 text-neutral-800 border border-neutral-200">
+            <span>🎁</span> Gift Box Included
+          </span>
         </div>
 
-        <!-- Dynamic Shopify Variants -->
-        <div id="pdp-variants-container" class="space-y-4">
-          <!-- Injected dynamically by storefront.ts based on product.options -->
+        <!-- ── WHAT'S IN THE BOX ── -->
+        <div class="border border-neutral-200 rounded-xl p-4 mb-4 bg-white shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-base">📦</span>
+              <span class="text-xs font-extrabold text-neutral-900 uppercase tracking-wider">What's In The Box</span>
+            </div>
+            <span class="text-[11px] font-bold text-neutral-800 bg-neutral-100 px-2.5 py-0.5 rounded-full border border-neutral-200">All-Inclusive Kit</span>
+          </div>
+          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <li class="flex items-center gap-2 text-xs text-neutral-700">
+              <span class="w-4 h-4 rounded-full bg-[#0B2D19] text-white flex items-center justify-center flex-shrink-0 text-[10px] font-bold">✓</span>
+              <span>Chunky organic cotton yarn</span>
+            </li>
+            <li class="flex items-center gap-2 text-xs text-neutral-700">
+              <span class="w-4 h-4 rounded-full bg-[#0B2D19] text-white flex items-center justify-center flex-shrink-0 text-[10px] font-bold">✓</span>
+              <span>Ergonomic crochet needle</span>
+            </li>
+            <li class="flex items-center gap-2 text-xs text-neutral-700">
+              <span class="w-4 h-4 rounded-full bg-[#0B2D19] text-white flex items-center justify-center flex-shrink-0 text-[10px] font-bold">✓</span>
+              <span>Pre-cut non-slip base pad</span>
+            </li>
+            <li class="flex items-center gap-2 text-xs text-neutral-700">
+              <span class="w-4 h-4 rounded-full bg-[#0B2D19] text-white flex items-center justify-center flex-shrink-0 text-[10px] font-bold">✓</span>
+              <span>Step-by-step visual guide</span>
+            </li>
+            <li class="flex items-center gap-2 text-xs text-neutral-700 sm:col-span-2">
+              <span class="w-4 h-4 rounded-full bg-[#0B2D19] text-white flex items-center justify-center flex-shrink-0 text-[10px] font-bold">✓</span>
+              <span>Luxury gift-ready presentation box</span>
+            </li>
+          </ul>
         </div>
 
-        <!-- Optional Custom Personalization Section -->
-        <div id="pdp-personalization-section" class="hidden border border-neutral-200 rounded-xl p-4 space-y-3">
+        <!-- ── RECENT BUYER SOCIAL PROOF TICKER ── -->
+        <div class="flex items-center gap-2.5 bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5 mb-5">
+          <div class="flex -space-x-1.5 flex-shrink-0">
+            <div class="w-6 h-6 rounded-full bg-amber-400 border-2 border-white flex items-center justify-center text-[9px] font-black text-amber-900">S</div>
+            <div class="w-6 h-6 rounded-full bg-rose-400 border-2 border-white flex items-center justify-center text-[9px] font-black text-white">E</div>
+            <div class="w-6 h-6 rounded-full bg-neutral-800 border-2 border-white flex items-center justify-center text-[9px] font-black text-white">M</div>
+          </div>
+          <p class="text-[11px] text-neutral-700 font-medium leading-snug">
+            <span class="font-bold text-neutral-950">Sarah from Manchester</span> just bought this · <span class="text-neutral-400">2 mins ago</span>
+          </p>
+        </div>
+
+        <!-- ── DYNAMIC SHOPIFY VARIANTS ── -->
+        <div id="pdp-variants-container" class="space-y-4 mb-4">
+          <!-- Injected by storefront.ts -->
+        </div>
+
+        <!-- ── PERSONALIZATION ── -->
+        <div id="pdp-personalization-section" class="hidden border border-neutral-200 rounded-xl p-4 space-y-3 mb-4">
           <div class="flex items-center gap-2">
             <i data-lucide="edit-3" class="w-4 h-4 text-neutral-600"></i>
-            <h3 class="text-xs font-medium text-neutral-900">Personalize Your Gift</h3>
+            <h3 class="text-xs font-bold text-neutral-900">Personalize Your Gift</h3>
           </div>
-          <p class="text-xs text-neutral-500 font-normal">
-            Enter the exact name, initials, or dedication message for this item.
-          </p>
-
+          <p class="text-xs text-neutral-500">Enter the name, initials, or message for this item.</p>
           <div class="space-y-3">
             <div>
-              <label for="input-custom-name" class="block text-xs font-normal text-neutral-600 mb-1">
+              <label for="input-custom-name" class="block text-xs font-medium text-neutral-600 mb-1">
                 Name / Personalization Text <span class="text-rose-500">*</span>
               </label>
-              <input 
-                type="text" 
-                id="input-custom-name" 
-                placeholder="Enter recipient name or initials" 
-                maxlength="40" 
-                class="w-full text-xs sm:text-sm bg-white border border-neutral-300 rounded-lg px-3.5 py-2 focus:border-neutral-900 outline-none transition font-normal"
-              >
+              <input type="text" id="input-custom-name" placeholder="Enter recipient name or initials" maxlength="40"
+                class="w-full text-xs sm:text-sm bg-white border border-neutral-300 rounded-lg px-3.5 py-2 focus:border-neutral-900 outline-none transition">
             </div>
-
             <div>
-              <label for="input-custom-message" class="block text-xs font-normal text-neutral-600 mb-1">
-                Optional Gift Message
-              </label>
-              <input 
-                type="text" 
-                id="input-custom-message" 
-                placeholder="e.g. Happy Birthday" 
-                maxlength="100" 
-                class="w-full text-xs sm:text-sm bg-white border border-neutral-300 rounded-lg px-3.5 py-2 focus:border-neutral-900 outline-none transition font-normal"
-              >
+              <label for="input-custom-message" class="block text-xs font-medium text-neutral-600 mb-1">Optional Gift Message</label>
+              <input type="text" id="input-custom-message" placeholder="e.g. Happy Birthday" maxlength="100"
+                class="w-full text-xs sm:text-sm bg-white border border-neutral-300 rounded-lg px-3.5 py-2 focus:border-neutral-900 outline-none transition">
             </div>
           </div>
         </div>
 
-        <!-- Clean Actions: Quantity, Add to Cart, Real Shop Pay Button -->
-        <div class="space-y-3 pt-2">
-          <div class="flex items-center gap-3">
-            <!-- Slim Quantity Selector -->
-            <div class="flex items-center border border-neutral-300 rounded-lg bg-white">
-              <button type="button" id="btn-qty-minus" aria-label="Decrease quantity" class="w-9 h-11 flex items-center justify-center text-neutral-600 hover:text-neutral-900 transition cursor-pointer font-normal text-base">
-                &minus;
-              </button>
-              <span id="qty-val" class="w-8 text-center text-sm font-normal text-neutral-900 select-none">1</span>
-              <button type="button" id="btn-qty-plus" aria-label="Increase quantity" class="w-9 h-11 flex items-center justify-center text-neutral-600 hover:text-neutral-900 transition cursor-pointer font-normal text-base">
-                &#43;
-              </button>
+        <!-- ── CTA BLOCK ── -->
+        <div class="space-y-2.5">
+          <!-- Quantity + Add to Cart -->
+          <div class="flex items-center gap-2.5">
+            <div class="flex items-center border-2 border-neutral-200 rounded-xl bg-white overflow-hidden">
+              <button type="button" id="btn-qty-minus" aria-label="Decrease quantity"
+                class="w-10 h-12 flex items-center justify-center text-neutral-600 hover:bg-neutral-50 transition cursor-pointer text-lg font-light">−</button>
+              <span id="qty-val" class="w-8 text-center text-sm font-bold text-neutral-900 select-none">1</span>
+              <button type="button" id="btn-qty-plus" aria-label="Increase quantity"
+                class="w-10 h-12 flex items-center justify-center text-neutral-600 hover:bg-neutral-50 transition cursor-pointer text-lg font-light">+</button>
             </div>
-
-            <!-- Add to Cart Button -->
-            <button 
-              type="button" 
-              id="btn-add-pdp-cart" 
-              class="flex-1 bg-neutral-900 hover:bg-neutral-800 text-white text-sm font-medium py-3.5 px-6 rounded-lg transition duration-150 flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
-            >
-              <span id="btn-add-text">Add to cart</span>
+            <button type="button" id="btn-add-pdp-cart"
+              class="flex-1 bg-[#0B2D19] hover:bg-[#144929] active:scale-[0.98] text-white text-sm font-bold py-3.5 px-6 rounded-xl transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-neutral-900/15">
+              <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+              <span id="btn-add-text">Add to Cart</span>
             </button>
           </div>
 
-          <!-- Authentic Shopify Shop Pay Button (No AI icons or gimmicks) -->
-          <button 
-            type="button" 
-            id="btn-buy-now" 
-            class="w-full bg-[#5a31f4] hover:bg-[#4a22e0] text-white text-sm font-medium py-3.5 px-6 rounded-lg transition duration-150 shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.99]"
-          >
+          <!-- Buy Now / Shop Pay -->
+          <button type="button" id="btn-buy-now"
+            class="w-full bg-[#5a31f4] hover:bg-[#4a22e0] active:scale-[0.98] text-white text-sm font-bold py-3.5 px-6 rounded-xl transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-violet-500/20">
             <span>Buy with</span>
             <span class="font-extrabold italic tracking-tight text-base leading-none">Shop Pay</span>
           </button>
         </div>
 
-        <!-- Slim Minimal Shipping & Returns Note -->
-        <div class="border-t border-neutral-100 pt-5 space-y-2 text-xs text-neutral-500 font-normal">
-          <div class="flex items-center gap-2.5">
-            <i data-lucide="truck" class="w-4 h-4 text-neutral-400 stroke-[1.5]"></i>
-            <span>Free tracked UK shipping on orders over £40</span>
+        <!-- ── GUARANTEE BADGE ROW ── -->
+        <div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-neutral-100">
+          <div class="flex flex-col items-center text-center gap-1">
+            <i data-lucide="truck" class="w-5 h-5 text-neutral-400 stroke-[1.5]"></i>
+            <span class="text-[10px] font-semibold text-neutral-500 leading-tight">Free UK<br>Tracked Delivery</span>
           </div>
-          <div class="flex items-center gap-2.5">
-            <i data-lucide="shield-check" class="w-4 h-4 text-neutral-400 stroke-[1.5]"></i>
-            <span>30-day hassle-free returns</span>
+          <div class="flex flex-col items-center text-center gap-1">
+            <i data-lucide="shield-check" class="w-5 h-5 text-neutral-400 stroke-[1.5]"></i>
+            <span class="text-[10px] font-semibold text-neutral-500 leading-tight">30-Day<br>Returns</span>
           </div>
+          <div class="flex flex-col items-center text-center gap-1">
+            <i data-lucide="lock" class="w-5 h-5 text-neutral-400 stroke-[1.5]"></i>
+            <span class="text-[10px] font-semibold text-neutral-500 leading-tight">Secure<br>Checkout</span>
+          </div>
+        </div>
+
+        <!-- ── PAYMENT ICONS ── -->
+        <div class="flex items-center justify-center gap-2 mt-3 opacity-50">
+          <span class="text-[10px] text-neutral-400 font-medium">We accept:</span>
+          <span class="text-[10px] font-bold text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded">VISA</span>
+          <span class="text-[10px] font-bold text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded">MC</span>
+          <span class="text-[10px] font-bold text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded">AMEX</span>
+          <span class="text-[10px] font-bold text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded">PayPal</span>
+          <span class="text-[10px] font-bold text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded">Apple Pay</span>
         </div>
 
       </div>
 
     </div>
+
 
     <!-- 4. DEDICATED HIGH-CONVERTING DTC LANDING EXPERIENCE (DIY CROCHET CAT BED KIT ONLY) -->
     <div id="cat-bed-landing-experience" class="mt-16 sm:mt-24 space-y-20 sm:space-y-28">
@@ -1395,7 +1566,7 @@
         <h4 id="sticky-pdp-title" class="font-bold text-neutral-950 text-xs sm:text-sm truncate">Product Name</h4>
         <div class="flex items-center gap-2 mt-0.5">
           <span id="sticky-pdp-price" class="font-extrabold text-[#0B2D19] text-xs sm:text-sm">$0.00</span>
-          <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60 hidden sm:inline-block">In Stock</span>
+          <span class="text-[10px] font-bold text-neutral-800 bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200 hidden sm:inline-block">In Stock</span>
         </div>
       </div>
     </div>
@@ -1634,7 +1805,109 @@
     <span id="action-toast-text">Updated!</span>
   </div>
 
+  <!-- BEGIN: GIFT FINDER QUIZ MODAL (Fully Responsive for All Screen Sizes) -->
+  <div class="fixed inset-0 bg-neutral-950/85 backdrop-blur-md z-[250] hidden items-center justify-center p-3 sm:p-6 overflow-y-auto pointer-events-auto gift-quiz-overlay" id="gift-quiz-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="quiz-main-headline">
+    <!-- Starfield Backdrop Decor -->
+    <div class="quiz-backdrop-stars pointer-events-none absolute inset-0" aria-hidden="true">
+      <span class="star-dot s1"></span>
+      <span class="star-dot s2"></span>
+      <span class="star-dot s3"></span>
+      <span class="star-dot s4"></span>
+      <span class="star-dot s5"></span>
+      <span class="star-dot s6"></span>
+      <span class="star-dot s7"></span>
+    </div>
+
+    <!-- Modal Box Container -->
+    <div class="relative w-full max-w-xl lg:max-w-2xl bg-white rounded-3xl shadow-2xl p-6 sm:p-10 my-auto border border-neutral-100 z-10 transition-all duration-300 max-h-[92vh] overflow-y-auto no-scrollbar pointer-events-auto" id="quiz-modal-container">
+      <!-- Close Button -->
+      <button class="absolute top-5 right-5 w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition cursor-pointer z-20" id="btn-close-gift-quiz" aria-label="Close gift quiz" onclick="window.closeGiftQuiz ? window.closeGiftQuiz() : null">
+        <i class="w-4 h-4 pointer-events-none" data-lucide="x"></i>
+      </button>
+
+      <!-- Headline -->
+      <div class="text-center mb-6 pt-2">
+        <span class="inline-block text-[11px] font-extrabold uppercase tracking-widest text-[#ff4d61] bg-rose-50 px-3 py-1 rounded-full mb-3">
+          Present Panic Gift Finder
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-neutral-950 tracking-tight leading-snug" id="quiz-main-headline">
+          Answer 4 questions.<br>Get the perfect gift.
+        </h2>
+      </div>
+
+      <!-- Question Card Wrapper -->
+      <div class="flex flex-col" id="quiz-card-wrapper">
+        <!-- Progress Dashes -->
+        <div class="flex justify-center gap-2 mb-6" id="quiz-progress-pills" aria-label="Quiz progress">
+          <span class="w-10 sm:w-12 h-1.5 rounded-full bg-[#ff4d61] transition-all duration-300" data-step="1"></span>
+          <span class="w-10 sm:w-12 h-1.5 rounded-full bg-gray-200 transition-all duration-300" data-step="2"></span>
+          <span class="w-10 sm:w-12 h-1.5 rounded-full bg-gray-200 transition-all duration-300" data-step="3"></span>
+          <span class="w-10 sm:w-12 h-1.5 rounded-full bg-gray-200 transition-all duration-300" data-step="4"></span>
+        </div>
+
+        <!-- Question Body Content -->
+        <div class="w-full flex flex-col items-center py-2" id="quiz-body-content">
+          <!-- Populated by JavaScript -->
+        </div>
+
+        <!-- Card Navigation Buttons -->
+        <div class="flex items-center justify-between border-t border-gray-100 pt-5 mt-4 text-xs font-semibold text-neutral-500" id="quiz-card-nav">
+          <button type="button" class="inline-flex items-center gap-1.5 text-neutral-600 hover:text-neutral-950 transition opacity-0 pointer-events-none cursor-pointer" id="btn-quiz-prev">
+            <i class="w-3.5 h-3.5 pointer-events-none" data-lucide="arrow-left"></i>
+            <span>Back</span>
+          </button>
+          
+          <span class="text-neutral-400 font-bold tracking-wider" id="quiz-step-counter">1 / 4</span>
+
+          <button type="button" class="text-neutral-500 hover:text-rose-500 transition cursor-pointer" id="btn-quiz-skip" onclick="window.showQuizResults ? window.showQuizResults() : null">
+            Skip quiz &rarr;
+          </button>
+        </div>
+      </div>
+
+      <!-- Recommendations Results Wrapper -->
+      <div class="hidden flex-col" id="quiz-recommendations-wrapper">
+        <!-- Populated on completion -->
+      </div>
+    </div>
+  </div>
+  <!-- END: GIFT FINDER QUIZ MODAL -->
+
   <!-- Shopify Storefront Core Controller -->
   <script type="module" src="/src/storefront.ts"></script>
+
+  <!-- Flash Sale Countdown Timer Script -->
+  <script>
+    (function() {
+      // Set a random end time between 8-14 min from now if not already set
+      const KEY = 'pp_flash_end';
+      let endTime = parseInt(localStorage.getItem(KEY) || '0');
+      if (!endTime || endTime < Date.now()) {
+        endTime = Date.now() + (Math.floor(Math.random() * 6) + 8) * 60 * 1000 + Math.floor(Math.random() * 60) * 1000;
+        localStorage.setItem(KEY, endTime);
+      }
+      function updateTimer() {
+        const diff = Math.max(0, endTime - Date.now());
+        const h = Math.floor(diff / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        const pad = n => String(n).padStart(2, '0');
+        const th = document.getElementById('pdp-timer-h');
+        const tm = document.getElementById('pdp-timer-m');
+        const ts = document.getElementById('pdp-timer-s');
+        if (th) th.textContent = pad(h);
+        if (tm) tm.textContent = pad(m);
+        if (ts) ts.textContent = pad(s);
+        if (diff <= 0) {
+          // Reset timer when it hits 0
+          endTime = Date.now() + (Math.floor(Math.random() * 6) + 8) * 60 * 1000;
+          localStorage.setItem(KEY, endTime);
+        }
+      }
+      updateTimer();
+      setInterval(updateTimer, 1000);
+    })();
+  </script>
+
 </body>
 </html>

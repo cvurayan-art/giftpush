@@ -1237,7 +1237,26 @@ async function initProductPageCommerce() {
 
     // 3. Descriptions & Specs
     const leadDesc = document.getElementById('pdp-lead-description');
-    if (leadDesc) leadDesc.textContent = product.description || 'Handcrafted and tailored with exceptional care.';
+    if (leadDesc) {
+      if (product.descriptionHtml) {
+        let cleanHtml = product.descriptionHtml
+          .replace(/<div>\s*<div>\s*<p>/gi, '<p>')
+          .replace(/<\/p>\s*<\/div>\s*<\/div>/gi, '</p>')
+          .replace(/<div>/gi, '<p>')
+          .replace(/<\/div>/gi, '</p>')
+          .replace(/<p>\s*<\/p>/gi, '');
+        leadDesc.innerHTML = cleanHtml;
+      } else if (product.description) {
+        const lines = product.description.split(/(?=[🧶🐱🎁•\-\*])/).map(s => s.trim()).filter(Boolean);
+        if (lines.length > 1) {
+          const p = `<p class="mb-2 text-neutral-700 leading-relaxed">${lines[0]}</p>`;
+          const bullets = lines.slice(1).map(l => `<li class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-neutral-800">${l}</li>`).join('');
+          leadDesc.innerHTML = `${p}<ul class="space-y-1.5 list-none p-0 my-2">${bullets}</ul>`;
+        } else {
+          leadDesc.innerHTML = `<p class="text-neutral-700 leading-relaxed">${product.description}</p>`;
+        }
+      }
+    }
 
     const fullDesc = document.getElementById('pdp-full-description');
     if (fullDesc) {
@@ -1428,7 +1447,7 @@ async function initProductPageCommerce() {
         }
       } else {
         if (stockEl) {
-          stockEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span class="text-emerald-600">In Stock</span>`;
+          stockEl.innerHTML = `<svg class="w-4 h-4 text-[#0B2D19] flex-shrink-0 inline-block" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg><span class="text-neutral-950 font-bold">In Stock — Ships Within 24 Hours</span>`;
         }
         if (addBtn) {
           addBtn.removeAttribute('disabled');
@@ -2117,6 +2136,9 @@ export function initGiftQuiz() {
   }
 
   function closeGiftQuiz() {
+    try {
+      localStorage.setItem('pp_quiz_seen', '1');
+    } catch (_) {}
     if (!quizOverlay) return;
     quizOverlay.classList.remove('active');
     setTimeout(() => {
@@ -2134,6 +2156,22 @@ export function initGiftQuiz() {
   // Expose globally for HTML onclick and mobile drawer
   (window as any).openGiftQuiz = openGiftQuiz;
   (window as any).closeGiftQuiz = closeGiftQuiz;
+  (window as any).showQuizResults = showQuizResults;
+
+  // Auto-show existing Gift Finder Quiz on first visit only
+  const QUIZ_SEEN_KEY = 'pp_quiz_seen';
+  try {
+    if (!localStorage.getItem(QUIZ_SEEN_KEY)) {
+      setTimeout(() => {
+        if (!localStorage.getItem(QUIZ_SEEN_KEY) && quizOverlay && quizOverlay.classList.contains('hidden')) {
+          localStorage.setItem(QUIZ_SEEN_KEY, '1');
+          openGiftQuiz();
+        }
+      }, 1500);
+    }
+  } catch (err) {
+    console.warn('Quiz auto-prompt error:', err);
+  }
 
   // Bind all potential quiz trigger elements
   const triggers = document.querySelectorAll(
@@ -2249,6 +2287,9 @@ export function initGiftQuiz() {
   }
 
   async function showQuizResults() {
+    try {
+      localStorage.setItem('pp_quiz_seen', '1');
+    } catch (_) {}
     isTransitioning = false;
 
     if (quizModalContainer) {
@@ -2470,6 +2511,9 @@ export function initGiftQuiz() {
   if (btnQuizSkip) {
     btnQuizSkip.addEventListener('click', (e) => {
       e.preventDefault();
+      try {
+        localStorage.setItem('pp_quiz_seen', '1');
+      } catch (_) {}
       showQuizResults();
     });
   }

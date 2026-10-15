@@ -515,35 +515,35 @@ export async function getShopifyProductByHandle(handle: string): Promise<Shopify
   if (!handle) return null;
   const cacheKey = `product_handle_${handle}`;
 
-  // 1. Fast Cache Hit (0ms) - If shopper came from Home or Shop, it is already cached!
-  const cached = getCachedData<ShopifyProduct>(cacheKey);
-  if (cached && cached.data) {
-    if (cached.isStale) {
-      dedupeRequest(cacheKey, () => fetchProductByHandleFromShopify(handle, cacheKey)).then(fresh => {
-        if (fresh) {
-          window.dispatchEvent(new CustomEvent('shopify:product:updated', { detail: fresh }));
-        }
-      }).catch(() => {});
+  // 1. If Shopify is configured, fetch live product data from Shopify
+  if (isShopifyConfigured()) {
+    const cached = getCachedData<ShopifyProduct>(cacheKey);
+    // Return immediately if cache is fresh
+    if (cached && cached.data && !cached.isStale) {
+      return cached.data;
     }
-    return cached.data;
+
+    try {
+      const fresh = await dedupeRequest(cacheKey, () => fetchProductByHandleFromShopify(handle, cacheKey));
+      if (fresh) {
+        return fresh;
+      }
+    } catch (err) {
+      console.warn('[Shopify] Error fetching product by handle, falling back:', err);
+    }
+
+    if (cached && cached.data) {
+      return cached.data;
+    }
   }
 
-  // 2. Check Fallback Catalog for Instant Render
+  // 2. Fallback Catalog
   const fallbackMatch = getFallbackProducts().find(p => p.handle === handle);
   if (fallbackMatch) {
-    dedupeRequest(cacheKey, () => fetchProductByHandleFromShopify(handle, cacheKey)).then(fresh => {
-      if (fresh) {
-        window.dispatchEvent(new CustomEvent('shopify:product:updated', { detail: fresh }));
-      }
-    }).catch(() => {});
     return fallbackMatch;
   }
 
-  if (!isShopifyConfigured()) {
-    return getFallbackProducts()[0] || null;
-  }
-
-  return dedupeRequest(cacheKey, () => fetchProductByHandleFromShopify(handle, cacheKey));
+  return getFallbackProducts()[0] || null;
 }
 
 async function fetchCollectionsFromShopify(first: number, cacheKey: string): Promise<ShopifyCollection[]> {
@@ -1110,7 +1110,8 @@ export const DEFAULT_CATALOG_PRODUCTS: ShopifyProduct[] = [
     id: "gid://shopify/Product/16352296370257",
     title: "DIY Crochet Cat Bed Kit",
     handle: "diy-crochet-cat-bed-kit",
-    description: "Create a cozy handmade hideaway for your cat with this DIY Crochet Cat Bed Kit. Designed for craft lovers, this creative kit lets you crochet an adorable cat-shaped bed while enjoying a fun and rewarding DIY project. The finished design features cute pointed cat ears and a spacious front opening, creating a snug resting space for your feline friend.",
+    description: "Create a cozy handmade cat hideaway with this adorable DIY crochet cat bed kit, perfect for creative pet lovers. 🧶 Fun & Creative DIY Crochet Project 🐱 Cozy Cat-Shaped Design with Cute Ears 🎁 Perfect Gift for Cat & Crochet Lovers",
+    descriptionHtml: "<p>Create a cozy handmade cat hideaway with this adorable DIY crochet cat bed kit, perfect for creative pet lovers.</p>\n<ul>\n<li>🧶 Fun &amp; Creative DIY Crochet Project</li>\n<li>🐱 Cozy Cat-Shaped Design with Cute Ears</li>\n<li>🎁 Perfect Gift for Cat &amp; Crochet Lovers</li>\n</ul>",
     vendor: "Present Panic",
     productType: "Handmade & Crafts",
     tags: ["cat bed", "diy", "crochet", "pet", "handmade", "cozy", "gift", "crafts"],
