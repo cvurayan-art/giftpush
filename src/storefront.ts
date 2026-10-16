@@ -116,12 +116,26 @@ function createProductCardHTML(p: ShopifyProduct): string {
 
   return `
     <div class="flex flex-col group w-full relative transition-all duration-300">
-      <div class="relative w-full aspect-square overflow-hidden mb-3 flex items-center justify-center bg-white rounded-lg">
+      <div class="relative w-full aspect-square overflow-hidden mb-3 flex items-center justify-center bg-white rounded-xl border border-neutral-100 shadow-2xs hover:shadow-xs transition-shadow">
         ${hasCompare ? `<span class="absolute top-2.5 left-2.5 bg-neutral-900 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider z-10 shadow-xs">Sale</span>` : ''}
         <a href="/product.html?handle=${p.handle}" class="w-full h-full flex items-center justify-center p-2" aria-label="${p.title}">
           <img alt="${p.title}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 pointer-events-none" src="${img}" loading="lazy">
         </a>
-        <button class="add-to-cart-action-btn absolute bottom-3 left-3 right-3 bg-neutral-900 hover:bg-black text-white text-xs font-semibold py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-200 cursor-pointer shadow-md z-10"
+      </div>
+      <div class="flex flex-col text-left flex-1 justify-between">
+        <div>
+          <div class="text-[11px] sm:text-xs font-medium text-neutral-500 uppercase tracking-wider mb-1">
+            ${p.productType || 'Gifts'}
+          </div>
+          <a href="/product.html?handle=${p.handle}" class="text-sm sm:text-base font-semibold text-neutral-900 hover:text-neutral-600 transition block mb-1 line-clamp-1 sm:line-clamp-2 leading-snug">
+            ${p.title}
+          </a>
+          <div class="flex items-baseline gap-2 mb-3">
+            <span class="text-sm sm:text-base font-bold text-neutral-900">${price}</span>
+            ${hasCompare ? `<span class="text-xs sm:text-sm text-neutral-400 line-through font-normal">${comparePrice}</span>` : ''}
+          </div>
+        </div>
+        <button class="add-to-cart-action-btn w-full bg-neutral-900 hover:bg-black text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-xs hover:shadow-md active:scale-[0.98]"
                 data-variant-id="${variantId}"
                 data-title="${p.title}"
                 data-price="${price}">
@@ -132,18 +146,6 @@ function createProductCardHTML(p: ShopifyProduct): string {
           </svg>
           <span>Add to Cart</span>
         </button>
-      </div>
-      <div class="flex flex-col text-left">
-        <div class="text-[11px] sm:text-xs font-medium text-neutral-500 uppercase tracking-wider mb-1">
-          ${p.productType || 'Gifts'}
-        </div>
-        <a href="/product.html?handle=${p.handle}" class="text-sm sm:text-base font-semibold text-neutral-900 hover:text-neutral-600 transition block mb-1 line-clamp-1 sm:line-clamp-2 leading-snug">
-          ${p.title}
-        </a>
-        <div class="flex items-baseline gap-2">
-          <span class="text-sm sm:text-base font-bold text-neutral-900">${price}</span>
-          ${hasCompare ? `<span class="text-xs sm:text-sm text-neutral-400 line-through font-normal">${comparePrice}</span>` : ''}
-        </div>
       </div>
     </div>
   `;
@@ -159,7 +161,11 @@ function bindAddToCartButtons(container: HTMLElement) {
       if (!variantId) return;
 
       const origText = btn.innerHTML;
-      btn.innerHTML = `<span>Adding...</span>`;
+      btn.innerHTML = `
+        <div class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin flex-shrink-0"></div>
+        <span>Adding...</span>
+      `;
+      (btn as HTMLElement).style.pointerEvents = 'none';
       try {
         await cart.addItem(variantId, 1);
         showToast(`Added "${title}" to your cart!`);
@@ -167,6 +173,7 @@ function bindAddToCartButtons(container: HTMLElement) {
         showToast('Could not add item to bag. Please try again.');
       } finally {
         btn.innerHTML = origText;
+        (btn as HTMLElement).style.pointerEvents = 'auto';
       }
     });
   });
