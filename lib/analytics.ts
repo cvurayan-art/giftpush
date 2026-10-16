@@ -206,9 +206,12 @@ class AnalyticsManager {
     }
 
     try {
-      window.fbq('init', this.pixelId);
+      if (!(window as any).__pp_pixel_inited) {
+        window.fbq('init', this.pixelId);
+        (window as any).__pp_pixel_inited = true;
+      }
       this.isPixelLoaded = true;
-      console.log(`[Analytics] Meta Pixel (${this.pixelId}) initialized successfully.`);
+      console.log(`[Analytics] Meta Pixel (${this.pixelId}) ready.`);
     } catch (err) {
       console.warn('[Analytics] Meta Pixel initialization failed:', err);
     }
@@ -295,14 +298,16 @@ class AnalyticsManager {
   public trackPageView(pageTitle?: string, pagePath?: string) {
     const title = pageTitle || document.title;
     const path = pagePath || window.location.pathname + window.location.search;
-    const eventId = this.generateEventId('pv');
+    const headEventId = typeof window !== 'undefined' ? (window as any).__pp_pageview_event_id : null;
+    const eventId = headEventId || this.generateEventId('pv');
 
-    // 1. Meta Pixel (Browser)
-    if (window.fbq) {
+    // 1. Meta Pixel (Browser) - fire only if not already fired by head tag
+    if (window.fbq && !(window as any).__pp_pageview_tracked) {
       window.fbq('track', 'PageView', {}, { eventID: eventId });
+      (window as any).__pp_pageview_tracked = true;
     }
 
-    // 2. Meta Conversions API (Server)
+    // 2. Meta Conversions API (Server) - always sent with identical eventId for 1:1 deduplication!
     this.sendToCAPI({
       eventName: 'PageView',
       eventId,

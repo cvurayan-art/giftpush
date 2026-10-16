@@ -50,8 +50,28 @@
 
   gtag('config', 'G-WEXQP7YJZ5');
 </script>
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1569317721181690');
+window.__pp_pixel_inited = true;
+window.__pp_pageview_event_id = 'pv_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+window.__pp_pageview_tracked = true;
+fbq('track', 'PageView', {}, { eventID: window.__pp_pageview_event_id });
+</script>
+<!-- End Meta Pixel Code -->
 </head>
 <body class="bg-[#fafafa] text-neutral-900 font-sans antialiased min-h-screen flex flex-col selection:bg-rose-500 selection:text-white">
+  <!-- Meta Pixel Noscript Fallback -->
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1569317721181690&amp;ev=PageView&amp;noscript=1"/></noscript>
 
   
   <!-- BEGIN: MainHeader (Full Width) -->
