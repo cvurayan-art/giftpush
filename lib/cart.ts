@@ -12,7 +12,9 @@ import {
   shopifyCartLinesRemove,
   shopifyCartDiscountCodesUpdate,
   formatShopifyMoney,
+  formatVariantGid,
 } from './shopify';
+import { analytics } from './analytics';
 
 const SHOPIFY_CART_ID_KEY = 'present_panic_shopify_cart_id';
 const SHOPIFY_CART_SNAPSHOT_KEY = 'present_panic_shopify_cart_snapshot';
@@ -99,9 +101,17 @@ class CartManager {
           this.saveCachedCart(fetched);
           this.broadcastUpdate();
           return fetched;
+        } else {
+          // Stale / expired / deleted cart on Shopify - clear it!
+          this.setCartId(null);
+          this.saveCachedCart(null);
+          this.cart = null;
         }
       } catch (err) {
         console.warn('[CartManager] Existing cart expired or invalid:', err);
+        this.setCartId(null);
+        this.saveCachedCart(null);
+        this.cart = null;
       }
     }
 
@@ -112,26 +122,67 @@ class CartManager {
     return this.cart;
   }
 
+  private triggerAddTracking(cart: ShopifyCart, variantId: string, quantity: number) {
+    try {
+      const line = cart.lines?.nodes?.find(
+        (n) => n.merchandise?.id === variantId || formatVariantGid(n.merchandise?.id || '') === variantId
+      );
+      if (line) {
+        analytics.trackAddToCart(
+          {
+            id: line.merchandise.product?.id || variantId,
+            variantId: line.merchandise.id || variantId,
+            title: line.merchandise.product?.title || line.merchandise.title || 'Product',
+            price: line.merchandise.price?.amount || 0,
+            currency: line.merchandise.price?.currencyCode || 'GBP',
+            category: line.merchandise.product?.productType || 'Gifts',
+          },
+          quantity
+        );
+      } else {
+        analytics.trackAddToCart(
+          {
+            id: variantId,
+            variantId: variantId,
+            title: 'Gift Item',
+            price: 0,
+            currency: cart.cost?.totalAmount?.currencyCode || 'GBP',
+          },
+          quantity
+        );
+      }
+    } catch (e) {
+      console.warn('[CartManager] Add tracking notice:', e);
+    }
+  }
+
   /**
-   * Add a product variant to the Shopify Cart
+   * Add a product variant to the Shopify Cart (With self-healing automatic recovery)
    */
   public async addItem(
     variantId: string,
     quantity = 1,
     attributes: { key: string; value: string }[] = []
   ): Promise<ShopifyCart> {
+    const cleanVariantId = formatVariantGid(variantId);
+
+    const createFreshCart = async (): Promise<ShopifyCart> => {
+      const newCart = await shopifyCreateCart([
+        { merchandiseId: cleanVariantId, quantity, attributes },
+      ]);
+      this.cart = newCart;
+      this.setCartId(newCart.id);
+      this.saveCachedCart(newCart);
+      this.broadcastUpdate();
+      this.triggerAddTracking(newCart, cleanVariantId, quantity);
+      return newCart;
+    };
+
     const existingId = this.getCartId();
     if (!existingId || !this.cart || !this.cart.id || this.cart.id.startsWith('blank-')) {
       this.isBusy = true;
       try {
-        const newCart = await shopifyCreateCart([
-          { merchandiseId: variantId, quantity, attributes },
-        ]);
-        this.cart = newCart;
-        this.setCartId(newCart.id);
-        this.saveCachedCart(newCart);
-        this.broadcastUpdate();
-        return newCart;
+        return await createFreshCart();
       } catch (err: any) {
         console.error('[CartManager] Failed to create cart with item:', err);
         throw err;
@@ -143,15 +194,25 @@ class CartManager {
     try {
       this.isBusy = true;
       const updated = await shopifyCartLinesAdd(this.cart.id, [
-        { merchandiseId: variantId, quantity, attributes },
+        { merchandiseId: cleanVariantId, quantity, attributes },
       ]);
       this.cart = updated;
       this.saveCachedCart(updated);
       this.broadcastUpdate();
+      this.triggerAddTracking(updated, cleanVariantId, quantity);
       return updated;
     } catch (err: any) {
-      console.error('[CartManager] Failed to add item to cart:', err);
-      throw err;
+      console.warn('[CartManager] Failed to add item to existing cart, auto-recovering with new cart:', err);
+      // Auto-recover if cart expired, deleted, or invalid
+      try {
+        this.setCartId(null);
+        this.saveCachedCart(null);
+        this.cart = null;
+        return await createFreshCart();
+      } catch (freshErr: any) {
+        console.error('[CartManager] Failed to create fresh cart during auto-recovery:', freshErr);
+        throw freshErr;
+      }
     } finally {
       this.isBusy = false;
     }
@@ -161,7 +222,7 @@ class CartManager {
    * Update quantity of a line item
    */
   public async updateQuantity(lineId: string, quantity: number): Promise<ShopifyCart> {
-    if (!this.cart) {
+    if (!this.cart || !this.cart.id || this.cart.id.startsWith('blank-')) {
       const c = await this.init();
       if (!c) throw new Error('Cart unavailable');
     }
@@ -175,6 +236,11 @@ class CartManager {
       return updated;
     } catch (err: any) {
       console.error('[CartManager] Failed to update line quantity:', err);
+      // If cart doesn't exist, reset cart
+      this.setCartId(null);
+      this.saveCachedCart(null);
+      this.cart = this.getBlankCart();
+      this.broadcastUpdate();
       throw err;
     } finally {
       this.isBusy = false;
@@ -185,10 +251,13 @@ class CartManager {
    * Remove a line item from cart
    */
   public async removeItem(lineId: string): Promise<ShopifyCart> {
-    if (!this.cart) {
+    if (!this.cart || !this.cart.id || this.cart.id.startsWith('blank-')) {
       const c = await this.init();
       if (!c) throw new Error('Cart unavailable');
     }
+
+    // Capture item info before removal for tracking
+    const itemToRemove = this.cart?.lines?.nodes?.find((n) => n.id === lineId);
 
     try {
       this.isBusy = true;
@@ -196,9 +265,31 @@ class CartManager {
       this.cart = updated;
       this.saveCachedCart(updated);
       this.broadcastUpdate();
+
+      if (itemToRemove) {
+        try {
+          analytics.trackRemoveFromCart(
+            {
+              id: itemToRemove.merchandise?.product?.id || itemToRemove.merchandise?.id || lineId,
+              variantId: itemToRemove.merchandise?.id,
+              title: itemToRemove.merchandise?.product?.title || itemToRemove.merchandise?.title || 'Product',
+              price: itemToRemove.merchandise?.price?.amount || 0,
+              currency: itemToRemove.merchandise?.price?.currencyCode || 'GBP',
+            },
+            itemToRemove.quantity || 1
+          );
+        } catch (tErr) {
+          console.debug('[CartManager] Remove tracking notice:', tErr);
+        }
+      }
+
       return updated;
     } catch (err: any) {
       console.error('[CartManager] Failed to remove item:', err);
+      this.setCartId(null);
+      this.saveCachedCart(null);
+      this.cart = this.getBlankCart();
+      this.broadcastUpdate();
       throw err;
     } finally {
       this.isBusy = false;
@@ -258,17 +349,53 @@ class CartManager {
    * Customers complete purchase as guest directly on Shopify checkout
    */
   public proceedToCheckout(): void {
-    if (!this.cart || !this.cart.checkoutUrl) {
-      alert('Cart is empty. Please add gifts before checking out.');
-      return;
-    }
-    if (this.cart.totalQuantity === 0) {
+    if (!this.cart || this.cart.totalQuantity === 0) {
       alert('Your cart is empty. Please add items before proceeding to checkout.');
       return;
     }
 
-    // Redirect to Shopify-hosted Checkout URL
-    window.location.href = this.cart.checkoutUrl;
+    // Immediate visual loading animation on checkout buttons
+    try {
+      const checkoutButtons = document.querySelectorAll<HTMLElement>(
+        '#cart-checkout-btn, #btn-proceed-checkout, #btn-checkout, #btn-cart-page-checkout, [data-checkout-btn]'
+      );
+      checkoutButtons.forEach((btn) => {
+        btn.style.pointerEvents = 'none';
+        btn.style.opacity = '0.92';
+        btn.innerHTML = `
+          <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin flex-shrink-0"></div>
+          <span class="font-bold tracking-wide">Redirecting to Checkout...</span>
+        `;
+      });
+    } catch (_) {}
+
+    const storeDomain =
+      (import.meta.env.VITE_SHOPIFY_STORE_DOMAIN as string) ||
+      'checkout.presentpanic.com';
+    const checkoutUrl = this.cart.checkoutUrl || `https://${storeDomain}/cart`;
+
+    try {
+      const items = (this.cart.lines?.nodes || []).map((line) => ({
+        id: line.merchandise?.product?.id || line.merchandise?.id || '',
+        variantId: line.merchandise?.id,
+        title: line.merchandise?.product?.title || line.merchandise?.title || 'Product',
+        price: line.merchandise?.price?.amount || 0,
+        currency: line.merchandise?.price?.currencyCode || 'GBP',
+        quantity: line.quantity || 1,
+      }));
+      const total = parseFloat(this.cart.cost?.totalAmount?.amount || '0');
+      const currency = this.cart.cost?.totalAmount?.currencyCode || 'GBP';
+
+      analytics.trackInitiateCheckout(items, total, currency);
+    } catch (e) {
+      console.warn('[CartManager] Checkout tracking notice:', e);
+    }
+
+    // Decorate checkout URL with Meta Click ID and attribution parameters
+    const targetUrl = analytics.decorateCheckoutUrl(checkoutUrl);
+
+    // Redirect directly to Shopify-hosted Checkout
+    window.location.href = targetUrl;
   }
 
   /**
@@ -364,9 +491,25 @@ class CartManager {
     }
 
     // 4. Empty State vs Items List
-    const itemsContainer = document.getElementById('cart-items-list');
-    const emptyView = document.getElementById('cart-empty-view');
+    let itemsContainer = document.getElementById('cart-items-list');
+    const drawerBody = document.querySelector('.cart-drawer-body');
+    let emptyView = document.getElementById('cart-empty-view');
     const footerSection = document.getElementById('cart-footer-section');
+
+    if (!itemsContainer && drawerBody) {
+      drawerBody.innerHTML = `
+        <div id="cart-empty-view" class="hidden flex-col items-center justify-center h-full text-center space-y-4 py-12">
+          <div class="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center text-neutral-400 mb-2 mx-auto">
+            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          </div>
+          <p class="text-neutral-500 text-sm">Your bag is currently empty.</p>
+          <button class="text-[#ff4d61] font-bold text-sm hover:underline cursor-pointer" onclick="document.getElementById('btn-close-cart-drawer')?.click()">Continue Shopping</button>
+        </div>
+        <div id="cart-items-list" class="space-y-4"></div>
+      `;
+      itemsContainer = document.getElementById('cart-items-list');
+      emptyView = document.getElementById('cart-empty-view');
+    }
 
     if (!itemsContainer) return;
 
@@ -390,16 +533,16 @@ class CartManager {
       footerSection.classList.remove('opacity-50', 'pointer-events-none');
     }
 
-    // Render Line Items
+    // Render Line Items safely
     itemsContainer.innerHTML = this.cart.lines.nodes
       .map((line) => {
-        const itemImg = line.merchandise.image?.url || line.merchandise.product.featuredImage?.url || '/images/personalized_box.jpg';
-        const itemTitle = line.merchandise.product.title;
-        const variantTitle = line.merchandise.title !== 'Default Title' ? line.merchandise.title : '';
-        const itemCurrency = line.merchandise.price.currencyCode || currency;
-        const itemPrice = formatShopifyMoney(parseFloat(line.merchandise.price.amount), itemCurrency);
-        const lineTotal = formatShopifyMoney(parseFloat(line.cost.totalAmount.amount), line.cost.totalAmount.currencyCode || itemCurrency);
-        const handle = line.merchandise.product.handle;
+        const itemImg = line.merchandise?.image?.url || line.merchandise?.product?.featuredImage?.url || '/images/personalized_box.jpg';
+        const itemTitle = line.merchandise?.product?.title || line.merchandise?.title || 'Curated Gift';
+        const variantTitle = (line.merchandise?.title && line.merchandise.title !== 'Default Title') ? line.merchandise.title : '';
+        const itemCurrency = line.merchandise?.price?.currencyCode || currency;
+        const itemPrice = formatShopifyMoney(parseFloat(line.merchandise?.price?.amount || '0'), itemCurrency);
+        const lineTotal = formatShopifyMoney(parseFloat(line.cost?.totalAmount?.amount || '0'), line.cost?.totalAmount?.currencyCode || itemCurrency);
+        const handle = line.merchandise?.product?.handle || '';
 
         const attributesHtml = line.attributes && line.attributes.length > 0
           ? `<div class="mt-1 space-y-0.5 text-[11px] text-neutral-500 font-normal">
@@ -407,14 +550,16 @@ class CartManager {
              </div>`
           : '';
 
+        const productLink = handle ? `/product.html?handle=${handle}` : '#';
+
         return `
           <div class="flex items-start gap-4 py-3 border-b border-gray-100 last:border-0 group" data-line-id="${line.id}">
-            <a href="/product.html?handle=${handle}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gray-50 flex items-center justify-center p-2 overflow-hidden flex-shrink-0 border border-gray-100 hover:opacity-90 transition">
+            <a href="${productLink}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gray-50 flex items-center justify-center p-2 overflow-hidden flex-shrink-0 border border-gray-100 hover:opacity-90 transition">
               <img src="${itemImg}" alt="${itemTitle}" class="w-full h-full object-contain">
             </a>
             <div class="flex-1 min-w-0">
               <div class="flex justify-between items-start gap-2">
-                <a href="/product.html?handle=${handle}" class="text-xs sm:text-sm font-bold text-neutral-900 hover:text-[#ff4d61] transition line-clamp-1">
+                <a href="${productLink}" class="text-xs sm:text-sm font-bold text-neutral-900 hover:text-[#ff4d61] transition line-clamp-1">
                   ${itemTitle}
                 </a>
                 <button class="cart-remove-line-btn text-neutral-400 hover:text-rose-500 transition p-1" data-line-id="${line.id}" title="Remove item">

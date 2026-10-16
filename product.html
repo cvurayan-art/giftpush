@@ -76,33 +76,37 @@
       animation: subtlePulse 2.5s infinite ease-in-out;
     }
 
-    /* PDP Lead Description Styling */
+    /* PDP Lead Description Styling - Modern & Compact */
     #pdp-lead-description p {
-      color: #374151;
-      font-size: 14.5px;
-      line-height: 1.6;
-      margin-bottom: 0.65rem;
+      color: #4b5563;
+      font-size: 13.5px;
+      line-height: 1.55;
+      margin-bottom: 0.35rem;
     }
     #pdp-lead-description ul {
       list-style: none !important;
       list-style-type: none !important;
       padding-left: 0 !important;
-      margin: 0.5rem 0 0.85rem 0 !important;
+      margin: 0.25rem 0 0.4rem 0 !important;
       display: flex;
-      flex-direction: column;
-      gap: 0.45rem;
+      flex-wrap: wrap;
+      gap: 0.35rem 0.6rem;
     }
     #pdp-lead-description li {
       list-style: none !important;
       list-style-type: none !important;
-      font-size: 13.5px;
+      font-size: 11.5px;
       font-weight: 600;
-      color: #1f2937;
-      display: flex;
+      color: #374151;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 9999px;
+      padding: 0.2rem 0.6rem;
+      display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      line-height: 1.4;
-      padding-left: 0 !important;
+      gap: 0.35rem;
+      line-height: 1.35;
+      padding-left: 0.6rem !important;
       margin-left: 0 !important;
     }
     #pdp-lead-description li p {
@@ -365,172 +369,123 @@
         </div>
       </div>
 
-      <!-- RIGHT: High-Converting DTC Description Panel -->
+      <!-- RIGHT: High-Converting, Compact DTC Panel -->
       <div class="lg:col-span-5 flex flex-col gap-0">
 
-        <!-- ── VENDOR TAG ── -->
-        <div id="pdp-vendor" class="text-[11px] font-black tracking-[0.2em] uppercase text-[#ff4d61] mb-2">
-          Present Panic
+        <!-- 1. VENDOR / CATEGORY BADGE -->
+        <div class="flex items-center gap-2 mb-2">
+          <span id="pdp-vendor" class="text-[11px] font-black tracking-widest uppercase text-emerald-800 bg-emerald-50 border border-emerald-200/70 px-2.5 py-0.5 rounded-full">
+            Present Panic
+          </span>
+          <span class="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">DIY Craft Kit</span>
         </div>
 
-        <!-- ── BOLD HEADLINE ── -->
-        <h1 id="pdp-title" class="text-[28px] sm:text-[34px] font-black text-neutral-950 tracking-tight leading-[1.15] mb-3">
+        <!-- 2. PRODUCT HEADLINE -->
+        <h1 id="pdp-title" class="text-2xl sm:text-3xl font-black text-neutral-950 tracking-tight leading-tight mb-2.5">
           DIY Crochet Cat Bed Kit
         </h1>
 
-        <!-- ── LEAD DESCRIPTION (Direct from Shopify / High-Converting Maker Tone) ── -->
-        <div id="pdp-lead-description" class="text-[14.5px] text-neutral-700 leading-relaxed mb-4">
-          <p class="mb-2.5 text-neutral-700 leading-relaxed">
-            Create a cozy handmade cat hideaway with this adorable DIY crochet cat bed kit, perfect for creative pet lovers.
-          </p>
-          <ul class="space-y-1.5 list-none p-0 my-2">
-            <li class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-neutral-800">
-              <span class="text-base flex-shrink-0">🧶</span>
-              <span>Fun &amp; Creative DIY Crochet Project</span>
-            </li>
-            <li class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-neutral-800">
-              <span class="text-base flex-shrink-0">🐱</span>
-              <span>Cozy Cat-Shaped Design with Cute Ears</span>
-            </li>
-            <li class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-neutral-800">
-              <span class="text-base flex-shrink-0">🎁</span>
-              <span>Perfect Gift for Cat &amp; Crochet Lovers</span>
-            </li>
-          </ul>
-        </div>
-
-        <!-- ── SOCIAL PROOF ROW ── -->
-        <div class="flex items-center gap-3 mb-3.5 flex-wrap">
+        <!-- 3. REVIEWS & BEST SELLER -->
+        <div class="flex items-center gap-2.5 mb-3 flex-wrap">
           <button type="button" id="btn-scroll-reviews" class="flex items-center gap-1.5 cursor-pointer group" aria-label="Jump to reviews">
             <div class="flex text-amber-400">
-              <i class="w-4 h-4 fill-amber-400" data-lucide="star"></i>
-              <i class="w-4 h-4 fill-amber-400" data-lucide="star"></i>
-              <i class="w-4 h-4 fill-amber-400" data-lucide="star"></i>
-              <i class="w-4 h-4 fill-amber-400" data-lucide="star"></i>
-              <i class="w-4 h-4 fill-amber-400" data-lucide="star"></i>
+              <i class="w-3.5 h-3.5 fill-amber-400" data-lucide="star"></i>
+              <i class="w-3.5 h-3.5 fill-amber-400" data-lucide="star"></i>
+              <i class="w-3.5 h-3.5 fill-amber-400" data-lucide="star"></i>
+              <i class="w-3.5 h-3.5 fill-amber-400" data-lucide="star"></i>
+              <i class="w-3.5 h-3.5 fill-amber-400" data-lucide="star"></i>
             </div>
-            <span class="text-sm font-bold text-neutral-900 group-hover:text-emerald-700 transition">4.8</span>
-            <span class="text-sm text-neutral-400 underline underline-offset-2">(170 reviews)</span>
+            <span class="text-xs font-bold text-neutral-900 group-hover:text-emerald-700 transition">4.8</span>
+            <span class="text-xs text-neutral-400 underline underline-offset-2">(170 reviews)</span>
           </button>
-          <span class="text-neutral-200 select-none">|</span>
-          <span class="text-xs font-semibold text-neutral-500">🏆 #1 Best Seller in Craft Kits</span>
+          <span class="text-neutral-300 select-none">•</span>
+          <span class="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-md">
+            🏆 #1 Best Seller
+          </span>
         </div>
 
-        <!-- ── PRICE ROW ── -->
-        <div class="flex items-baseline gap-3 flex-wrap mb-1">
-          <span id="pdp-display-price" class="text-[38px] font-black text-neutral-950 tracking-tight leading-none">£77.99</span>
-          <span id="pdp-compare-price" class="hidden text-xl text-neutral-400 line-through font-normal">£92.00</span>
-          <span id="pdp-save-badge" class="hidden bg-[#ff4d61] text-white text-xs font-extrabold px-3 py-1.5 rounded-full tracking-wide">SAVE 15%</span>
+        <!-- 4. PRICE ROW -->
+        <div class="flex items-baseline gap-2.5 flex-wrap mb-1">
+          <span id="pdp-display-price" class="text-3xl sm:text-4xl font-black text-neutral-950 tracking-tight leading-none">£77.99</span>
+          <span id="pdp-compare-price" class="hidden text-lg text-neutral-400 line-through font-normal">£92.00</span>
+          <span id="pdp-save-badge" class="hidden bg-[#ff4d61] text-white text-[11px] font-extrabold px-2.5 py-0.5 rounded-full tracking-wide">SAVE 15%</span>
+          <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">Free UK Delivery</span>
         </div>
-        <p class="text-xs text-neutral-400 mb-4">Taxes included. Free UK delivery over £40.</p>
+        <p class="text-[11px] text-neutral-400 mb-3">Taxes included · Dispatched within 24 hours</p>
 
-        <!-- ── STOCK / URGENCY ── -->
-        <div class="bg-neutral-50 border border-neutral-200/90 rounded-xl px-4 py-3 flex flex-col gap-1.5 mb-4">
-          <div id="pdp-stock-status" class="flex items-center gap-2 text-sm font-bold text-neutral-950">
-            <i data-lucide="check-circle-2" class="w-4 h-4 flex-shrink-0 text-[#0B2D19]"></i>
-            <span>In Stock — Ships Within 24 Hours</span>
+        <!-- 5. SLEEK ALL-IN-ONE URGENCY & FLASH SALE BANNER -->
+        <div class="flex items-center justify-between gap-3 bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 border border-amber-500/25 rounded-xl px-3 py-2 mb-3 shadow-2xs">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="relative flex h-2 w-2 flex-shrink-0">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-600"></span>
+            </span>
+            <span class="text-xs font-bold text-neutral-900 truncate">⚡ Flash Deal · Only 10 Left</span>
           </div>
-          <div class="flex items-center gap-2 text-xs font-semibold text-neutral-700">
-            <span class="w-2 h-2 rounded-full bg-[#dc2626] flex-shrink-0"></span>
-            <span>Only 10 left in stock — high demand item</span>
-          </div>
-        </div>
-
-        <!-- ── FLASH SALE COUNTDOWN ── -->
-        <div class="flex items-center gap-3 bg-neutral-950 text-white rounded-xl px-4 py-3 mb-4 shadow-sm">
-          <div class="flex flex-col">
-            <span class="text-[10px] font-bold tracking-widest uppercase text-amber-400">⚡ Flash Deal</span>
-            <span class="text-xs font-bold text-white">This price expires in:</span>
-          </div>
-          <div class="flex items-center gap-1.5 ml-auto">
-            <div class="flex flex-col items-center">
-              <span id="pdp-timer-h" class="bg-white text-neutral-950 font-black text-sm w-10 h-10 flex items-center justify-center rounded-lg shadow-inner">00</span>
-              <span class="text-[9px] text-neutral-400 mt-0.5 font-semibold">HRS</span>
-            </div>
-            <span class="text-neutral-500 font-bold text-lg mb-3">:</span>
-            <div class="flex flex-col items-center">
-              <span id="pdp-timer-m" class="bg-white text-neutral-950 font-black text-sm w-10 h-10 flex items-center justify-center rounded-lg shadow-inner">07</span>
-              <span class="text-[9px] text-neutral-400 mt-0.5 font-semibold">MIN</span>
-            </div>
-            <span class="text-neutral-500 font-bold text-lg mb-3">:</span>
-            <div class="flex flex-col items-center">
-              <span id="pdp-timer-s" class="bg-white text-neutral-950 font-black text-sm w-10 h-10 flex items-center justify-center rounded-lg shadow-inner">04</span>
-              <span class="text-[9px] text-neutral-400 mt-0.5 font-semibold">SEC</span>
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-neutral-500 hidden sm:inline">Ends in:</span>
+            <div class="flex items-center gap-1 font-mono text-xs font-black text-neutral-900 bg-white px-2 py-0.5 rounded-md border border-amber-200/80 shadow-2xs">
+              <span id="pdp-timer-h">00</span>
+              <span class="text-neutral-400 font-sans">:</span>
+              <span id="pdp-timer-m">07</span>
+              <span class="text-neutral-400 font-sans">:</span>
+              <span id="pdp-timer-s">04</span>
             </div>
           </div>
         </div>
 
-        <!-- ── FEATURE PILLS (DTC Converting Badges) ── -->
-        <div class="flex flex-wrap gap-2 mb-4">
-          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-neutral-100 text-neutral-800 border border-neutral-200">
-            <span>🧶</span> Beginner Friendly
-          </span>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-neutral-100 text-neutral-800 border border-neutral-200">
-            <span>🌿</span> 100% Organic Cotton
-          </span>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-neutral-100 text-neutral-800 border border-neutral-200">
-            <span>⏱</span> Done in 35-45 Mins
-          </span>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-neutral-100 text-neutral-800 border border-neutral-200">
-            <span>🐾</span> Non-Slip Base Pad
-          </span>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-neutral-100 text-neutral-800 border border-neutral-200">
-            <span>🎁</span> Gift Box Included
-          </span>
-        </div>
-
-        <!-- ── WHAT'S IN THE BOX ── -->
-        <div class="border border-neutral-200 rounded-xl p-4 mb-4 bg-white shadow-sm">
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-2">
-              <span class="text-base">📦</span>
-              <span class="text-xs font-extrabold text-neutral-900 uppercase tracking-wider">What's In The Box</span>
-            </div>
-            <span class="text-[11px] font-bold text-neutral-800 bg-neutral-100 px-2.5 py-0.5 rounded-full border border-neutral-200">All-Inclusive Kit</span>
-          </div>
-          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <li class="flex items-center gap-2 text-xs text-neutral-700">
-              <span class="w-4 h-4 rounded-full bg-[#0B2D19] text-white flex items-center justify-center flex-shrink-0 text-[10px] font-bold">✓</span>
-              <span>Chunky organic cotton yarn</span>
-            </li>
-            <li class="flex items-center gap-2 text-xs text-neutral-700">
-              <span class="w-4 h-4 rounded-full bg-[#0B2D19] text-white flex items-center justify-center flex-shrink-0 text-[10px] font-bold">✓</span>
-              <span>Ergonomic crochet needle</span>
-            </li>
-            <li class="flex items-center gap-2 text-xs text-neutral-700">
-              <span class="w-4 h-4 rounded-full bg-[#0B2D19] text-white flex items-center justify-center flex-shrink-0 text-[10px] font-bold">✓</span>
-              <span>Pre-cut non-slip base pad</span>
-            </li>
-            <li class="flex items-center gap-2 text-xs text-neutral-700">
-              <span class="w-4 h-4 rounded-full bg-[#0B2D19] text-white flex items-center justify-center flex-shrink-0 text-[10px] font-bold">✓</span>
-              <span>Step-by-step visual guide</span>
-            </li>
-            <li class="flex items-center gap-2 text-xs text-neutral-700 sm:col-span-2">
-              <span class="w-4 h-4 rounded-full bg-[#0B2D19] text-white flex items-center justify-center flex-shrink-0 text-[10px] font-bold">✓</span>
-              <span>Luxury gift-ready presentation box</span>
-            </li>
-          </ul>
-        </div>
-
-        <!-- ── RECENT BUYER SOCIAL PROOF TICKER ── -->
-        <div class="flex items-center gap-2.5 bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5 mb-5">
-          <div class="flex -space-x-1.5 flex-shrink-0">
-            <div class="w-6 h-6 rounded-full bg-amber-400 border-2 border-white flex items-center justify-center text-[9px] font-black text-amber-900">S</div>
-            <div class="w-6 h-6 rounded-full bg-rose-400 border-2 border-white flex items-center justify-center text-[9px] font-black text-white">E</div>
-            <div class="w-6 h-6 rounded-full bg-neutral-800 border-2 border-white flex items-center justify-center text-[9px] font-black text-white">M</div>
-          </div>
-          <p class="text-[11px] text-neutral-700 font-medium leading-snug">
-            <span class="font-bold text-neutral-950">Sarah from Manchester</span> just bought this · <span class="text-neutral-400">2 mins ago</span>
+        <!-- 6. LEAD DESCRIPTION -->
+        <div id="pdp-lead-description" class="text-[13.5px] text-neutral-600 leading-relaxed mb-3">
+          <p class="mb-1 text-neutral-600 leading-relaxed">
+            Create a cozy handmade cat hideaway with this adorable DIY crochet cat bed kit, crafted with 100% natural organic cotton for the ultimate feline comfort.
           </p>
         </div>
 
-        <!-- ── DYNAMIC SHOPIFY VARIANTS ── -->
-        <div id="pdp-variants-container" class="space-y-4 mb-4">
+        <!-- 7. COMPACT 4-POINT VALUE HIGHLIGHTS -->
+        <div class="grid grid-cols-2 gap-2 mb-3.5">
+          <div class="flex items-center gap-2 bg-neutral-50/90 border border-neutral-200/70 rounded-lg px-2.5 py-1.5">
+            <span class="text-sm">🧶</span>
+            <div class="leading-none">
+              <span class="text-xs font-bold text-neutral-900 block">Beginner Friendly</span>
+              <span class="text-[10px] text-neutral-500">Step-by-step visual guide</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 bg-neutral-50/90 border border-neutral-200/70 rounded-lg px-2.5 py-1.5">
+            <span class="text-sm">🌿</span>
+            <div class="leading-none">
+              <span class="text-xs font-bold text-neutral-900 block">100% Organic</span>
+              <span class="text-[10px] text-neutral-500">Soft chunky yarn</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 bg-neutral-50/90 border border-neutral-200/70 rounded-lg px-2.5 py-1.5">
+            <span class="text-sm">⏱</span>
+            <div class="leading-none">
+              <span class="text-xs font-bold text-neutral-900 block">35-45 Mins</span>
+              <span class="text-[10px] text-neutral-500">Quick, relaxing craft</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 bg-neutral-50/90 border border-neutral-200/70 rounded-lg px-2.5 py-1.5">
+            <span class="text-sm">🎁</span>
+            <div class="leading-none">
+              <span class="text-xs font-bold text-neutral-900 block">Gift-Ready Box</span>
+              <span class="text-[10px] text-neutral-500">Luxury presentation</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. STOCK STATUS BADGE -->
+        <div id="pdp-stock-status" class="flex items-center gap-1.5 text-xs font-semibold text-emerald-800 mb-2.5">
+          <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-700 flex-shrink-0"></i>
+          <span>In Stock — Ships Within 24 Hours</span>
+        </div>
+
+        <!-- 9. DYNAMIC SHOPIFY VARIANTS -->
+        <div id="pdp-variants-container" class="space-y-3 mb-2.5">
           <!-- Injected by storefront.ts -->
         </div>
 
-        <!-- ── PERSONALIZATION ── -->
-        <div id="pdp-personalization-section" class="hidden border border-neutral-200 rounded-xl p-4 space-y-3 mb-4">
+        <!-- 10. PERSONALIZATION -->
+        <div id="pdp-personalization-section" class="hidden border border-neutral-200 rounded-xl p-3.5 space-y-2.5 mb-3 bg-neutral-50/50">
           <div class="flex items-center gap-2">
             <i data-lucide="edit-3" class="w-4 h-4 text-neutral-600"></i>
             <h3 class="text-xs font-bold text-neutral-900">Personalize Your Gift</h3>
@@ -552,56 +507,106 @@
           </div>
         </div>
 
-        <!-- ── CTA BLOCK ── -->
-        <div class="space-y-2.5">
-          <!-- Quantity + Add to Cart -->
-          <div class="flex items-center gap-2.5">
-            <div class="flex items-center border-2 border-neutral-200 rounded-xl bg-white overflow-hidden">
+        <!-- 11. PRIMARY CTA BLOCK (Add to Cart + Shop Pay) -->
+        <div class="space-y-2 mb-3">
+          <div class="flex items-center gap-2">
+            <div class="flex items-center border border-neutral-300 rounded-xl bg-white overflow-hidden shadow-2xs">
               <button type="button" id="btn-qty-minus" aria-label="Decrease quantity"
-                class="w-10 h-12 flex items-center justify-center text-neutral-600 hover:bg-neutral-50 transition cursor-pointer text-lg font-light">−</button>
-              <span id="qty-val" class="w-8 text-center text-sm font-bold text-neutral-900 select-none">1</span>
+                class="w-9 h-11 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 transition cursor-pointer text-base">−</button>
+              <span id="qty-val" class="w-7 text-center text-sm font-bold text-neutral-900 select-none">1</span>
               <button type="button" id="btn-qty-plus" aria-label="Increase quantity"
-                class="w-10 h-12 flex items-center justify-center text-neutral-600 hover:bg-neutral-50 transition cursor-pointer text-lg font-light">+</button>
+                class="w-9 h-11 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 transition cursor-pointer text-base">+</button>
             </div>
             <button type="button" id="btn-add-pdp-cart"
-              class="flex-1 bg-[#0B2D19] hover:bg-[#144929] active:scale-[0.98] text-white text-sm font-bold py-3.5 px-6 rounded-xl transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-neutral-900/15">
+              class="flex-1 bg-[#0B2D19] hover:bg-[#144929] active:scale-[0.98] text-white text-sm font-bold py-3 px-5 rounded-xl transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-neutral-950/10">
               <i data-lucide="shopping-bag" class="w-4 h-4"></i>
               <span id="btn-add-text">Add to Cart</span>
             </button>
           </div>
 
-          <!-- Buy Now / Shop Pay -->
           <button type="button" id="btn-buy-now"
-            class="w-full bg-[#5a31f4] hover:bg-[#4a22e0] active:scale-[0.98] text-white text-sm font-bold py-3.5 px-6 rounded-xl transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-violet-500/20">
+            class="w-full bg-[#5a31f4] hover:bg-[#4a22e0] active:scale-[0.98] text-white text-sm font-bold py-3 px-5 rounded-xl transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-violet-500/20">
             <span>Buy with</span>
             <span class="font-extrabold italic tracking-tight text-base leading-none">Shop Pay</span>
           </button>
         </div>
 
-        <!-- ── GUARANTEE BADGE ROW ── -->
-        <div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-neutral-100">
-          <div class="flex flex-col items-center text-center gap-1">
-            <i data-lucide="truck" class="w-5 h-5 text-neutral-400 stroke-[1.5]"></i>
-            <span class="text-[10px] font-semibold text-neutral-500 leading-tight">Free UK<br>Tracked Delivery</span>
+        <!-- 12. COMPACT LIVE PURCHASE TICKER & GUARANTEE -->
+        <div class="flex items-center justify-between gap-2 pt-1 pb-3 text-[11px] text-neutral-500 border-b border-neutral-150">
+          <div class="flex items-center gap-1.5">
+            <div class="flex -space-x-1 flex-shrink-0">
+              <div class="w-4 h-4 rounded-full bg-amber-400 border border-white flex items-center justify-center text-[7px] font-black text-amber-900">S</div>
+              <div class="w-4 h-4 rounded-full bg-rose-400 border border-white flex items-center justify-center text-[7px] font-black text-white">E</div>
+              <div class="w-4 h-4 rounded-full bg-neutral-800 border border-white flex items-center justify-center text-[7px] font-black text-white">M</div>
+            </div>
+            <span><strong>Sarah M.</strong> from Manchester just bought · 2m ago</span>
           </div>
-          <div class="flex flex-col items-center text-center gap-1">
-            <i data-lucide="shield-check" class="w-5 h-5 text-neutral-400 stroke-[1.5]"></i>
-            <span class="text-[10px] font-semibold text-neutral-500 leading-tight">30-Day<br>Returns</span>
-          </div>
-          <div class="flex flex-col items-center text-center gap-1">
-            <i data-lucide="lock" class="w-5 h-5 text-neutral-400 stroke-[1.5]"></i>
-            <span class="text-[10px] font-semibold text-neutral-500 leading-tight">Secure<br>Checkout</span>
+          <div class="flex items-center gap-1 text-emerald-800 font-semibold flex-shrink-0">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-700"></i>
+            <span>30-Day Guarantee</span>
           </div>
         </div>
 
-        <!-- ── PAYMENT ICONS ── -->
-        <div class="flex items-center justify-center gap-2 mt-3 opacity-50">
-          <span class="text-[10px] text-neutral-400 font-medium">We accept:</span>
-          <span class="text-[10px] font-bold text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded">VISA</span>
-          <span class="text-[10px] font-bold text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded">MC</span>
-          <span class="text-[10px] font-bold text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded">AMEX</span>
-          <span class="text-[10px] font-bold text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded">PayPal</span>
-          <span class="text-[10px] font-bold text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded">Apple Pay</span>
+        <!-- 13. MODERN COLLAPSIBLE ACCORDIONS -->
+        <div class="space-y-2 mt-3">
+          <!-- Accordion 1: What's In The Box -->
+          <details class="group border border-neutral-200/90 rounded-xl overflow-hidden bg-white open:shadow-2xs transition">
+            <summary class="flex items-center justify-between px-3.5 py-2.5 text-xs font-bold text-neutral-900 cursor-pointer select-none hover:bg-neutral-50/80 transition list-none">
+              <div class="flex items-center gap-2">
+                <span class="text-sm">📦</span>
+                <span>What's In The Box</span>
+                <span class="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">5-Piece Kit</span>
+              </div>
+              <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-400 group-open:rotate-180 transition-transform duration-200"></i>
+            </summary>
+            <div class="px-3.5 pb-3 pt-1 border-t border-neutral-100 text-xs text-neutral-700 bg-neutral-50/30">
+              <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
+                <li class="flex items-center gap-2">
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#0B2D19] text-white flex items-center justify-center text-[9px] font-bold flex-shrink-0">✓</span>
+                  <span>Chunky organic cotton yarn</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#0B2D19] text-white flex items-center justify-center text-[9px] font-bold flex-shrink-0">✓</span>
+                  <span>Ergonomic crochet needle</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#0B2D19] text-white flex items-center justify-center text-[9px] font-bold flex-shrink-0">✓</span>
+                  <span>Pre-cut non-slip base pad</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#0B2D19] text-white flex items-center justify-center text-[9px] font-bold flex-shrink-0">✓</span>
+                  <span>Step-by-step visual guide</span>
+                </li>
+                <li class="flex items-center gap-2 sm:col-span-2">
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#0B2D19] text-white flex items-center justify-center text-[9px] font-bold flex-shrink-0">✓</span>
+                  <span>Luxury gift-ready presentation box</span>
+                </li>
+              </ul>
+            </div>
+          </details>
+
+          <!-- Accordion 2: Delivery & Free Returns -->
+          <details class="group border border-neutral-200/90 rounded-xl overflow-hidden bg-white open:shadow-2xs transition">
+            <summary class="flex items-center justify-between px-3.5 py-2.5 text-xs font-bold text-neutral-900 cursor-pointer select-none hover:bg-neutral-50/80 transition list-none">
+              <div class="flex items-center gap-2">
+                <span class="text-sm">🚚</span>
+                <span>Delivery &amp; Free UK Returns</span>
+              </div>
+              <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-400 group-open:rotate-180 transition-transform duration-200"></i>
+            </summary>
+            <div class="px-3.5 pb-3 pt-1 border-t border-neutral-100 text-xs text-neutral-600 bg-neutral-50/30 leading-relaxed">
+              Dispatched within 24 hours via Royal Mail Tracked. Free delivery on orders over £40. Includes a 30-day "no questions asked" return guarantee if your cat doesn't instantly adopt it.
+            </div>
+          </details>
+        </div>
+
+        <!-- 14. MINI TRUST ICONS -->
+        <div class="flex items-center justify-center gap-4 mt-3 pt-1 text-[11px] text-neutral-400 font-medium">
+          <span class="flex items-center gap-1"><i data-lucide="truck" class="w-3.5 h-3.5 text-neutral-400"></i> Free UK Shipping</span>
+          <span>•</span>
+          <span class="flex items-center gap-1"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-neutral-400"></i> 30-Day Returns</span>
+          <span>•</span>
+          <span class="flex items-center gap-1"><i data-lucide="lock" class="w-3.5 h-3.5 text-neutral-400"></i> Secure Checkout</span>
         </div>
 
       </div>
@@ -1760,7 +1765,7 @@
           <span id="cart-subtotal-price" class="subtotal-amount">$0.00</span>
         </div>
         <p class="text-xs text-neutral-500 text-center">Taxes and shipping calculated at checkout.</p>
-        <button id="cart-checkout-btn" class="w-full bg-[#0B2D19] hover:bg-[#144929] text-white py-3.5 sm:py-4 rounded-xl font-bold tracking-wide transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer" onclick="window.ShopifyCommerce?.cart?.proceedToCheckout() || (window.location.href='/cart.html')">
+        <button id="cart-checkout-btn" class="w-full bg-[#0B2D19] hover:bg-[#144929] text-white py-3.5 sm:py-4 rounded-xl font-bold tracking-wide transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer" onclick="this.style.pointerEvents='none'; this.innerHTML='<div class=\'w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin flex-shrink-0\'></div><span class=\'font-bold tracking-wide\'>Redirecting to Checkout...</span>'; window.ShopifyCommerce?.cart?.proceedToCheckout(); event.preventDefault();">
           <span>Secure Checkout</span>
           <span class="opacity-50">|</span>
           <span id="cart-checkout-btn-total">$0.00</span>
@@ -1789,47 +1794,47 @@
     </div>
 
     <!-- Modal Box Container -->
-    <div class="relative w-full max-w-xl lg:max-w-2xl bg-white rounded-3xl shadow-2xl p-6 sm:p-10 my-auto border border-neutral-100 z-10 transition-all duration-300 max-h-[92vh] overflow-y-auto no-scrollbar pointer-events-auto" id="quiz-modal-container">
+    <div class="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl p-5 sm:p-7 my-auto border border-neutral-100 z-10 transition-all duration-300 max-h-[92vh] overflow-y-auto no-scrollbar pointer-events-auto" id="quiz-modal-container">
       <!-- Close Button -->
-      <button class="absolute top-5 right-5 w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition cursor-pointer z-20" id="btn-close-gift-quiz" aria-label="Close gift quiz" onclick="window.closeGiftQuiz ? window.closeGiftQuiz() : null">
-        <i class="w-4 h-4 pointer-events-none" data-lucide="x"></i>
+      <button class="absolute top-4 right-4 w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition cursor-pointer z-20" id="btn-close-gift-quiz" aria-label="Close gift quiz" onclick="window.closeGiftQuiz ? window.closeGiftQuiz() : null">
+        <i class="w-3.5 h-3.5 pointer-events-none" data-lucide="x"></i>
       </button>
 
       <!-- Headline -->
-      <div class="text-center mb-6 pt-2">
-        <span class="inline-block text-[11px] font-extrabold uppercase tracking-widest text-[#ff4d61] bg-rose-50 px-3 py-1 rounded-full mb-3">
-          Present Panic Gift Finder
+      <div class="text-center mb-4 pt-1">
+        <span class="inline-block text-[10px] font-bold uppercase tracking-widest text-emerald-800 bg-emerald-50 border border-emerald-200/70 px-2.5 py-0.5 rounded-full mb-1.5">
+          Gift Concierge
         </span>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-neutral-950 tracking-tight leading-snug" id="quiz-main-headline">
-          Answer 4 questions.<br>Get the perfect gift.
+        <h2 class="text-xl sm:text-2xl font-black text-neutral-950 tracking-tight leading-snug" id="quiz-main-headline">
+          Find the Perfect Gift
         </h2>
       </div>
 
       <!-- Question Card Wrapper -->
       <div class="flex flex-col" id="quiz-card-wrapper">
         <!-- Progress Dashes -->
-        <div class="flex justify-center gap-2 mb-6" id="quiz-progress-pills" aria-label="Quiz progress">
-          <span class="w-10 sm:w-12 h-1.5 rounded-full bg-[#ff4d61] transition-all duration-300" data-step="1"></span>
-          <span class="w-10 sm:w-12 h-1.5 rounded-full bg-gray-200 transition-all duration-300" data-step="2"></span>
-          <span class="w-10 sm:w-12 h-1.5 rounded-full bg-gray-200 transition-all duration-300" data-step="3"></span>
-          <span class="w-10 sm:w-12 h-1.5 rounded-full bg-gray-200 transition-all duration-300" data-step="4"></span>
+        <div class="flex justify-center gap-1.5 mb-5" id="quiz-progress-pills" aria-label="Quiz progress">
+          <span class="w-8 sm:w-10 h-1.5 rounded-full bg-[#0B2D19] transition-all duration-300" data-step="1"></span>
+          <span class="w-8 sm:w-10 h-1.5 rounded-full bg-neutral-200 transition-all duration-300" data-step="2"></span>
+          <span class="w-8 sm:w-10 h-1.5 rounded-full bg-neutral-200 transition-all duration-300" data-step="3"></span>
+          <span class="w-8 sm:w-10 h-1.5 rounded-full bg-neutral-200 transition-all duration-300" data-step="4"></span>
         </div>
 
         <!-- Question Body Content -->
-        <div class="w-full flex flex-col items-center py-2" id="quiz-body-content">
+        <div class="w-full flex flex-col items-center py-1" id="quiz-body-content">
           <!-- Populated by JavaScript -->
         </div>
 
         <!-- Card Navigation Buttons -->
-        <div class="flex items-center justify-between border-t border-gray-100 pt-5 mt-4 text-xs font-semibold text-neutral-500" id="quiz-card-nav">
+        <div class="flex items-center justify-between border-t border-neutral-100 pt-4 mt-3 text-xs font-semibold text-neutral-500" id="quiz-card-nav">
           <button type="button" class="inline-flex items-center gap-1.5 text-neutral-600 hover:text-neutral-950 transition opacity-0 pointer-events-none cursor-pointer" id="btn-quiz-prev">
             <i class="w-3.5 h-3.5 pointer-events-none" data-lucide="arrow-left"></i>
             <span>Back</span>
           </button>
           
-          <span class="text-neutral-400 font-bold tracking-wider" id="quiz-step-counter">1 / 4</span>
+          <span class="text-neutral-400 font-bold tracking-wider text-[11px]" id="quiz-step-counter">1 / 4</span>
 
-          <button type="button" class="text-neutral-500 hover:text-rose-500 transition cursor-pointer" id="btn-quiz-skip" onclick="window.showQuizResults ? window.showQuizResults() : null">
+          <button type="button" class="text-neutral-500 hover:text-emerald-800 transition cursor-pointer text-xs" id="btn-quiz-skip" onclick="window.showQuizResults ? window.showQuizResults() : null">
             Skip quiz &rarr;
           </button>
         </div>

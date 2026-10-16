@@ -61,6 +61,7 @@ export interface ShopifyProduct {
     name: string;
     values: string[];
   }[];
+  _isFallback?: boolean;
 }
 
 export interface ShopifyCollection {
@@ -129,6 +130,14 @@ export const isShopifyConfigured = (): boolean => {
   );
 };
 
+export function formatVariantGid(id: string): string {
+  if (!id) return '';
+  if (id.startsWith('gid://shopify/ProductVariant/')) return id;
+  const digits = id.replace(/[^0-9]/g, '');
+  if (digits) return `gid://shopify/ProductVariant/${digits}`;
+  return id;
+}
+
 // ----------------------------------------------------
 // Multi-Tier SWR (Stale-While-Revalidate) Cache Engine
 // ----------------------------------------------------
@@ -143,6 +152,18 @@ const IN_FLIGHT_PROMISES = new Map<string, Promise<any>>();
 const CACHE_FRESH_MS = 15 * 60 * 1000; // 15 minutes fresh
 const CACHE_MAX_STALE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days stale allowance
 
+// Clean legacy cache keys on load
+if (typeof window !== 'undefined') {
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && (k.startsWith('pp_cache_v1_') || k.startsWith('pp_cache_v2_') || k.startsWith('pp_cache_v3_'))) {
+        localStorage.removeItem(k);
+      }
+    }
+  } catch (_) {}
+}
+
 export function getCachedData<T>(key: string): { data: T; isStale: boolean } | null {
   const now = Date.now();
   // 1. In-memory check (0ms)
@@ -155,7 +176,7 @@ export function getCachedData<T>(key: string): { data: T; isStale: boolean } | n
   // 2. LocalStorage check (0ms)
   if (typeof window !== 'undefined') {
     try {
-      const raw = localStorage.getItem(`pp_cache_v3_${key}`);
+      const raw = localStorage.getItem(`pp_cache_v4_${key}`);
       if (raw) {
         const item: CacheItem<T> = JSON.parse(raw);
         MEMORY_CACHE.set(key, item);
@@ -173,7 +194,7 @@ export function setCachedData<T>(key: string, data: T): void {
   MEMORY_CACHE.set(key, item);
   if (typeof window !== 'undefined') {
     try {
-      localStorage.setItem(`pp_cache_v3_${key}`, JSON.stringify(item));
+      localStorage.setItem(`pp_cache_v4_${key}`, JSON.stringify(item));
     } catch (_) {}
   }
 }
@@ -395,29 +416,60 @@ async function fetchProductsFromShopify(options: {
   sortKey?: string;
   reverse?: boolean;
 }, cacheKey: string): Promise<ShopifyProduct[]> {
-  const query = `
-    query GetProducts($first: Int!, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean) {
-      products(first: $first, query: $query, sortKey: $sortKey, reverse: $reverse) {
-        nodes {
-          ${PRODUCT_FRAGMENT}
-        }
-      }
-    }
-  `;
+  const targetFirst = options.first || 250;
+  const batchSize = Math.min(targetFirst, 250);
+
+  let allNodes: ShopifyProduct[] = [];
+  let hasNext = true;
+  let cursor: string | null = null;
 
   try {
-    const data = await shopifyFetch<{ products: { nodes: ShopifyProduct[] } }>({
-      query,
-      variables: {
-        first: options.first || 24,
-        query: options.query || null,
-        sortKey: options.sortKey || 'BEST_SELLING',
-        reverse: options.reverse || false,
-      },
-    });
+    while (hasNext && allNodes.length < targetFirst) {
+      const remaining = targetFirst - allNodes.length;
+      const currentBatch = Math.min(remaining, batchSize);
 
-    if (data.products?.nodes && data.products.nodes.length > 0) {
-      const sorted = (!options.query || options.query === '') ? prioritizeHeroProduct(data.products.nodes) : data.products.nodes;
+      const query = `
+        query GetProducts($first: Int!, $after: String, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean) {
+          products(first: $first, after: $after, query: $query, sortKey: $sortKey, reverse: $reverse) {
+            pageInfo {
+              hasNextPage
+              endCursor
+            }
+            nodes {
+              ${PRODUCT_FRAGMENT}
+            }
+          }
+        }
+      `;
+
+      const data = await shopifyFetch<{
+        products: {
+          pageInfo: { hasNextPage: boolean; endCursor: string | null };
+          nodes: ShopifyProduct[];
+        };
+      }>({
+        query,
+        variables: {
+          first: currentBatch,
+          after: cursor,
+          query: options.query || null,
+          sortKey: options.sortKey || 'BEST_SELLING',
+          reverse: options.reverse || false,
+        },
+      });
+
+      if (data.products?.nodes && data.products.nodes.length > 0) {
+        allNodes.push(...data.products.nodes);
+      }
+
+      hasNext = Boolean(data.products?.pageInfo?.hasNextPage);
+      cursor = data.products?.pageInfo?.endCursor || null;
+
+      if (!cursor || !hasNext) break;
+    }
+
+    if (allNodes.length > 0) {
+      const sorted = (!options.query || options.query === '') ? prioritizeHeroProduct(allNodes) : allNodes;
       setCachedData(cacheKey, sorted);
       indexProductsInCache(sorted);
       return sorted;
@@ -441,7 +493,7 @@ export async function getShopifyProducts(options: {
   sortKey?: string;
   reverse?: boolean;
 } = {}): Promise<ShopifyProduct[]> {
-  const first = options.first || 24;
+  const first = options.first || 250;
   const sortKey = options.sortKey || 'BEST_SELLING';
   const reverse = options.reverse || false;
   const queryFilter = options.query || '';
@@ -453,7 +505,7 @@ export async function getShopifyProducts(options: {
 
   // 1. Fast Cache Hit (0ms)
   const cached = getCachedData<ShopifyProduct[]>(cacheKey);
-  if (cached && cached.data && cached.data.length > 0) {
+  if (cached && cached.data && cached.data.length > 0 && !(cached.data[0] as any)?._isFallback) {
     const sorted = (!queryFilter) ? prioritizeHeroProduct(cached.data) : cached.data;
     if (cached.isStale) {
       // Revalidate in background
@@ -466,20 +518,7 @@ export async function getShopifyProducts(options: {
     return sorted;
   }
 
-  // 2. For default queries, return seed products immediately in 0ms while revalidating
-  if (!queryFilter) {
-    const seed = getFallbackProducts();
-    dedupeRequest(cacheKey, () => fetchProductsFromShopify(options, cacheKey)).then(fresh => {
-      if (fresh && fresh.length > 0) {
-        window.dispatchEvent(new CustomEvent('shopify:products:updated', { detail: fresh }));
-      }
-    }).catch(() => {});
-    if (seed && seed.length > 0) {
-      return seed.slice(0, first);
-    }
-  }
-
-  return dedupeRequest(cacheKey, () => fetchProductsFromShopify(options, cacheKey));
+  return dedupeRequest(cacheKey, () => fetchProductsFromShopify({ ...options, first }, cacheKey));
 }
 
 async function fetchProductByHandleFromShopify(handle: string, cacheKey: string): Promise<ShopifyProduct | null> {
@@ -518,8 +557,8 @@ export async function getShopifyProductByHandle(handle: string): Promise<Shopify
   // 1. If Shopify is configured, fetch live product data from Shopify
   if (isShopifyConfigured()) {
     const cached = getCachedData<ShopifyProduct>(cacheKey);
-    // Return immediately if cache is fresh
-    if (cached && cached.data && !cached.isStale) {
+    // Return immediately if cache is fresh and not fallback
+    if (cached && cached.data && !cached.isStale && !(cached.data as any)._isFallback) {
       return cached.data;
     }
 
@@ -532,7 +571,7 @@ export async function getShopifyProductByHandle(handle: string): Promise<Shopify
       console.warn('[Shopify] Error fetching product by handle, falling back:', err);
     }
 
-    if (cached && cached.data) {
+    if (cached && cached.data && !(cached.data as any)._isFallback) {
       return cached.data;
     }
   }
@@ -580,32 +619,30 @@ async function fetchCollectionsFromShopify(first: number, cacheKey: string): Pro
 /**
  * Fetch collections list directly from Shopify with instant SWR cache return (0ms)
  */
-export async function getShopifyCollections(first = 25): Promise<ShopifyCollection[]> {
+export async function getShopifyCollections(first = 100): Promise<ShopifyCollection[]> {
   const cacheKey = `collections_${first}`;
 
-  // 1. Fast Cache Hit (0ms)
-  const cached = getCachedData<ShopifyCollection[]>(cacheKey);
-  if (cached && cached.data && cached.data.length > 0) {
-    if (cached.isStale) {
-      dedupeRequest(cacheKey, () => fetchCollectionsFromShopify(first, cacheKey)).then(fresh => {
-        if (fresh && fresh.length > 0) {
-          window.dispatchEvent(new CustomEvent('shopify:collections:updated', { detail: fresh }));
-        }
-      }).catch(() => {});
+  if (isShopifyConfigured()) {
+    const cached = getCachedData<ShopifyCollection[]>(cacheKey);
+    if (cached && cached.data && !cached.isStale && !(cached.data as any)._isFallback) {
+      return cached.data;
     }
-    return cached.data;
+
+    try {
+      const fresh = await dedupeRequest(cacheKey, () => fetchCollectionsFromShopify(first, cacheKey));
+      if (fresh && fresh.length > 0) {
+        return fresh;
+      }
+    } catch (err) {
+      console.warn('[Shopify] Live collections fetch notice:', err);
+    }
+
+    if (cached && cached.data) {
+      return cached.data;
+    }
   }
 
-  // 2. Return DEFAULT_COLLECTIONS in 0ms while revalidating in background
-  const seedCollections = getFallbackCollections();
-  if (isShopifyConfigured()) {
-    dedupeRequest(cacheKey, () => fetchCollectionsFromShopify(first, cacheKey)).then(fresh => {
-      if (fresh && fresh.length > 0) {
-        window.dispatchEvent(new CustomEvent('shopify:collections:updated', { detail: fresh }));
-      }
-    }).catch(() => {});
-  }
-  return seedCollections;
+  return getFallbackCollections();
 }
 
 async function fetchCollectionByHandleFromShopify(
@@ -613,6 +650,9 @@ async function fetchCollectionByHandleFromShopify(
   first: number,
   cacheKey: string
 ): Promise<{ collection: ShopifyCollection; products: ShopifyProduct[] } | null> {
+  const targetFirst = first || 250;
+  const batchSize = Math.min(targetFirst, 250);
+
   const query = `
     query GetCollectionByHandle($handle: String!, $first: Int!) {
       collection(handle: $handle) {
@@ -635,7 +675,7 @@ async function fetchCollectionByHandleFromShopify(
       collection: (ShopifyCollection & { products: { nodes: ShopifyProduct[] } }) | null;
     }>({
       query,
-      variables: { handle, first },
+      variables: { handle, first: batchSize },
     });
 
     if (data.collection) {
@@ -670,38 +710,36 @@ async function fetchCollectionByHandleFromShopify(
  */
 export async function getShopifyCollectionByHandle(
   handle: string,
-  first = 24
+  first = 250
 ): Promise<{ collection: ShopifyCollection; products: ShopifyProduct[] } | null> {
   const cacheKey = `collection_${handle}_${first}`;
 
-  // 1. Fast Cache Hit (0ms)
-  const cached = getCachedData<{ collection: ShopifyCollection; products: ShopifyProduct[] }>(cacheKey);
-  if (cached && cached.data) {
-    if (cached.isStale) {
-      dedupeRequest(cacheKey, () => fetchCollectionByHandleFromShopify(handle, first, cacheKey)).then(fresh => {
-        if (fresh) {
-          window.dispatchEvent(new CustomEvent('shopify:collection:updated', { detail: fresh }));
-        }
-      }).catch(() => {});
+  if (isShopifyConfigured()) {
+    const cached = getCachedData<{ collection: ShopifyCollection; products: ShopifyProduct[] }>(cacheKey);
+    if (cached && cached.data && !cached.isStale && !(cached.data as any)._isFallback) {
+      return cached.data;
     }
-    return cached.data;
+
+    try {
+      const fresh = await dedupeRequest(cacheKey, () => fetchCollectionByHandleFromShopify(handle, first, cacheKey));
+      if (fresh) {
+        return fresh;
+      }
+    } catch (err) {
+      console.warn('[Shopify] Live collection fetch notice:', err);
+    }
+
+    if (cached && cached.data) {
+      return cached.data;
+    }
   }
 
-  // 2. Check Seed
+  // Fallback
   const col = getFallbackCollections().find(c => c.handle === handle);
   if (col) {
-    const prods = getFallbackProducts();
-    if (isShopifyConfigured()) {
-      dedupeRequest(cacheKey, () => fetchCollectionByHandleFromShopify(handle, first, cacheKey)).then(fresh => {
-        if (fresh) {
-          window.dispatchEvent(new CustomEvent('shopify:collection:updated', { detail: fresh }));
-        }
-      }).catch(() => {});
-    }
-    return { collection: col, products: prods };
+    return { collection: col, products: getFallbackProducts().slice(0, first) };
   }
-
-  return dedupeRequest(cacheKey, () => fetchCollectionByHandleFromShopify(handle, first, cacheKey));
+  return null;
 }
 
 /**
@@ -1348,7 +1386,7 @@ export const DEFAULT_CATALOG_PRODUCTS: ShopifyProduct[] = [
     variants: {
       nodes: [
         {
-          id: "gid://shopify/ProductVariant/62832230138065",
+          id: "gid://shopify/ProductVariant/62832239902801",
           title: "Default Title",
           availableForSale: true,
           price: { amount: "14.99", currencyCode: "GBP" },
@@ -1383,7 +1421,7 @@ export const DEFAULT_CATALOG_PRODUCTS: ShopifyProduct[] = [
     variants: {
       nodes: [
         {
-          id: "gid://shopify/ProductVariant/62832328409425",
+          id: "gid://shopify/ProductVariant/62832310222929",
           title: "Default Title",
           availableForSale: true,
           price: { amount: "33.99", currencyCode: "GBP" },
@@ -1418,7 +1456,7 @@ export const DEFAULT_CATALOG_PRODUCTS: ShopifyProduct[] = [
     variants: {
       nodes: [
         {
-          id: "gid://shopify/ProductVariant/62832398532945",
+          id: "gid://shopify/ProductVariant/62832373039185",
           title: "Default Title",
           availableForSale: true,
           price: { amount: "14.99", currencyCode: "GBP" },
@@ -1430,8 +1468,10 @@ export const DEFAULT_CATALOG_PRODUCTS: ShopifyProduct[] = [
   }
 ];
 
-// Pre-seed memory cache on startup so PDP & Category queries hit 0ms
-indexProductsInCache(DEFAULT_CATALOG_PRODUCTS);
+// Pre-seed fallback cache only when Shopify credentials are not configured
+if (!isShopifyConfigured()) {
+  indexProductsInCache(DEFAULT_CATALOG_PRODUCTS);
+}
 
 export function getFallbackCollections(): ShopifyCollection[] {
   return DEFAULT_COLLECTIONS;

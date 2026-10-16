@@ -263,7 +263,7 @@
         </div>
 
         <!-- Checkout Button -->
-        <button id="btn-cart-page-checkout" type="button" class="w-full bg-[#ff4d61] hover:bg-[#e63946] text-white font-extrabold text-sm py-4 px-6 rounded-2xl transition shadow-lg flex items-center justify-center gap-2 cursor-pointer">
+        <button id="btn-cart-page-checkout" type="button" class="w-full bg-[#ff4d61] hover:bg-[#e63946] text-white font-extrabold text-sm py-4 px-6 rounded-2xl transition shadow-lg flex items-center justify-center gap-2 cursor-pointer" onclick="this.style.pointerEvents='none'; this.innerHTML='<div class=\'w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin flex-shrink-0\'></div><span class=\'font-bold tracking-wide\'>Redirecting to Checkout...</span>'; window.ShopifyCommerce?.cart?.proceedToCheckout(); event.preventDefault();">
           <i class="w-4 h-4" data-lucide="lock"></i>
           <span>Checkout via Shopify</span>
         </button>

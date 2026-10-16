@@ -21,6 +21,7 @@ import {
   ShopifyCollection,
 } from '../lib/shopify';
 import { cart } from '../lib/cart';
+import { analytics } from '../lib/analytics';
 
 // Expose on window for runtime debugging or global calls
 (window as any).ShopifyCommerce = {
@@ -32,6 +33,7 @@ import { cart } from '../lib/cart';
   getRecommendations: getShopifyProductRecommendations,
   formatMoney: formatShopifyMoney,
   cart,
+  analytics,
 };
 
 (window as any).showToast = showToast;
@@ -39,6 +41,10 @@ import { cart } from '../lib/cart';
 async function initStorefront() {
   // Non-blocking Cart initialization (Synchronously loaded from snapshot, revalidates quietly)
   cart.init().catch(err => console.warn('Cart initialization notice:', err));
+
+  // Enterprise Tracking: Automatic PageView and Form Submissions
+  analytics.trackPageView();
+  setupGlobalFormTracking();
 
   // Bind Shared Global Components
   setupCartDrawer();
@@ -166,6 +172,30 @@ function bindAddToCartButtons(container: HTMLElement) {
   });
 }
 
+function setupGlobalFormTracking() {
+  if (typeof document === 'undefined') return;
+
+  // 1. Newsletter Forms across header/footer
+  const newsletterForms = document.querySelectorAll('form[id*="newsletter"]');
+  newsletterForms.forEach((form) => {
+    form.addEventListener('submit', () => {
+      const emailInput = form.querySelector('input[type="email"]') as HTMLInputElement | null;
+      const email = emailInput?.value || '';
+      analytics.trackLead('Newsletter Subscription', email);
+    });
+  });
+
+  // 2. Contact Page Form
+  const contactForm = document.getElementById('contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', () => {
+      const emailInput = contactForm.querySelector('input[type="email"]') as HTMLInputElement | null;
+      const email = emailInput?.value || '';
+      analytics.trackLead('Contact Form Inquiry', email);
+    });
+  }
+}
+
 // ====================================================
 // 1. CART DRAWER CONTROLLER
 // ====================================================
@@ -173,7 +203,10 @@ function setupCartDrawer() {
   const cartTrigger = document.getElementById('btn-header-cart') || document.getElementById('btn-cart-trigger');
   const cartOverlay = document.getElementById('cart-drawer-overlay');
   const closeCartBtn = document.getElementById('btn-close-cart-drawer') || document.getElementById('btn-close-cart');
-  const checkoutBtn = document.getElementById('btn-proceed-checkout') || document.getElementById('btn-checkout');
+  const checkoutBtn =
+    document.getElementById('cart-checkout-btn') ||
+    document.getElementById('btn-proceed-checkout') ||
+    document.getElementById('btn-checkout');
   const promoInput = document.getElementById('cart-promo-input') as HTMLInputElement | null;
   const applyPromoBtn = document.getElementById('btn-apply-promo');
   const removePromoBtn = document.getElementById('btn-remove-promo');
@@ -194,6 +227,24 @@ function setupCartDrawer() {
       panel.classList.add('translate-x-0');
     }
     cart.renderCartUI();
+
+    try {
+      const currentCart = cart.getCurrentCart();
+      if (currentCart && currentCart.lines?.nodes?.length > 0) {
+        analytics.trackViewCart(
+          currentCart.lines.nodes.map((n) => ({
+            id: n.merchandise?.product?.id || n.merchandise?.id || '',
+            variantId: n.merchandise?.id,
+            title: n.merchandise?.product?.title || n.merchandise?.title || 'Product',
+            price: n.merchandise?.price?.amount || 0,
+            currency: n.merchandise?.price?.currencyCode || 'GBP',
+            quantity: n.quantity || 1,
+          })),
+          parseFloat(currentCart.cost?.totalAmount?.amount || '0'),
+          currentCart.cost?.totalAmount?.currencyCode || 'GBP'
+        );
+      }
+    } catch (_) {}
   }
 
   function closeCart() {
@@ -239,7 +290,16 @@ function setupCartDrawer() {
   }
 
   if (checkoutBtn) {
-    checkoutBtn.addEventListener('click', () => {
+    checkoutBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      try {
+        checkoutBtn.style.pointerEvents = 'none';
+        checkoutBtn.style.opacity = '0.92';
+        checkoutBtn.innerHTML = `
+          <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin flex-shrink-0"></div>
+          <span class="font-bold tracking-wide">Redirecting to Checkout...</span>
+        `;
+      } catch (_) {}
       cart.proceedToCheckout();
     });
   }
@@ -386,6 +446,7 @@ function setupSearchModal() {
       if (e.key === 'Enter') {
         const q = modalSearchInput.value.trim();
         if (q) {
+          try { analytics.trackSearch(q); } catch (_) {}
           window.location.href = `/shop.html?q=${encodeURIComponent(q)}`;
         }
       }
@@ -549,6 +610,7 @@ function setupSearchModal() {
       if (e.key === 'Enter') {
         const q = headerSearchInput.value.trim();
         if (q) {
+          try { analytics.trackSearch(q); } catch (_) {}
           window.location.href = `/shop.html?q=${encodeURIComponent(q)}`;
         }
       }
@@ -568,6 +630,7 @@ function setupSearchModal() {
       e.preventDefault();
       const q = headerSearchInput?.value.trim() || '';
       if (q) {
+        try { analytics.trackSearch(q); } catch (_) {}
         window.location.href = `/shop.html?q=${encodeURIComponent(q)}`;
       } else if (headerSearchInput) {
         headerSearchInput.focus();
@@ -656,8 +719,8 @@ async function initHomepageCommerce() {
 
   // 2. Fetch Live Shopify Data in Parallel (0ms cache hit or background refresh)
   Promise.all([
-    getShopifyCollections(25),
-    getShopifyProducts({ first: 12 }),
+    getShopifyCollections(100),
+    getShopifyProducts({ first: 24 }),
   ]).then(([freshCollections, freshProducts]) => {
     if (freshCollections && freshCollections.length > 0) {
       renderHomepageCategories(freshCollections);
@@ -704,6 +767,7 @@ async function initShopPageCommerce() {
     if (searchInput) searchInput.value = currentSearch;
     const headerInput = document.getElementById('header-search-input') as HTMLInputElement | null;
     if (headerInput) headerInput.value = currentSearch;
+    try { analytics.trackSearch(currentSearch); } catch (_) {}
   }
   const initialCategory = urlParams.get('collection') || urlParams.get('category');
   if (initialCategory) {
@@ -745,7 +809,7 @@ async function initShopPageCommerce() {
           applyFilterAndSort();
         } else {
           try {
-            const colData = await getShopifyCollectionByHandle(currentFilter, 30);
+            const colData = await getShopifyCollectionByHandle(currentFilter, 250);
             currentProducts = colData?.products || [];
           } catch (e) {
             currentProducts = [];
@@ -767,8 +831,8 @@ async function initShopPageCommerce() {
 
   // 2. Fetch fresh collections & products in parallel!
   Promise.all([
-    getShopifyCollections(25),
-    getShopifyProducts({ first: 50 }),
+    getShopifyCollections(100),
+    getShopifyProducts({ first: 250 }),
   ]).then(async ([freshCols, freshProds]) => {
     if (freshCols && freshCols.length > 0) {
       renderShopFilterButtons(freshCols);
@@ -778,13 +842,30 @@ async function initShopPageCommerce() {
       if (currentFilter === 'all') {
         currentProducts = [...allProducts];
       } else {
-        const colData = await getShopifyCollectionByHandle(currentFilter, 30);
+        const colData = await getShopifyCollectionByHandle(currentFilter, 250);
         currentProducts = colData?.products || [...allProducts];
       }
       applyFilterAndSort();
     }
   }).catch(err => {
     console.warn('[Shop] Notice during parallel fetch:', err);
+  });
+
+  // 3. React to live background updates
+  window.addEventListener('shopify:products:updated', (e: any) => {
+    if (e.detail && e.detail.length > 0) {
+      allProducts = prioritizeHeroProduct(e.detail);
+      if (currentFilter === 'all') {
+        currentProducts = [...allProducts];
+        applyFilterAndSort();
+      }
+    }
+  });
+
+  window.addEventListener('shopify:collections:updated', (e: any) => {
+    if (e.detail && e.detail.length > 0) {
+      renderShopFilterButtons(e.detail);
+    }
   });
 
   function applyFilterAndSort() {
@@ -882,7 +963,7 @@ async function initCategoriesPageCommerce() {
   if (!grid) return;
 
   try {
-    const collections = await getShopifyCollections(25);
+    const collections = await getShopifyCollections(100);
     if (collections.length > 0) {
       grid.innerHTML = collections
         .map((col) => {
@@ -936,10 +1017,10 @@ async function initCollectionPageCommerce() {
   const searchInput = document.getElementById('collection-search-input') as HTMLInputElement | null;
 
   try {
-    const colData = await getShopifyCollectionByHandle(handle, 30);
+    const colData = await getShopifyCollectionByHandle(handle, 250);
     if (!colData) return;
 
-    const { collection, products } = colData;
+    let { collection, products } = colData;
 
     document.title = `${collection.title} | Present Panic`;
     if (titleEl) titleEl.textContent = collection.title;
@@ -966,6 +1047,15 @@ async function initCollectionPageCommerce() {
     }
 
     renderCollectionProducts(products);
+
+    // Listen for live background updates
+    window.addEventListener('shopify:collection:updated', (e: any) => {
+      if (e.detail && e.detail.collection && e.detail.collection.handle === handle) {
+        products = e.detail.products || [];
+        renderCollectionProducts(products);
+        if (countEl) countEl.textContent = String(products.length);
+      }
+    });
 
     if (sortSelect) {
       sortSelect.addEventListener('change', () => {
@@ -1029,6 +1119,21 @@ function initCartPageCommerce() {
     if (subtotalEl) subtotalEl.textContent = subtotal;
     if (totalEl) totalEl.textContent = total;
 
+    try {
+      analytics.trackViewCart(
+        currentCart.lines.nodes.map((n) => ({
+          id: n.merchandise?.product?.id || n.merchandise?.id || '',
+          variantId: n.merchandise?.id,
+          title: n.merchandise?.product?.title || n.merchandise?.title || 'Product',
+          price: n.merchandise?.price?.amount || 0,
+          currency: n.merchandise?.price?.currencyCode || 'GBP',
+          quantity: n.quantity || 1,
+        })),
+        parseFloat(currentCart.cost?.totalAmount?.amount || '0'),
+        currency
+      );
+    } catch (_) {}
+
     // Free shipping threshold ($75)
     const threshold = 75;
     const diff = Math.max(0, threshold - subtotalNum);
@@ -1046,13 +1151,13 @@ function initCartPageCommerce() {
 
     itemsContainer.innerHTML = currentCart.lines.nodes
       .map((line) => {
-        const itemImg = line.merchandise.image?.url || line.merchandise.product.featuredImage?.url || '/images/personalized_box.jpg';
-        const itemTitle = line.merchandise.product.title;
-        const variantTitle = line.merchandise.title !== 'Default Title' ? line.merchandise.title : '';
-        const itemCur = line.merchandise.price.currencyCode || currency;
-        const itemPrice = formatShopifyMoney(parseFloat(line.merchandise.price.amount), itemCur);
-        const lineTotal = formatShopifyMoney(parseFloat(line.cost.totalAmount.amount), line.cost.totalAmount.currencyCode || itemCur);
-        const handle = line.merchandise.product.handle;
+        const itemImg = line.merchandise?.image?.url || line.merchandise?.product?.featuredImage?.url || '/images/personalized_box.jpg';
+        const itemTitle = line.merchandise?.product?.title || line.merchandise?.title || 'Curated Gift';
+        const variantTitle = (line.merchandise?.title && line.merchandise.title !== 'Default Title') ? line.merchandise.title : '';
+        const itemCur = line.merchandise?.price?.currencyCode || currency;
+        const itemPrice = formatShopifyMoney(parseFloat(line.merchandise?.price?.amount || '0'), itemCur);
+        const lineTotal = formatShopifyMoney(parseFloat(line.cost?.totalAmount?.amount || '0'), line.cost?.totalAmount?.currencyCode || itemCur);
+        const handle = line.merchandise?.product?.handle || '';
 
         const attributesHtml = line.attributes && line.attributes.length > 0
           ? `<div class="mt-2 bg-rose-50/70 border border-rose-100 rounded-xl p-2.5 text-xs text-neutral-700 space-y-1">
@@ -1144,7 +1249,16 @@ function initCartPageCommerce() {
   });
 
   if (checkoutBtn) {
-    checkoutBtn.addEventListener('click', () => {
+    checkoutBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      try {
+        checkoutBtn.style.pointerEvents = 'none';
+        checkoutBtn.style.opacity = '0.92';
+        checkoutBtn.innerHTML = `
+          <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin flex-shrink-0"></div>
+          <span class="font-bold tracking-wide">Redirecting to Checkout...</span>
+        `;
+      } catch (_) {}
       cart.proceedToCheckout();
     });
   }
@@ -1192,6 +1306,19 @@ async function initProductPageCommerce() {
       return;
     }
 
+    // Enterprise Tracking: ViewContent (Meta Pixel + CAPI with deduplication) & GA4 view_item
+    try {
+      analytics.trackViewContent({
+        id: product.id,
+        variantId: product.variants?.nodes?.[0]?.id,
+        title: product.title,
+        price: product.priceRange.minVariantPrice.amount,
+        currency: product.priceRange.minVariantPrice.currencyCode || 'GBP',
+        category: product.productType || 'Gifts',
+        handle: product.handle,
+      });
+    } catch (_) {}
+
     // 1. Meta & Title
     document.title = `${product.title} | Present Panic`;
     const titleEl = document.getElementById('pdp-title');
@@ -1235,10 +1362,15 @@ async function initProductPageCommerce() {
       }
     }
 
+    // Product identifier flags
+    const isCatBed = (handle === 'diy-crochet-cat-bed-kit' || !handle || product.title.toLowerCase().includes('cat bed'));
+
     // 3. Descriptions & Specs
     const leadDesc = document.getElementById('pdp-lead-description');
     if (leadDesc) {
-      if (product.descriptionHtml) {
+      if (isCatBed) {
+        leadDesc.innerHTML = `<p class="text-[13.5px] text-neutral-600 leading-relaxed mb-1">Create a cozy handmade cat hideaway with this adorable DIY crochet cat bed kit, crafted with 100% natural organic cotton for the ultimate feline comfort.</p>`;
+      } else if (product.descriptionHtml) {
         let cleanHtml = product.descriptionHtml
           .replace(/<div>\s*<div>\s*<p>/gi, '<p>')
           .replace(/<\/p>\s*<\/div>\s*<\/div>/gi, '</p>')
@@ -1250,8 +1382,8 @@ async function initProductPageCommerce() {
         const lines = product.description.split(/(?=[🧶🐱🎁•\-\*])/).map(s => s.trim()).filter(Boolean);
         if (lines.length > 1) {
           const p = `<p class="mb-2 text-neutral-700 leading-relaxed">${lines[0]}</p>`;
-          const bullets = lines.slice(1).map(l => `<li class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-neutral-800">${l}</li>`).join('');
-          leadDesc.innerHTML = `${p}<ul class="space-y-1.5 list-none p-0 my-2">${bullets}</ul>`;
+          const bullets = lines.slice(1).map(l => `<li class="flex items-center gap-1.5 text-xs font-semibold text-neutral-800">${l}</li>`).join('');
+          leadDesc.innerHTML = `${p}<ul class="flex flex-wrap gap-1.5 list-none p-0 my-2">${bullets}</ul>`;
         } else {
           leadDesc.innerHTML = `<p class="text-neutral-700 leading-relaxed">${product.description}</p>`;
         }
@@ -1271,7 +1403,6 @@ async function initProductPageCommerce() {
 
     // 4. Main Gallery & Thumbnails
     const activeImg = document.getElementById('pdp-active-image') as HTMLImageElement | null;
-    const isCatBed = (handle === 'diy-crochet-cat-bed-kit' || !handle || product.title.toLowerCase().includes('cat bed'));
 
     // Keep top gallery focused purely on the main product shot for the Cat Bed
     if (isCatBed && product.images?.nodes) {
@@ -2068,7 +2199,7 @@ const VERIFIED_QUIZ_CATALOG: ShopifyProduct[] = [
 
 // Pre-cached products so quiz recommendations render instantaneously without freezing
 let quizCatalogCache: ShopifyProduct[] = [...VERIFIED_QUIZ_CATALOG];
-getShopifyProducts({ first: 50 }).then((prods) => {
+getShopifyProducts({ first: 250 }).then((prods) => {
   if (prods && prods.length > 0) quizCatalogCache = prods;
 }).catch(() => {});
 
@@ -2087,27 +2218,27 @@ export function initGiftQuiz() {
 
   if (!quizOverlay) return;
 
-  // Quiz Questions Data (4 distinct steps)
+  // Quiz Questions Data (4 distinct, balanced steps)
   const quizQuestions = [
     {
       id: 'who',
       title: 'Who are you shopping for?',
-      options: ['Mum', 'Dad', 'Partner', 'Friend', 'Colleague', 'Teacher', 'Kid', 'Grandparents']
+      options: ['Mum', 'Dad', 'Partner', 'Friend', 'Colleague', 'Grandparents']
     },
     {
       id: 'occasion',
-      title: "What's the special occasion?",
-      options: ['Christmas Holiday', 'Birthday', 'Anniversary', 'Thank You', 'Just Because', 'Housewarming']
+      title: "What is the special occasion?",
+      options: ['Christmas & Holiday', 'Birthday', 'Anniversary', 'Housewarming', 'Thank You', 'Just Because']
     },
     {
-      id: 'vibe',
-      title: "What is their personal vibe?",
-      options: ['Cozy & Warm', 'Sentimental & Heartfelt', 'Luxury & Pampering', 'Practical & Classic', 'Playful & Festive']
+      id: 'style',
+      title: "What style suits them best?",
+      options: ['Warm & Artisanal', 'Timeless & Classic', 'Thoughtful Keepsake', 'Modern & Sleek', 'Playful & Creative', 'Elevated Luxury']
     },
     {
       id: 'budget',
-      title: "What's your ideal budget?",
-      options: ['Under £25', '£25 – £50', '£50 – £100', 'Luxury £100+']
+      title: "What is your ideal budget?",
+      options: ['Under £25', '£25 – £50', '£50 – £100', '£100+ Luxury']
     }
   ];
 
@@ -2116,6 +2247,7 @@ export function initGiftQuiz() {
   let quizAnswers: Record<string, string> = {
     who: '',
     occasion: '',
+    style: '',
     vibe: '',
     budget: ''
   };
@@ -2126,7 +2258,7 @@ export function initGiftQuiz() {
     // Always start fresh from question 1
     currentQuizStep = 0;
     isTransitioning = false;
-    quizAnswers = { who: '', occasion: '', vibe: '', budget: '' };
+    quizAnswers = { who: '', occasion: '', style: '', vibe: '', budget: '' };
 
     quizOverlay.classList.remove('hidden');
     quizOverlay.classList.add('flex', 'active');
@@ -2147,8 +2279,8 @@ export function initGiftQuiz() {
     }, 200);
     document.body.style.overflow = '';
     if (quizModalContainer) {
-      quizModalContainer.classList.remove('max-w-4xl');
-      quizModalContainer.classList.add('max-w-xl');
+      quizModalContainer.classList.remove('max-w-4xl', 'max-w-2xl', 'has-results');
+      quizModalContainer.classList.add('max-w-lg');
     }
     isTransitioning = false;
   }
@@ -2190,8 +2322,8 @@ export function initGiftQuiz() {
     isTransitioning = false;
 
     if (quizModalContainer) {
-      quizModalContainer.classList.remove('max-w-4xl');
-      quizModalContainer.classList.add('max-w-xl');
+      quizModalContainer.classList.remove('max-w-4xl', 'max-w-2xl', 'has-results');
+      quizModalContainer.classList.add('max-w-lg');
     }
 
     if (quizCardWrapper) quizCardWrapper.classList.remove('hidden');
@@ -2201,7 +2333,7 @@ export function initGiftQuiz() {
       quizResultsWrapper.innerHTML = '';
     }
     if (quizHeroHeadline) {
-      quizHeroHeadline.innerHTML = 'Answer 4 questions.<br>Get the perfect gift.';
+      quizHeroHeadline.innerHTML = 'Find the Perfect Gift';
     }
 
     const q = quizQuestions[currentQuizStep];
@@ -2211,11 +2343,11 @@ export function initGiftQuiz() {
       const dashes = quizProgressPills.querySelectorAll('span');
       dashes.forEach((dash, idx) => {
         if (idx === currentQuizStep) {
-          dash.className = 'w-10 sm:w-12 h-1.5 rounded-full bg-[#ff4d61] transition-all duration-300';
+          dash.className = 'w-8 sm:w-10 h-1.5 rounded-full bg-[#0B2D19] transition-all duration-300';
         } else if (idx < currentQuizStep) {
-          dash.className = 'w-10 sm:w-12 h-1.5 rounded-full bg-neutral-900 transition-all duration-300';
+          dash.className = 'w-8 sm:w-10 h-1.5 rounded-full bg-neutral-900 transition-all duration-300';
         } else {
-          dash.className = 'w-10 sm:w-12 h-1.5 rounded-full bg-gray-200 transition-all duration-300';
+          dash.className = 'w-8 sm:w-10 h-1.5 rounded-full bg-neutral-200 transition-all duration-300';
         }
       });
     }
@@ -2236,18 +2368,18 @@ export function initGiftQuiz() {
       }
     }
 
-    // Render Question & Options
-    quizStepContent.className = 'w-full flex flex-col items-center py-2 fade-step-enter';
+    // Render Question & Symmetrical 2-Column Options Grid
+    quizStepContent.className = 'w-full flex flex-col items-center py-1 fade-step-enter';
     quizStepContent.innerHTML = `
-      <h3 class="text-lg sm:text-xl font-bold text-neutral-900 mb-5 text-center">${q.title}</h3>
-      <div class="flex flex-wrap justify-center gap-2.5 max-w-lg mb-2">
+      <h3 class="text-base sm:text-lg font-bold text-neutral-900 mb-4 text-center">${q.title}</h3>
+      <div class="grid grid-cols-2 gap-2 sm:gap-2.5 w-full max-w-sm sm:max-w-md mx-auto mb-2">
         ${q.options.map(opt => {
-          const isSelected = quizAnswers[q.id] === opt;
+          const isSelected = (quizAnswers[q.id] === opt) || (q.id === 'style' && quizAnswers.vibe === opt);
           return `
-            <button type="button" class="quiz-option-pill px-5 py-2.5 rounded-full border text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
+            <button type="button" class="quiz-option-pill px-3.5 py-3 rounded-xl border text-xs sm:text-sm font-semibold transition-all duration-150 cursor-pointer text-center ${
               isSelected
-                ? 'bg-[#ff4d61] text-white border-[#ff4d61] shadow-md scale-105'
-                : 'bg-gray-50 border-gray-200 text-neutral-800 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white'
+                ? 'bg-[#0B2D19] text-white border-[#0B2D19] shadow-sm font-bold'
+                : 'bg-white border-neutral-200 text-neutral-800 hover:border-neutral-900 hover:bg-neutral-50 shadow-2xs'
             }" data-value="${escapeHtml(opt)}">
               ${escapeHtml(opt)}
             </button>
@@ -2267,12 +2399,15 @@ export function initGiftQuiz() {
 
         const val = pill.getAttribute('data-value') || '';
         quizAnswers[q.id] = val;
+        if (q.id === 'style') {
+          quizAnswers.vibe = val;
+        }
 
         // Visual selection feedback
         quizStepContent.querySelectorAll('.quiz-option-pill').forEach(p => {
-          p.className = 'quiz-option-pill px-5 py-2.5 rounded-full border text-xs sm:text-sm font-semibold transition-all duration-200 bg-gray-50 border-gray-200 text-neutral-800 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white cursor-pointer';
+          p.className = 'quiz-option-pill px-3.5 py-3 rounded-xl border text-xs sm:text-sm font-semibold transition-all duration-150 bg-white border-neutral-200 text-neutral-800 hover:border-neutral-900 hover:bg-neutral-50 shadow-2xs cursor-pointer text-center';
         });
-        pill.className = 'quiz-option-pill px-5 py-2.5 rounded-full border text-xs sm:text-sm font-semibold transition-all duration-200 bg-[#ff4d61] text-white border-[#ff4d61] shadow-md scale-105 cursor-pointer';
+        pill.className = 'quiz-option-pill px-3.5 py-3 rounded-xl border text-xs sm:text-sm font-bold transition-all duration-150 bg-[#0B2D19] text-white border-[#0B2D19] shadow-sm cursor-pointer text-center';
 
         setTimeout(() => {
           isTransitioning = false;
@@ -2293,8 +2428,8 @@ export function initGiftQuiz() {
     isTransitioning = false;
 
     if (quizModalContainer) {
-      quizModalContainer.classList.remove('max-w-xl');
-      quizModalContainer.classList.add('max-w-4xl');
+      quizModalContainer.classList.remove('max-w-xl', 'max-w-4xl');
+      quizModalContainer.classList.add('max-w-2xl', 'has-results');
     }
 
     if (quizCardWrapper) quizCardWrapper.classList.add('hidden');
@@ -2303,20 +2438,20 @@ export function initGiftQuiz() {
       quizResultsWrapper.classList.add('flex');
     }
     if (quizHeroHeadline) {
-      quizHeroHeadline.innerHTML = '✨ Your Curated Gift Matches';
+      quizHeroHeadline.innerHTML = 'Curated Gift Recommendations';
     }
 
-    // Retrieve products (always instant because quizCatalogCache is pre-populated)
+    // Retrieve products (instant from cache or verified catalog)
     let allProducts = (quizCatalogCache && quizCatalogCache.length > 0) ? quizCatalogCache : VERIFIED_QUIZ_CATALOG;
 
     // Intelligent Scored Matching based on user answers
     const who = (quizAnswers.who || '').toLowerCase();
     const occasion = (quizAnswers.occasion || '').toLowerCase();
-    const vibe = (quizAnswers.vibe || '').toLowerCase();
+    const style = (quizAnswers.style || quizAnswers.vibe || '').toLowerCase();
     const budget = quizAnswers.budget || '';
 
     const scoredProducts = allProducts.map(p => {
-      let score = Math.floor(Math.random() * 20); // baseline variation
+      let score = Math.floor(Math.random() * 15); // baseline subtle variation
       const title = (p.title || '').toLowerCase();
       const desc = (p.description || '').toLowerCase();
       const type = (p.productType || '').toLowerCase();
@@ -2325,44 +2460,56 @@ export function initGiftQuiz() {
       const price = parseFloat(p.priceRange?.minVariantPrice?.amount || '0');
 
       // Occasion matching
-      if (occasion.includes('christmas') && (text.includes('christmas') || text.includes('snowman') || text.includes('holiday') || text.includes('decor') || text.includes('hanging'))) {
+      if (occasion.includes('christmas') && (text.includes('christmas') || text.includes('snowman') || text.includes('holiday') || text.includes('decor') || text.includes('hanging') || text.includes('music box') || text.includes('ferris wheel'))) {
         score += 40;
       }
-      if (occasion.includes('birthday') && (text.includes('lamp') || text.includes('ball') || text.includes('tote') || text.includes('gift'))) {
+      if (occasion.includes('birthday') && (text.includes('lamp') || text.includes('light') || text.includes('tote') || text.includes('crochet') || text.includes('gift'))) {
         score += 35;
       }
-      if (occasion.includes('anniversary') && (text.includes('crystal') || text.includes('photo') || text.includes('lamp'))) {
+      if (occasion.includes('anniversary') && (text.includes('crystal') || text.includes('photo') || text.includes('lamp') || text.includes('music box'))) {
+        score += 35;
+      }
+      if (occasion.includes('housewarming') && (text.includes('lamp') || text.includes('light') || text.includes('clock') || text.includes('night light') || text.includes('bed') || text.includes('decor'))) {
         score += 35;
       }
 
       // Who matching
-      if ((who.includes('partner') || who.includes('mum')) && (text.includes('lamp') || text.includes('crystal') || text.includes('feather') || text.includes('tote') || text.includes('photo'))) {
+      if ((who.includes('partner') || who.includes('mum')) && (text.includes('lamp') || text.includes('crystal') || text.includes('feather') || text.includes('tote') || text.includes('photo') || text.includes('music box'))) {
         score += 35;
       }
-      if ((who.includes('dad') || who.includes('colleague')) && (text.includes('fan') || text.includes('straw') || text.includes('lamp') || text.includes('wall'))) {
+      if ((who.includes('dad') || who.includes('colleague')) && (text.includes('fan') || text.includes('lamp') || text.includes('clock') || text.includes('night light') || text.includes('wall'))) {
         score += 35;
       }
-      if (who.includes('friend') && (text.includes('photo') || text.includes('feather') || text.includes('tote'))) {
+      if (who.includes('friend') && (text.includes('crochet') || text.includes('photo') || text.includes('feather') || text.includes('tote') || text.includes('cat bed'))) {
+        score += 35;
+      }
+      if (who.includes('grandparent') && (text.includes('night light') || text.includes('house') || text.includes('photo') || text.includes('music box') || text.includes('crochet') || text.includes('lamp'))) {
         score += 35;
       }
 
-      // Vibe matching
-      if (vibe.includes('cozy') && (text.includes('lamp') || text.includes('light') || text.includes('crochet') || text.includes('hanging') || text.includes('feather'))) {
-        score += 30;
+      // Style matching (Professional Big-Brand Categories)
+      if ((style.includes('warm') || style.includes('artisanal')) && (text.includes('crochet') || text.includes('cat bed') || text.includes('wood') || text.includes('light') || text.includes('handmade') || text.includes('organic'))) {
+        score += 35;
       }
-      if (vibe.includes('luxury') && (text.includes('crystal') || text.includes('tote') || text.includes('gold') || text.includes('lamp'))) {
-        score += 30;
+      if ((style.includes('timeless') || style.includes('classic')) && (text.includes('music box') || text.includes('piano') || text.includes('clock') || text.includes('wooden') || text.includes('ferris wheel'))) {
+        score += 35;
       }
-      if (vibe.includes('sentimental') && (text.includes('photo') || text.includes('crystal') || text.includes('feather') || text.includes('handmade'))) {
-        score += 30;
+      if ((style.includes('thoughtful') || style.includes('keepsake')) && (text.includes('photo') || text.includes('night light') || text.includes('crystal') || text.includes('personalized') || text.includes('house'))) {
+        score += 35;
       }
-      if (vibe.includes('playful') && (text.includes('christmas') || text.includes('crochet') || text.includes('ornament'))) {
-        score += 30;
+      if ((style.includes('modern') || style.includes('sleek')) && (text.includes('3-in-1') || text.includes('night light') || text.includes('lamp') || text.includes('led') || text.includes('diffuser'))) {
+        score += 35;
+      }
+      if ((style.includes('playful') || style.includes('creative')) && (text.includes('crochet') || text.includes('cat bed') || text.includes('ferris wheel') || text.includes('diy') || text.includes('ballerina'))) {
+        score += 35;
+      }
+      if ((style.includes('luxury') || style.includes('refined')) && (text.includes('crystal') || text.includes('gold') || text.includes('music box') || text.includes('deluxe') || text.includes('luxury'))) {
+        score += 35;
       }
 
       // Budget matching
-      if (budget.includes('25') && price > 0 && price <= 25) score += 30;
-      if (budget.includes('50') && price > 25 && price <= 50) score += 30;
+      if (budget.includes('25') && price > 0 && price <= 30) score += 30;
+      if (budget.includes('50') && price > 25 && price <= 55) score += 30;
       if (budget.includes('100') && price > 50 && price <= 100) score += 30;
       if (budget.includes('100+') && price >= 75) score += 30;
 
@@ -2378,24 +2525,27 @@ export function initGiftQuiz() {
       topPicks.push(extra);
     }
 
-    const badges = ['⭐ 98% Match', '✨ Top Personalized Pick', '🌟 Popular Choice'];
+    const badges = ['Top Match', 'Curator’s Pick', 'Most Gifted'];
 
     if (quizResultsWrapper) {
+      const summaryItems = [quizAnswers.who, quizAnswers.occasion, quizAnswers.style || quizAnswers.vibe, quizAnswers.budget].filter(Boolean);
+
       quizResultsWrapper.innerHTML = `
-        <div class="text-center mb-6 w-full">
-          <span class="text-[10px] sm:text-xs font-extrabold tracking-widest text-[#ff4d61] uppercase bg-rose-50 px-3 py-1 rounded-full">Tailored Recommendations</span>
-          <h3 class="text-xl sm:text-2xl font-black text-neutral-900 mt-2">Handpicked for ${escapeHtml(quizAnswers.who || 'Someone Special')}</h3>
-          <p class="text-xs sm:text-sm text-neutral-500 mt-1">
-            ${quizAnswers.who ? `<strong>${escapeHtml(quizAnswers.who)}</strong> &bull; ` : ''}
-            ${quizAnswers.occasion ? `<strong>${escapeHtml(quizAnswers.occasion)}</strong> &bull; ` : ''}
-            ${quizAnswers.vibe ? `<strong>${escapeHtml(quizAnswers.vibe)}</strong> &bull; ` : ''}
-            ${quizAnswers.budget ? `<strong>${escapeHtml(quizAnswers.budget)}</strong>` : 'Curated Catalog'}
+        <div class="text-center mb-3.5 w-full">
+          <span class="inline-block text-[10px] font-bold uppercase tracking-widest text-emerald-800 bg-emerald-50 border border-emerald-200/70 px-2.5 py-0.5 rounded-full mb-1">
+            Curated Recommendations
+          </span>
+          <h3 class="text-lg sm:text-xl font-black text-neutral-950 tracking-tight">
+            Handpicked for ${escapeHtml(quizAnswers.who || 'Someone Special')}
+          </h3>
+          <p class="text-[11px] text-neutral-500 mt-0.5">
+            ${summaryItems.map(escapeHtml).join(' · ')}
           </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8 w-full">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 mb-4 w-full">
           ${topPicks.map((item, idx) => {
-            const badge = badges[idx] || '🔥 Staff Pick';
+            const badge = badges[idx] || 'Curator Choice';
             const priceAmount = item.priceRange?.minVariantPrice?.amount || '24.00';
             const currency = item.priceRange?.minVariantPrice?.currencyCode || 'GBP';
             const priceFormatted = formatShopifyMoney(priceAmount, currency);
@@ -2403,20 +2553,21 @@ export function initGiftQuiz() {
             const variantId = item.variants?.nodes?.[0]?.id || '';
 
             return `
-              <div class="border border-gray-100 rounded-2xl p-4 bg-white flex flex-col justify-between hover:shadow-xl transition-all duration-300">
-                <div class="relative w-full h-52 sm:h-56 flex items-center justify-center overflow-hidden mb-4 bg-[#f8f9fa] rounded-xl p-3 group cursor-pointer" onclick="window.location.href='/product.html?handle=${item.handle}'">
-                  <span class="absolute top-2 left-2 bg-[#ff4d61] text-white text-[9px] font-extrabold px-2 py-0.5 rounded shadow-sm z-10">${badge}</span>
-                  <img src="${imgUrl}" alt="${escapeHtml(item.title)}" class="h-full w-full object-contain object-center group-hover:scale-105 transition duration-500 ease-out mix-blend-multiply">
+              <div class="border border-neutral-200/80 rounded-xl p-2.5 bg-white flex flex-col justify-between hover:shadow-md transition-all duration-200 group">
+                <div class="relative w-full aspect-square flex items-center justify-center overflow-hidden mb-2 bg-[#f8f9fa] rounded-lg p-2 cursor-pointer" onclick="window.location.href='/product.html?handle=${item.handle}'">
+                  <span class="absolute top-1.5 left-1.5 bg-neutral-900 text-white text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wide z-10 shadow-2xs">${badge}</span>
+                  <img src="${imgUrl}" alt="${escapeHtml(item.title)}" class="h-full w-full object-contain object-center group-hover:scale-105 transition duration-300 mix-blend-multiply">
                 </div>
                 <div class="flex-1 flex flex-col justify-between text-left">
                   <a href="/product.html?handle=${item.handle}" class="block">
-                    <h4 class="text-xs sm:text-sm font-bold text-neutral-900 line-clamp-2 mt-1 leading-snug hover:text-[#ff4d61] transition">${escapeHtml(item.title)}</h4>
-                    <div class="mt-2 flex items-baseline gap-2">
-                      <span class="text-base font-extrabold text-neutral-900">${priceFormatted}</span>
+                    <h4 class="text-xs font-bold text-neutral-900 line-clamp-2 h-8 leading-snug group-hover:text-emerald-700 transition" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</h4>
+                    <div class="mt-1 flex items-baseline justify-between">
+                      <span class="text-sm font-extrabold text-neutral-950">${priceFormatted}</span>
+                      <span class="text-[10px] text-emerald-800 font-medium">Free Delivery</span>
                     </div>
                   </a>
-                  <button type="button" class="quiz-add-btn mt-4 w-full bg-neutral-900 hover:bg-[#ff4d61] text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer shadow-sm" data-id="${variantId}" data-name="${escapeHtml(item.title)}">
-                    <i class="w-4 h-4 stroke-[2]" data-lucide="shopping-bag"></i>
+                  <button type="button" class="quiz-add-btn mt-2.5 w-full bg-[#0B2D19] hover:bg-[#144929] active:scale-[0.98] text-white text-xs font-bold py-2 rounded-lg flex items-center justify-center gap-1.5 transition cursor-pointer shadow-2xs" data-id="${variantId}" data-name="${escapeHtml(item.title)}">
+                    <i class="w-3.5 h-3.5" data-lucide="shopping-bag"></i>
                     <span>Add to Bag</span>
                   </button>
                 </div>
@@ -2425,12 +2576,12 @@ export function initGiftQuiz() {
           }).join('')}
         </div>
 
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 border-t border-gray-100 w-full">
-          <button type="button" class="w-full sm:w-auto px-7 py-3 rounded-full border border-gray-200 text-neutral-800 text-xs sm:text-sm font-bold hover:bg-neutral-100 transition cursor-pointer" id="btn-quiz-retake">
+        <div class="flex items-center justify-center gap-2.5 pt-3 border-t border-neutral-100 w-full">
+          <button type="button" class="px-5 py-2 rounded-xl border border-neutral-200 text-neutral-700 text-xs font-bold hover:bg-neutral-50 transition cursor-pointer" id="btn-quiz-retake">
             ↺ Retake Quiz
           </button>
-          <button type="button" class="w-full sm:w-auto px-7 py-3 rounded-full bg-[#ff4d61] text-white text-xs sm:text-sm font-bold hover:bg-rose-600 transition shadow-sm cursor-pointer" id="btn-quiz-explore">
-            Explore All Gifts &rarr;
+          <button type="button" class="px-5 py-2 rounded-xl bg-[#0B2D19] text-white text-xs font-bold hover:bg-[#144929] transition cursor-pointer shadow-2xs" id="btn-quiz-explore">
+            Browse All Gifts &rarr;
           </button>
         </div>
       `;

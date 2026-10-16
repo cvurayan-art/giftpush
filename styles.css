@@ -2313,7 +2313,7 @@ ul, ol {
 
 .quiz-modal-container {
   position: relative;
-  width: 600px;
+  width: 480px;
   max-width: 92vw;
   text-align: center;
   z-index: 10;
@@ -2322,7 +2322,7 @@ ul, ol {
 }
 
 .quiz-modal-container.has-results {
-  width: 860px;
+  width: 700px;
   max-width: 95vw;
 }
 
