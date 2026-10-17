@@ -22,6 +22,15 @@ import {
 } from '../lib/shopify';
 import { cart } from '../lib/cart';
 import { analytics } from '../lib/analytics';
+import {
+  getActiveMarket,
+  getActiveCountryCode,
+  setActiveMarket,
+  initGeoMarketDetection,
+  formatCurrency,
+  MARKETS,
+  MarketCode,
+} from '../lib/currency';
 
 // Expose on window for runtime debugging or global calls
 (window as any).ShopifyCommerce = {
@@ -34,17 +43,26 @@ import { analytics } from '../lib/analytics';
   formatMoney: formatShopifyMoney,
   cart,
   analytics,
+  market: {
+    getActiveMarket,
+    setActiveMarket,
+    MARKETS,
+  },
 };
 
 (window as any).showToast = showToast;
 
 async function initStorefront() {
+  // Dual-Market & Currency Engine (UK 🇬🇧 & USA 🇺🇸)
+  initMarketEngine();
+
   // Non-blocking Cart initialization (Synchronously loaded from snapshot, revalidates quietly)
   cart.init().catch(err => console.warn('Cart initialization notice:', err));
 
-  // Enterprise Tracking: Automatic PageView and Form Submissions
+  // Enterprise Tracking: Automatic PageView, Form Submissions & Product Clicks
   analytics.trackPageView();
   setupGlobalFormTracking();
+  setupProductClickTracking();
 
   // Bind Shared Global Components
   setupCartDrawer();
@@ -201,6 +219,271 @@ function setupGlobalFormTracking() {
       analytics.trackLead('Contact Form Inquiry', email);
     });
   }
+}
+
+/**
+ * Enterprise Tracking: Product Click Event Listener
+ * Catches user clicks on any product card, link, or image across the store.
+ * Fires Meta Pixel 'ProductClick' (with content_name) & GA4 'select_item' + 'product_click'.
+ */
+function setupProductClickTracking() {
+  if (typeof document === 'undefined') return;
+
+  document.addEventListener(
+    'click',
+    (e) => {
+      try {
+        const el = e.target as HTMLElement | null;
+        if (!el) return;
+
+        // Detect click on any anchor, button, or container targeting a product
+        const link = el.closest(
+          'a, [onclick*="/product.html"], [onclick*="/products/"], [data-product-handle]'
+        ) as HTMLElement | null;
+        if (!link) return;
+
+        const href = link.getAttribute('href') || link.getAttribute('onclick') || '';
+        const hasProductUrl = href.includes('/product.html?handle=') || href.includes('/products/');
+        const hasProductData = link.hasAttribute('data-product-handle') || link.hasAttribute('data-product-title');
+
+        if (!hasProductUrl && !hasProductData) return;
+
+        // Extract product handle
+        let handle = link.getAttribute('data-product-handle') || '';
+        if (!handle) {
+          if (href.includes('handle=')) {
+            handle = href.split('handle=')[1]?.split('&')[0]?.split('#')[0]?.replace(/['"]/g, '') || '';
+          } else if (href.includes('/products/')) {
+            handle = href.split('/products/')[1]?.split('?')[0]?.split('#')[0]?.replace(/['"]/g, '') || '';
+          }
+        }
+
+        // Find closest container card to extract extra info if available
+        const card = link.closest('[data-product-title], .group, div');
+
+        // Extract product title with multiple safe fallbacks
+        let title =
+          link.getAttribute('data-product-title') ||
+          card?.getAttribute('data-product-title') ||
+          link.getAttribute('aria-label') ||
+          '';
+
+        if (!title) {
+          const titleEl = card?.querySelector('h1, h2, h3, h4, .font-semibold, .font-bold');
+          if (titleEl && titleEl.textContent) {
+            title = titleEl.textContent.trim();
+          }
+        }
+
+        // Format clean title from handle if title was missing
+        if (!title && handle) {
+          title = handle
+            .split('-')
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(' ');
+        }
+
+        if (!title && !handle) return;
+
+        const price = link.getAttribute('data-product-price') || card?.getAttribute('data-product-price') || '';
+        const category = link.getAttribute('data-product-category') || card?.getAttribute('data-product-category') || '';
+
+        analytics.trackProductClick({
+          title: title || handle,
+          handle: handle,
+          price: price || undefined,
+          category: category || undefined,
+          sourcePage: window.location.pathname + window.location.search,
+          targetUrl: href || `/product.html?handle=${handle}`,
+        });
+      } catch (err) {
+        // Non-blocking: never interfere with user clicks or navigation
+        console.debug('[Analytics Click Notice]:', err);
+      }
+    },
+    { capture: true, passive: true }
+  );
+}
+
+// ====================================================
+// DUAL-MARKET & CURRENCY ENGINE (UK 🇬🇧 & USA 🇺🇸)
+// ====================================================
+
+function initMarketEngine() {
+  if (typeof document === 'undefined') return;
+
+  // Mount Market Switcher in Desktop Header & Mobile Drawer
+  mountDesktopMarketSwitcher();
+  mountMobileMarketSwitcher();
+  updateMarketUI();
+
+  // Run async IP geolocation detection in background (fallback to timezone)
+  initGeoMarketDetection().then(() => {
+    updateMarketUI();
+  });
+
+  // Re-sync UI if market changes
+  window.addEventListener('marketChange', (e: any) => {
+    const config = e.detail?.config;
+    updateMarketUI();
+    if (config) {
+      showToast(`Switched market to ${config.countryName} (${config.currency} ${config.symbol})`);
+    }
+    setTimeout(() => {
+      window.location.reload();
+    }, 450);
+  });
+}
+
+function mountDesktopMarketSwitcher() {
+  if (document.getElementById('market-switcher-container')) return;
+  const cartBtn = document.getElementById('btn-header-cart');
+  if (!cartBtn || !cartBtn.parentElement) return;
+
+  const container = document.createElement('div');
+  container.id = 'market-switcher-container';
+  container.className = 'relative flex items-center mr-1 sm:mr-2';
+
+  const market = getActiveMarket();
+  container.innerHTML = `
+    <button id="btn-market-switcher" type="button" aria-expanded="false" aria-label="Select Country and Currency" class="flex items-center gap-1.5 px-2.5 py-1 sm:py-1.5 rounded-full text-xs font-bold text-white hover:bg-[#103B21] transition cursor-pointer border border-emerald-700/60 bg-[#0B2D19]/60 shadow-2xs">
+      <span class="market-current-flag text-sm sm:text-base leading-none">${market.flag}</span>
+      <span class="market-current-currency hidden sm:inline text-xs font-bold text-emerald-100">${market.currency} (${market.symbol})</span>
+      <svg class="w-3 h-3 stroke-[2.5] text-emerald-200 transition-transform duration-200 market-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+    <div id="market-dropdown" class="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-2xl border border-neutral-100 p-2 hidden z-[150] text-neutral-800 text-xs">
+      <div class="px-2.5 py-1 text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Select Market</div>
+      <button type="button" data-market="GB" class="market-select-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-neutral-50 transition font-semibold text-left cursor-pointer ${market.code === 'GB' ? 'bg-emerald-50 text-emerald-950 font-bold' : ''}">
+        <span class="flex items-center gap-2.5"><span class="text-base">🇬🇧</span> United Kingdom</span>
+        <span class="text-neutral-500 font-bold">GBP (£)</span>
+      </button>
+      <button type="button" data-market="US" class="market-select-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-neutral-50 transition font-semibold text-left cursor-pointer ${market.code === 'US' ? 'bg-emerald-50 text-emerald-950 font-bold' : ''}">
+        <span class="flex items-center gap-2.5"><span class="text-base">🇺🇸</span> United States</span>
+        <span class="text-neutral-500 font-bold">USD ($)</span>
+      </button>
+    </div>
+  `;
+
+  cartBtn.parentElement.insertBefore(container, cartBtn);
+
+  const toggleBtn = container.querySelector('#btn-market-switcher');
+  const dropdown = container.querySelector('#market-dropdown') as HTMLElement | null;
+  const arrow = container.querySelector('.market-arrow') as HTMLElement | null;
+
+  if (toggleBtn && dropdown) {
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isHidden = dropdown.classList.contains('hidden');
+      if (isHidden) {
+        dropdown.classList.remove('hidden');
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+      } else {
+        dropdown.classList.add('hidden');
+        if (arrow) arrow.style.transform = '';
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!container.contains(e.target as Node)) {
+        dropdown.classList.add('hidden');
+        if (arrow) arrow.style.transform = '';
+      }
+    });
+  }
+
+  container.querySelectorAll('.market-select-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const m = btn.getAttribute('data-market') as MarketCode;
+      if (m) setActiveMarket(m);
+    });
+  });
+}
+
+function mountMobileMarketSwitcher() {
+  if (document.getElementById('mobile-market-switcher-container')) return;
+  const mobilePanel = document.getElementById('mobile-menu-panel');
+  if (!mobilePanel) return;
+
+  const container = document.createElement('div');
+  container.id = 'mobile-market-switcher-container';
+  container.className = 'pt-4 border-t border-gray-100 mt-4';
+
+  const market = getActiveMarket();
+  container.innerHTML = `
+    <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Market & Currency</p>
+    <div class="grid grid-cols-2 gap-2">
+      <button type="button" data-market="GB" class="market-select-btn flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-xs font-bold transition cursor-pointer ${market.code === 'GB'
+      ? 'bg-[#0B2D19] text-white border-[#0B2D19]'
+      : 'bg-white text-neutral-800 border-neutral-200 hover:bg-neutral-50'
+    }">
+        <span class="text-base">🇬🇧</span> UK (£)
+      </button>
+      <button type="button" data-market="US" class="market-select-btn flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-xs font-bold transition cursor-pointer ${market.code === 'US'
+      ? 'bg-[#0B2D19] text-white border-[#0B2D19]'
+      : 'bg-white text-neutral-800 border-neutral-200 hover:bg-neutral-50'
+    }">
+        <span class="text-base">🇺🇸</span> USA ($)
+      </button>
+    </div>
+  `;
+
+  const helpSection = mobilePanel.querySelector('.pt-6.border-t.border-gray-100');
+  if (helpSection) {
+    mobilePanel.insertBefore(container, helpSection);
+  } else {
+    mobilePanel.appendChild(container);
+  }
+
+  container.querySelectorAll('.market-select-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const m = btn.getAttribute('data-market') as MarketCode;
+      if (m) setActiveMarket(m);
+    });
+  });
+}
+
+function updateMarketUI() {
+  const market = getActiveMarket();
+  document.querySelectorAll('.market-current-flag').forEach((el) => {
+    el.textContent = market.flag;
+  });
+  document.querySelectorAll('.market-current-currency').forEach((el) => {
+    el.textContent = `${market.currency} (${market.symbol})`;
+  });
+  document.querySelectorAll('.market-select-btn').forEach((btn) => {
+    const m = btn.getAttribute('data-market');
+    if (m === market.code) {
+      if (btn.closest('#mobile-market-switcher-container')) {
+        btn.className = 'market-select-btn flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-xs font-bold transition cursor-pointer bg-[#0B2D19] text-white border-[#0B2D19] shadow-xs';
+      } else {
+        btn.classList.add('bg-emerald-50', 'text-emerald-950', 'font-bold');
+      }
+    } else {
+      if (btn.closest('#mobile-market-switcher-container')) {
+        btn.className = 'market-select-btn flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-xs font-bold transition cursor-pointer bg-white text-neutral-800 border-neutral-200 hover:bg-neutral-50';
+      } else {
+        btn.classList.remove('bg-emerald-50', 'text-emerald-950', 'font-bold');
+      }
+    }
+  });
+
+  // Dynamically update the 4 hero promo banner cards to match active market currency
+  document.querySelectorAll<HTMLElement>('[data-bento-price]').forEach((el) => {
+    const baseGbp = el.getAttribute('data-bento-price');
+    if (baseGbp) {
+      el.textContent = formatCurrency(parseFloat(baseGbp), 'GBP');
+    }
+  });
+  document.querySelectorAll<HTMLElement>('[data-bento-compare]').forEach((el) => {
+    const baseGbp = el.getAttribute('data-bento-compare');
+    if (baseGbp) {
+      el.textContent = formatCurrency(parseFloat(baseGbp), 'GBP');
+    }
+  });
 }
 
 // ====================================================

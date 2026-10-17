@@ -55,14 +55,23 @@ export default async function handler(req, res) {
     }
 
     // 3. Resolve Environment Credentials
-    const pixelId =
+    let pixelId =
       process.env.META_PIXEL_ID ||
       process.env.VITE_META_PIXEL_ID ||
       '1569317721181690';
+    if (pixelId) {
+      pixelId = String(pixelId).trim().replace(/['"]/g, '');
+      if (pixelId.length > 0 && pixelId.length % 2 === 0) {
+        const half = pixelId.length / 2;
+        if (pixelId.slice(0, half) === pixelId.slice(half)) {
+          pixelId = pixelId.slice(0, half);
+        }
+      }
+    }
     const accessToken =
-      process.env.META_ACCESS_TOKEN ||
+      (process.env.META_ACCESS_TOKEN || '').trim().replace(/['"]/g, '') ||
       'EAATVBheZAf40BSqacJPdvMZCt4hJaZC1twZCzMUOm8ktFdcskNePmOT3KBjoyxgZCIeAHmMHAE8lrBPReZBcQMFgT2gjG3ZBVRmGcoMGxP2xgn8OkkFIUByViq12VdbGKxONEc9Sk01tajtEgmDSgUwDNsF11pfx6aetZCv6q8ttJXMVyTpqSU0cPvgu6qqjyAZDZD';
-    const testEventCode = process.env.META_TEST_EVENT_CODE;
+    const testEventCode = (process.env.META_TEST_EVENT_CODE || '').trim().replace(/['"]/g, '') || undefined;
 
     // Graceful fallback if credentials are not yet set in environment
     if (!pixelId || !accessToken) {

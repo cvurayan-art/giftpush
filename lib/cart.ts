@@ -446,7 +446,7 @@ class CartManager {
     const checkoutBtnTotal = document.getElementById('cart-checkout-btn-total');
     if (checkoutBtnTotal) checkoutBtnTotal.textContent = total;
 
-    // Free shipping tracker ($50 threshold)
+    // Free shipping tracker (50 threshold)
     const shippingBar = document.getElementById('cart-shipping-bar');
     const shippingAmountEl = document.getElementById('cart-shipping-amount');
     const shippingTextEl = document.getElementById('cart-shipping-text');
@@ -455,7 +455,7 @@ class CartManager {
       const diff = Math.max(0, freeThreshold - subtotalNum);
       const pct = Math.min(100, Math.round((subtotalNum / freeThreshold) * 100));
       shippingBar.style.width = `${pct}%`;
-      if (shippingAmountEl) shippingAmountEl.textContent = `$${diff.toFixed(2)}`;
+      if (shippingAmountEl) shippingAmountEl.textContent = formatShopifyMoney(diff, currency);
       if (diff === 0 && shippingTextEl) {
         shippingTextEl.innerHTML = `<span>🎉</span> <strong>FREE Holiday Delivery Unlocked!</strong>`;
       }
@@ -471,13 +471,13 @@ class CartManager {
       const dAmt = parseFloat(this.cart.discountAllocations[0].discountedAmount.amount);
       if (discountRow) discountRow.classList.remove('hidden');
       if (discountRow) discountRow.classList.add('flex');
-      if (discountAmtEl) discountAmtEl.textContent = `-$${dAmt.toFixed(2)}`;
+      if (discountAmtEl) discountAmtEl.textContent = `-${formatShopifyMoney(dAmt, currency)}`;
 
       if (promoBadge) {
         promoBadge.classList.remove('hidden');
         promoBadge.classList.add('flex');
         const code = this.cart.discountCodes?.[0]?.code || 'PROMO';
-        if (promoBadgeText) promoBadgeText.textContent = `Coupon applied: ${code} (-$${dAmt.toFixed(2)})`;
+        if (promoBadgeText) promoBadgeText.textContent = `Coupon applied: ${code} (-${formatShopifyMoney(dAmt, currency)})`;
       }
     } else {
       if (discountRow) {

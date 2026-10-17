@@ -5,6 +5,8 @@
  * Cross-Query Product Indexing, and Instant 0ms Pre-seeding
  */
 
+import { getActiveCountryCode, formatCurrency } from './currency';
+
 export interface ShopifyImage {
   url: string;
   altText?: string;
@@ -381,18 +383,8 @@ const CART_FRAGMENT = `
 // ----------------------------------------------------
 // Currency Formatting Helper
 // ----------------------------------------------------
-export function formatShopifyMoney(amount: string | number, currencyCode = 'USD'): string {
-  const num = typeof amount === 'number' ? amount : parseFloat(amount || '0');
-  const symbols: Record<string, string> = {
-    USD: '$',
-    GBP: '£',
-    EUR: '€',
-    CAD: 'CA$',
-    AUD: 'AU$',
-    JPY: '¥',
-  };
-  const sym = symbols[(currencyCode || 'USD').toUpperCase()] || `${currencyCode} `;
-  return `${sym}${num.toFixed(2)}`;
+export function formatShopifyMoney(amount: string | number, currencyCode = 'GBP'): string {
+  return formatCurrency(amount, currencyCode);
 }
 
 // ----------------------------------------------------
@@ -428,8 +420,9 @@ async function fetchProductsFromShopify(options: {
       const remaining = targetFirst - allNodes.length;
       const currentBatch = Math.min(remaining, batchSize);
 
+      const country = getActiveCountryCode();
       const query = `
-        query GetProducts($first: Int!, $after: String, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean) {
+        query GetProducts($first: Int!, $after: String, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean, $country: CountryCode) @inContext(country: $country) {
           products(first: $first, after: $after, query: $query, sortKey: $sortKey, reverse: $reverse) {
             pageInfo {
               hasNextPage
@@ -455,6 +448,7 @@ async function fetchProductsFromShopify(options: {
           query: options.query || null,
           sortKey: options.sortKey || 'BEST_SELLING',
           reverse: options.reverse || false,
+          country,
         },
       });
 
@@ -497,7 +491,8 @@ export async function getShopifyProducts(options: {
   const sortKey = options.sortKey || 'BEST_SELLING';
   const reverse = options.reverse || false;
   const queryFilter = options.query || '';
-  const cacheKey = `products_${first}_${queryFilter}_${sortKey}_${reverse}`;
+  const country = getActiveCountryCode();
+  const cacheKey = `products_${country}_${first}_${queryFilter}_${sortKey}_${reverse}`;
 
   if (!isShopifyConfigured()) {
     return getFallbackProducts(options.query);
@@ -522,8 +517,9 @@ export async function getShopifyProducts(options: {
 }
 
 async function fetchProductByHandleFromShopify(handle: string, cacheKey: string): Promise<ShopifyProduct | null> {
+  const country = getActiveCountryCode();
   const query = `
-    query GetProductByHandle($handle: String!) {
+    query GetProductByHandle($handle: String!, $country: CountryCode) @inContext(country: $country) {
       product(handle: $handle) {
         ${PRODUCT_FRAGMENT}
       }
@@ -533,11 +529,11 @@ async function fetchProductByHandleFromShopify(handle: string, cacheKey: string)
   try {
     const data = await shopifyFetch<{ product: ShopifyProduct | null }>({
       query,
-      variables: { handle },
+      variables: { handle, country },
     });
     if (data.product) {
       setCachedData(cacheKey, data.product);
-      setCachedData(`product_id_${data.product.id}`, data.product);
+      setCachedData(`product_id_${country}_${data.product.id}`, data.product);
       return data.product;
     }
     return getFallbackProducts().find(p => p.handle === handle) || null;
@@ -552,7 +548,8 @@ async function fetchProductByHandleFromShopify(handle: string, cacheKey: string)
  */
 export async function getShopifyProductByHandle(handle: string): Promise<ShopifyProduct | null> {
   if (!handle) return null;
-  const cacheKey = `product_handle_${handle}`;
+  const country = getActiveCountryCode();
+  const cacheKey = `product_handle_${country}_${handle}`;
 
   // 1. If Shopify is configured, fetch live product data from Shopify
   if (isShopifyConfigured()) {
@@ -859,8 +856,9 @@ export async function shopifyCreateCart(lines: { merchandiseId: string; quantity
     return createLocalCartMock(lines);
   }
 
+  const country = getActiveCountryCode();
   const query = `
-    mutation CartCreate($input: CartInput!) {
+    mutation CartCreate($input: CartInput!, $country: CountryCode) @inContext(country: $country) {
       cartCreate(input: $input) {
         cart {
           ${CART_FRAGMENT}
@@ -875,7 +873,7 @@ export async function shopifyCreateCart(lines: { merchandiseId: string; quantity
 
   const data = await shopifyFetch<{ cartCreate: { cart: ShopifyCart; userErrors: { field: string; message: string }[] } }>({
     query,
-    variables: { input: { lines } },
+    variables: { input: { lines }, country },
   });
 
   if (data.cartCreate.userErrors && data.cartCreate.userErrors.length > 0) {

@@ -26,6 +26,17 @@ export interface TrackingProduct {
   handle?: string;
 }
 
+export interface ProductClickParams {
+  title: string;
+  handle?: string;
+  id?: string;
+  price?: number | string;
+  currency?: string;
+  category?: string;
+  sourcePage?: string;
+  targetUrl?: string;
+}
+
 export interface CapiCustomData {
   currency?: string;
   value?: number;
@@ -61,6 +72,18 @@ export interface CapiPayload {
   userData?: CapiUserData;
 }
 
+function sanitizeTrackingId(id?: string | null): string {
+  if (!id) return '';
+  const clean = String(id).trim().replace(/['"]/g, '');
+  if (clean.length > 0 && clean.length % 2 === 0) {
+    const half = clean.length / 2;
+    if (clean.slice(0, half) === clean.slice(half)) {
+      return clean.slice(0, half);
+    }
+  }
+  return clean;
+}
+
 class AnalyticsManager {
   private pixelId: string | null = null;
   private gaId: string | null = null;
@@ -69,8 +92,8 @@ class AnalyticsManager {
   private pageViewSent = false;
 
   constructor() {
-    this.pixelId = (import.meta.env.VITE_META_PIXEL_ID as string) || '1569317721181690';
-    this.gaId = (import.meta.env.VITE_GA4_MEASUREMENT_ID as string) || 'G-WEXQP7YJZ5';
+    this.pixelId = sanitizeTrackingId((import.meta.env.VITE_META_PIXEL_ID as string) || '1569317721181690');
+    this.gaId = sanitizeTrackingId((import.meta.env.VITE_GA4_MEASUREMENT_ID as string) || 'G-WEXQP7YJZ5');
 
     if (typeof window !== 'undefined') {
       this.initAttributionCookies();
@@ -397,6 +420,88 @@ class AnalyticsManager {
     }
 
     console.debug(`[Analytics] Tracked ViewContent: "${product.title}" (eventId: ${eventId})`);
+  }
+
+  /**
+   * Track ProductClick (Custom Event - Option A)
+   * Tracks customer clicks on any product link/card with the product's name and details.
+   * Meta: fbq('trackCustom', 'ProductClick', { content_name, content_id, content_category, source_page, target_url, value, currency })
+   * GA4: gtag('event', 'select_item', ...) + gtag('event', 'product_click', ...)
+   * Meta CAPI: server-side CAPI event 'ProductClick'
+   */
+  public trackProductClick(params: ProductClickParams) {
+    try {
+      const eventId = this.generateEventId('clk');
+      const title = params.title || 'Product';
+      const handle = params.handle || '';
+      const cleanId = params.id || handle;
+      const currency = params.currency || 'GBP';
+      const priceNum = typeof params.price === 'string'
+        ? parseFloat(params.price.replace(/[^0-9.]/g, '')) || 0
+        : (params.price || 0);
+      const sourcePage = params.sourcePage || (typeof window !== 'undefined' ? window.location.pathname + window.location.search : '');
+      const targetUrl = params.targetUrl || '';
+
+      // 1. Meta Pixel (Browser) - Custom Event
+      if (typeof window !== 'undefined' && window.fbq) {
+        window.fbq(
+          'trackCustom',
+          'ProductClick',
+          {
+            content_name: title,
+            content_ids: cleanId ? [cleanId] : undefined,
+            content_type: 'product',
+            content_category: params.category || 'Gifts',
+            value: priceNum > 0 ? priceNum : undefined,
+            currency: priceNum > 0 ? currency : undefined,
+            source_page: sourcePage,
+            target_url: targetUrl,
+          },
+          { eventID: eventId }
+        );
+      }
+
+      // 2. Meta Conversions API (Server-Side)
+      this.sendToCAPI({
+        eventName: 'ProductClick',
+        eventId,
+        customData: {
+          content_name: title,
+          content_ids: cleanId ? [cleanId] : undefined,
+          content_type: 'product',
+          content_category: params.category || 'Gifts',
+          value: priceNum > 0 ? priceNum : undefined,
+          currency: priceNum > 0 ? currency : undefined,
+          source_page: sourcePage,
+          target_url: targetUrl,
+        },
+      });
+
+      // 3. Google Analytics 4 (Dual event: GA4 recommended select_item + direct product_click)
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'select_item', {
+          item_list_name: sourcePage || 'Catalog',
+          items: [
+            {
+              item_id: cleanId,
+              item_name: title,
+              item_category: params.category || 'Gifts',
+              price: priceNum > 0 ? priceNum : undefined,
+            },
+          ],
+        });
+
+        window.gtag('event', 'product_click', {
+          product_name: title,
+          product_handle: handle,
+          source_page: sourcePage,
+        });
+      }
+
+      console.debug(`[Analytics] Tracked ProductClick: "${title}" (eventId: ${eventId}) from ${sourcePage}`);
+    } catch (err) {
+      console.warn('[Analytics ProductClick Warning]:', err);
+    }
   }
 
   /**
